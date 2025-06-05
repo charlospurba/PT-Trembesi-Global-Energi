@@ -2,14 +2,14 @@
 
 @section('content')
     <!-- Include Navbar Component -->
-    @include('components.navold')
+    @include('components.navbar')
 
     <!-- Main Content -->
     <div class="container">
         <!-- Categories Section -->
         <div class="section-title">Kategori</div>
         <div class="categories-grid">
-            <a href="/login" class="category-card">
+            <a href="/material" class="category-card">
                 <i class="fas fa-cube"></i>
                 <span>Material</span>
             </a>

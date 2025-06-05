@@ -3,6 +3,4 @@
 @section('content')
 
     <!-- Include Navbar Component -->
-    @include('components.navbar')
-
-   
+    @include('components.cartnav')

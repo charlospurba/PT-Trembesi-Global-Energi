@@ -31,11 +31,8 @@
                 <i class="fas fa-bell"></i>
                 <span class="badge notification-badge" id="notificationBadge" style="display: none;">0</span>
             </a>
-            <div style="display: flex; align-items: center; color: white;">
-                <i class="fas fa-user-circle" style="font-size: 24px; margin-right: 8px;"></i>
-                <span>Gracesia Romauli</span>
-            </div>
+            <a href="/login" class="nav-button login">Log In</a>
+            <a href="/register" class="nav-button register">Register</a>
         </div>
     </div>
 </nav>
-

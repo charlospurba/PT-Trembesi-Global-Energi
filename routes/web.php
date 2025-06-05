@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('dashboard');
 });
-
+Route::get('/login', function () {
+    return view('auth.login');
+});
 Route::get('/register', function () {
     return view('auth.register');
 })->name('auth.register');
@@ -26,4 +28,10 @@ Route::get('/consumables', function () {
 });
 Route::get('/personal', function () {
     return view('procurement.personal');
+});
+Route::get('/cart', function () {
+    return view('procurement.cart');
+});
+Route::get('/detail', function () {
+    return view('procurement.detail');
 });

@@ -14,9 +14,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/material.css') }}">
 </head>
 <body>
-    <!-- Include Navbar Component -->
-    @include('components.navbar')
-
     
     <div class="container">
         @yield('content')
