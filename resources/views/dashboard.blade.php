@@ -1,43 +1,29 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Trembesi Global Energi</title>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="{{ asset('assets/css/navbar.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
-</head>
-<body>
-    <!-- Include Navbar Component -->
-    @include('components.navbar')
+@extends('layouts.app') 
+
+@section('content')
 
     <!-- Main Content -->
     <div class="container">
         <!-- Categories Section -->
         <div class="section-title">Kategori</div>
         <div class="categories-grid">
-            <a href="/category/material" class="category-card">
+            <a href="/material" class="category-card">
                 <i class="fas fa-cube"></i>
                 <span>Material</span>
             </a>
-            <a href="/category/equipment" class="category-card">
+            <a href="/equipment" class="category-card">
                 <i class="fas fa-tools"></i>
                 <span>Equipment</span>
             </a>
-            <a href="/category/electrical" class="category-card">
+            <a href="/electrical" class="category-card">
                 <i class="fas fa-bolt"></i>
                 <span>Electrical Tools</span>
             </a>
-            <a href="/category/consumables" class="category-card">
+            <a href="/consumables" class="category-card">
                 <i class="fas fa-shopping-bag"></i>
                 <span>Consumables</span>
             </a>
-            <a href="/category/ppe" class="category-card">
+            <a href="/personal" class="category-card">
                 <i class="fas fa-hard-hat"></i>
                 <span>Personal Protective Equipment</span>
             </a>
@@ -147,33 +133,4 @@
         </div>
     </div>
 
-    <!-- Optional JavaScript -->
-    <script>
-        // Function to update cart badge
-        function updateCartBadge(count) {
-            const badge = document.getElementById('cartBadge');
-            if (count > 0) {
-                badge.textContent = count;
-                badge.style.display = 'block';
-            } else {
-                badge.style.display = 'none';
-            }
-        }
-
-        // Function to update notification badge
-        function updateNotificationBadge(count) {
-            const badge = document.getElementById('notificationBadge');
-            if (count > 0) {
-                badge.textContent = count;
-                badge.style.display = 'block';
-            } else {
-                badge.style.display = 'none';
-            }
-        }
-
-        // Example usage (you can call these functions from your Laravel controller)
-        // updateCartBadge(3);
-        // updateNotificationBadge(5);
-    </script>
-</body>
-</html>
+    
