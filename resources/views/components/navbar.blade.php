@@ -37,7 +37,7 @@
             <a href="/login" class="nav-button login">Log In</a>
 
             <!-- Register Button -->
-            <a href="/register" class="nav-button register">Register</a>
+            <a href="{{ route('auth.register') }}" class="nav-button register">Register</a>
         </div>
     </div>
 </nav>
