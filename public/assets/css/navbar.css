@@ -1,0 +1,142 @@
+.navbar {
+  background: #E82929;
+  padding: 10px 20px;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.logo {
+  height: 120px;
+  width: 120px;
+}
+
+.search-form {
+  flex-grow: 1;
+  max-width: 600px;
+  min-width: 300px;
+  margin-right: 10px;
+}
+
+.search-wrapper {
+  display: flex;
+  width: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+  background-color: transparent;
+  border: 1px solid white;
+  align-items: center;
+  height: 45px;
+}
+
+.search-icon {
+  padding: 0 15px;
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon i {
+  font-size: 20px;
+}
+
+.search-input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  height: 100%;
+  font-size: 16px;
+  padding: 0 10px;
+  color: white;
+  background-color: transparent;
+}
+
+.search-button {
+  padding: 0 20px;
+  height: 100%;
+  background-color: white;
+  color: black;
+  border: none;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  border-top-right-radius: 999px;
+  border-bottom-right-radius: 999px;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.nav-icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  text-decoration: none;
+}
+
+.nav-icon i {
+  color: white;
+  font-size: 28px;
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #6c757d;
+  color: white;
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+  display: none;
+}
+
+.nav-button {
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  text-decoration: none;
+  font-weight: 500;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login {
+  background-color: #e30613;
+  color: white;
+  border: 1px solid white;
+}
+
+.register {
+  background-color: white;
+  color: #e30613;
+}
