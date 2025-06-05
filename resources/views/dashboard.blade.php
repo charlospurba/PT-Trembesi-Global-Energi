@@ -1,123 +1,179 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Trembesi Global Energi</title>
-    <!-- Font Awesome untuk ikon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{{ asset('assets/css/navbar.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
 </head>
-
 <body>
-    <!-- Memanggil komponen navbar -->
-    @component('components.navbar')
-    @endcomponent
+    <!-- Include Navbar Component -->
+    @include('components.navbar')
 
-    <div class="dashboard-container">
-        <!-- Bagian Kategori -->
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Categories Section -->
         <div class="section-title">Kategori</div>
         <div class="categories-grid">
+            <a href="/category/material" class="category-card">
+                <i class="fas fa-cube"></i>
+                <span>Material</span>
+            </a>
             <a href="/category/equipment" class="category-card">
                 <i class="fas fa-tools"></i>
                 <span>Equipment</span>
             </a>
-            <a href="/category/construction" class="category-card">
-                <i class="fas fa-building"></i>
-                <span>Peralatan Konstruksi</span>
+            <a href="/category/electrical" class="category-card">
+                <i class="fas fa-bolt"></i>
+                <span>Electrical Tools</span>
             </a>
-            <a href="/category/pipe-fitting" class="category-card">
-                <i class="fas fa-tape"></i>
-                <span>Pipa dan Fitting</span>
+            <a href="/category/consumables" class="category-card">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Consumables</span>
             </a>
-            <a href="/category/paint-coating" class="category-card">
-                <i class="fas fa-paint-roller"></i>
-                <span>Cat dan Pelapis</span>
-            </a>
-            <a href="/category/hand-power-tools" class="category-card">
-                <i class="fas fa-hammer"></i>
-                <span>Perkakas Tangan dan Power Tools</span>
-            </a>
-            <a href="/category/electricity-lighting" class="category-card">
-                <i class="fas fa-plug"></i>
-                <span>Listrik & Pencahayaan</span>
-            </a>
-            <a href="/category/ventilation-ac" class="category-card">
-                <i class="fas fa-fan"></i>
-                <span>Sistem Ventilasi dan AC</span>
-            </a>
-            <a href="/category/ceiling-partition" class="category-card">
-                <i class="fas fa-th-large"></i>
-                <span>Plafon dan Partisi</span>
-            </a>
-            <a href="/category/floor-wall" class="category-card">
-                <i class="fas fa-square"></i>
-                <span>Lantai dan Dinding</span>
-            </a>
-            <a href="/category/safety-equipment" class="category-card">
-                <i class="fas fa-traffic-cone"></i>
-                <span>Peralatan Keamanan Konstruksi</span>
+            <a href="/category/ppe" class="category-card">
+                <i class="fas fa-hard-hat"></i>
+                <span>Personal Protective Equipment</span>
             </a>
         </div>
 
-        <!-- Bagian Rekomendasi -->
-        <div class="section-title">REKOMENDASI</div>
+        <!-- Recommendations Section -->
+        <div class="recommendations-section">
+            <div class="recommendations-title">REKOMENDASI</div>
+            
+            <!-- Material Collection -->
+            <div class="collection">
+                <div class="collection-header">
+                    <h3>Koleksi Material</h3>
+                    <a href="#" class="view-all">Lihat Semua ></a>
+                </div>
+                <div class="products-grid">
+                    @for($i = 0; $i < 6; $i++)
+                    <div class="product-card">
+                        <div class="product-image">
+                            @if($i == 1)
+                                Steel
+                            @elseif($i == 2)
+                                Gyp
+                            @else
+                                PVC
+                            @endif
+                            <span class="product-badge">Toko Bangunan</span>
+                        </div>
+                        <div class="product-info">
+                            <h4>
+                                @if($i == 1)
+                                    HITAM 450
+                                @else
+                                    PUTIH 100
+                                @endif
+                            </h4>
+                            <p class="product-desc">
+                                @if($i == 1)
+                                    Pipa Steel 3 inch
+                                @elseif($i == 2)
+                                    Gypsum Board Standard
+                                @elseif($i == 3)
+                                    Pipa PVC 6 inch
+                                @elseif($i == 4)
+                                    Pipa PVC 2 inch
+                                @elseif($i == 5)
+                                    Pipa PVC 8 inch
+                                @else
+                                    Pipa PVC 4 inch
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+                    @endfor
+                </div>
+            </div>
 
-        <!-- Koleksi Bahan Bangunan -->
-        <div class="recommendation-section">
-            <div class="recommendation-header">
-                <div class="section-subtitle">Koleksi Bahan Bangunan</div>
-                <a href="/collection/bahan-bangunan" class="view-all">
-                    Lihat Semua
-                    <i class="fas fa-chevron-right"></i>
-                </a>
-            </div>
-            <div class="product-scroll-container">
-                @foreach ([['name' => 'Pipa PVC 6 meter', 'price' => 'Rp110.199', 'shop' => 'Toko Beringin', 'stock' => '1500'], ['name' => 'Pipa Besi', 'price' => 'Rp110.400', 'shop' => 'Jakarta Selatan', 'stock' => '1200'], ['name' => 'Gypsum', 'price' => 'Rp110.119', 'shop' => 'Toko Beringin', 'stock' => '1500'], ['name' => 'Pipa PVC 6 meter', 'price' => 'Rp110.198', 'shop' => 'Toko Beringin', 'stock' => '1500'], ['name' => 'Pipa PVC 6 meter', 'price' => 'Rp110.198', 'shop' => 'Toko Beringin', 'stock' => '1500'], ['name' => 'Pipa PVC 6 meter', 'price' => 'Rp110.198', 'shop' => 'Toko Beringin', 'stock' => '1500']] as $index => $product)
-                    <a href="/product/{{ $index + 1 }}" class="product-card">
-                        <div class="product-card-image-wrapper">
-                            <img src="https://placehold.co/200x150/f0f2f5/E82929?text={{ $product['name'] }}"
-                                alt="{{ $product['name'] }}" class="product-card-image">
-                            <span class="shop-name-overlay">{{ $product['shop'] }}</span>
+            <!-- Equipment Collection -->
+            <div class="collection">
+                <div class="collection-header">
+                    <h3>Koleksi Equipment</h3>
+                    <a href="#" class="view-all">Lihat Semua ></a>
+                </div>
+                <div class="equipment-grid">
+                    @for($row = 0; $row < 2; $row++)
+                        @for($col = 0; $col < 6; $col++)
+                        <div class="product-card">
+                            <div class="product-image">
+                                @if($col == 1)
+                                    Steel
+                                @elseif($col == 2)
+                                    Gyp
+                                @else
+                                    PVC
+                                @endif
+                                <span class="product-badge">Toko Bangunan</span>
+                            </div>
+                            <div class="product-info">
+                                <h4>
+                                    @if($col == 1)
+                                        HITAM 450
+                                    @else
+                                        PUTIH 100
+                                    @endif
+                                </h4>
+                                <p class="product-desc">
+                                    @if($col == 1)
+                                        Pipa Steel 3 inch
+                                    @elseif($col == 2)
+                                        Gypsum Board Standard
+                                    @elseif($col == 3)
+                                        Pipa PVC 6 inch
+                                    @elseif($col == 4)
+                                        Pipa PVC 2 inch
+                                    @elseif($col == 5)
+                                        Pipa PVC 8 inch
+                                    @else
+                                        Pipa PVC 4 inch
+                                    @endif
+                                </p>
+                            </div>
                         </div>
-                        <div class="product-card-content">
-                            <h3 class="product-name">{{ $product['name'] }}</h3>
-                            <div class="product-price">{{ $product['price'] }}</div>
-                            <div class="product-stock">Stok: {{ $product['stock'] }}</div>
-                        </div>
-                    </a>
-                @endforeach
-            </div>
-        </div>
-
-        <!-- Koleksi Peralatan -->
-        <div class="recommendation-section">
-            <div class="recommendation-header">
-                <div class="section-subtitle">Koleksi Peralatan Konstruksi</div>
-                <a href="/collection/peralatan" class="view-all">
-                    Lihat Semua
-                    <i class="fas fa-chevron-right"></i>
-                </a>
-            </div>
-            <div class="product-scroll-container">
-                @foreach ([['name' => 'Pipa Besi', 'price' => 'Rp110.400', 'shop' => 'Jakarta Selatan', 'stock' => '1200'], ['name' => 'Gypsum', 'price' => 'Rp110.119', 'shop' => 'Toko Beringin', 'stock' => '1500'], ['name' => 'Pipa PVC 6 meter', 'price' => 'Rp110.198', 'shop' => 'Toko Beringin', 'stock' => '1500'], ['name' => 'Pipa PVC 6 meter', 'price' => 'Rp110.198', 'shop' => 'Toko Beringin', 'stock' => '1500'], ['name' => 'Pipa PVC 6 meter', 'price' => 'Rp110.198', 'shop' => 'Toko Beringin', 'stock' => '1500'], ['name' => 'Pipa PVC 6 meter', 'price' => 'Rp110.198', 'shop' => 'Toko Beringin', 'stock' => '1500']] as $index => $product)
-                    <a href="/product/{{ $index + 1 }}" class="product-card">
-                        <div class="product-card-image-wrapper">
-                            <img src="https://placehold.co/200x150/f0f2f5/E82929?text={{ $product['name'] }}"
-                                alt="{{ $product['name'] }}" class="product-card-image">
-                            <span class="shop-name-overlay">{{ $product['shop'] }}</span>
-                        </div>
-                        <div class="product-card-content">
-                            <h3 class="product-name">{{ $product['name'] }}</h3>
-                            <div class="product-price">{{ $product['price'] }}</div>
-                            <div class="product-stock">Stok: {{ $product['stock'] }}</div>
-                        </div>
-                    </a>
-                @endforeach
+                        @endfor
+                    @endfor
+                </div>
             </div>
         </div>
     </div>
-</body>
 
+    <!-- Optional JavaScript -->
+    <script>
+        // Function to update cart badge
+        function updateCartBadge(count) {
+            const badge = document.getElementById('cartBadge');
+            if (count > 0) {
+                badge.textContent = count;
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // Function to update notification badge
+        function updateNotificationBadge(count) {
+            const badge = document.getElementById('notificationBadge');
+            if (count > 0) {
+                badge.textContent = count;
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // Example usage (you can call these functions from your Laravel controller)
+        // updateCartBadge(3);
+        // updateNotificationBadge(5);
+    </script>
+</body>
 </html>
