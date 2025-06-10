@@ -1,5 +1,97 @@
-@extends('layouts.app') 
+@extends('layouts.app')
 
 @section('content')
     <!-- Include Navbar Component -->
     @include('components.navbar')
+
+    <!-- Material Collection -->
+    <div class="collection">
+    
+        <div class="products-grid">
+            @for($i = 0; $i < 6; $i++)
+            <div class="product-card">
+                <div class="product-image">
+                    @if($i == 1)
+                        Steel
+                    @elseif($i == 2)
+                        Gyp
+                    @else
+                        PVC
+                    @endif
+                    <span class="product-badge">Toko Bangunan</span>
+                </div>
+                <div class="product-info">
+                    <h4>
+                        @if($i == 1)
+                            HITAM 450
+                        @else
+                            PUTIH 100
+                        @endif
+                    </h4>
+                    <p class="product-desc">
+                        @if($i == 1)
+                            Pipa Steel 3 inch
+                        @elseif($i == 2)
+                            Gypsum Board Standard
+                        @elseif($i == 3)
+                            Pipa PVC 6 inch
+                        @elseif($i == 4)
+                            Pipa PVC 2 inch
+                        @elseif($i == 5)
+                            Pipa PVC 8 inch
+                        @else
+                            Pipa PVC 4 inch
+                        @endif
+                    </p>
+                </div>
+            </div>
+            @endfor
+        </div>
+    </div>
+
+    <!-- Equipment Collection -->
+    <div class="collection">
+        <div class="equipment-grid">
+            @for($row = 0; $row < 2; $row++)
+                @for($col = 0; $col < 6; $col++)
+                <div class="product-card">
+                    <div class="product-image">
+                        @if($col == 1)
+                            Steel
+                        @elseif($col == 2)
+                            Gyp
+                        @else
+                            PVC
+                        @endif
+                        <span class="product-badge">Toko Bangunan</span>
+                    </div>
+                    <div class="product-info">
+                        <h4>
+                            @if($col == 1)
+                                HITAM 450
+                            @else
+                                PUTIH 100
+                            @endif
+                        </h4>
+                        <p class="product-desc">
+                            @if($col == 1)
+                                Pipa Steel 3 inch
+                            @elseif($col == 2)
+                                Gypsum Board Standard
+                            @elseif($col == 3)
+                                Pipa PVC 6 inch
+                            @elseif($col == 4)
+                                Pipa PVC 2 inch
+                            @elseif($col == 5)
+                                Pipa PVC 8 inch
+                            @else
+                                Pipa PVC 4 inch
+                            @endif
+                        </p>
+                    </div>
+                </div>
+                @endfor
+            @endfor
+        </div>
+    </div>
+@endsection
