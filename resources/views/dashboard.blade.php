@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- Include Navbar Component -->
-    @include('components.navold')
+     @include('components.navbar')
 
     <!-- Main Content -->
     <div class="container">

@@ -23,11 +23,11 @@
         </form>
 
         <div class="nav-right">
-            <a href="/cart" class="nav-icon">
+            <a href="/signin" class="nav-icon">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="badge cart-badge" id="cartBadge" style="display: none;">0</span>
             </a>
-            <a href="/notifications" class="nav-icon">
+            <a href="/signin" class="nav-icon">
                 <i class="fas fa-bell"></i>
                 <span class="badge notification-badge" id="notificationBadge" style="display: none;">0</span>
             </a>

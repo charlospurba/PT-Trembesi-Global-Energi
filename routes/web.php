@@ -12,6 +12,10 @@ Route::get('/signup', function () {
     return view('auth.register');
 })->name('auth.register');
 
+Route::get('/dashboard/profile', function () {
+    return view('components.profile');
+})->name('components.profile');
+
 Route::get('/signup/form', function () {
     return view('auth.register_form');
 })->name('auth.register_form');

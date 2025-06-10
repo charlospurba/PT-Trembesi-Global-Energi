@@ -31,10 +31,36 @@
                 <i class="fas fa-bell"></i>
                 <span class="badge notification-badge" id="notificationBadge" style="display: none;">0</span>
             </a>
-            <div style="display: flex; align-items: center; color: white;">
-                <i class="fas fa-user-circle" style="font-size: 24px; margin-right: 8px;"></i>
-                <span>Gracesia Romauli</span>
+            <!-- Profile Dropdown -->
+            <div class="profile-dropdown">
+                <div class="profile-trigger" onclick="toggleDropdown()">
+                    <i class="fas fa-user-circle" style="font-size: 24px; margin-right: 8px;"></i>
+                    <span>Gracesia Romauli</span>
+                    <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
+                </div>
+                <div id="dropdownMenu" class="dropdown-menu" style="display: none;">
+                    <a href="/dashboard/profile" class="dropdown-item">My Profile</a>
+                    <form method="POST" action="/logout" class="dropdown-item" style="margin: 0;">
+                        @csrf
+                        <button type="submit" style="background: none; border: none; padding: 0; color: inherit; cursor: pointer;">Logout</button>
+                    </form>
+                </div>
             </div>
+
         </div>
     </div>
 </nav>
+<script>
+    function toggleDropdown() {
+        var menu = document.getElementById("dropdownMenu");
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    window.addEventListener('click', function(e) {
+        const trigger = document.querySelector('.profile-trigger');
+        const dropdown = document.getElementById("dropdownMenu");
+        if (!trigger.contains(e.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+</script>

@@ -279,3 +279,32 @@
 .navbar {
     animation: fadeIn 0.3s ease-out;
 }
+.profile-dropdown {
+    position: relative;
+    display: inline-block;
+    color: white;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    min-width: 150px;
+    z-index: 1000;
+    padding: 10px 0;
+}
+
+.dropdown-item {
+    padding: 10px 20px;
+    text-decoration: none;
+    display: block;
+    color: black;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
+}
