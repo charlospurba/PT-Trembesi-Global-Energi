@@ -12,6 +12,10 @@ Route::get('/register', function () {
     return view('auth.register');
 })->name('auth.register');
 
+Route::get('/register/form', function () {
+    return view('auth.register_form');
+})->name('auth.register_form');
+
 Route::get('/material', function () {
     return view('procurement.material');
 })->name('procurement.material');

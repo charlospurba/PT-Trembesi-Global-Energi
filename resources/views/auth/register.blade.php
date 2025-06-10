@@ -21,7 +21,7 @@
 
         <br/>
         <!-- Vendor Box Centered -->
-        <a href="/vendor/register"
+        <a href="{{ route('auth.register_form') }}"
           class="inline-flex items-center bg-gray-100 hover:bg-gray-200 rounded-lg p-5 shadow-md transition-colors duration-200 cursor-pointer no-underline mx-auto">
           <img src="{{ asset('assets/images/vendor_17641134.png') }}" alt="Vendor Icon" class="w-14 h-14 mr-4">
           <div class="text-gray-700">
@@ -34,7 +34,7 @@
       <!-- Sign In Text -->
       <div class="mt-10 border-t pt-4 text-center text-sm text-gray-600">
         Already have an account?
-        <a href="#" class="text-blue-600 hover:underline">Sign in</a>
+        <a href="/login" class="text-blue-600 hover:underline">Sign in</a>
       </div>
     </div>
 
