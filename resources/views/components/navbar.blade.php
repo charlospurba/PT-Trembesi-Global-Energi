@@ -7,7 +7,7 @@
             </a>
         </div>
 
-               <!-- Search Form -->
+        <!-- Search Form -->
         <form id="searchForm" action="/search" method="GET"
             style="flex-grow: 1; max-width: 600px; min-width: 300px; margin-right: 10px;">
             <div
@@ -38,4 +38,3 @@
         </div>
     </div>
 </nav>
-
