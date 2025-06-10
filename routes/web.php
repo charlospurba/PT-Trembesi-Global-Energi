@@ -38,8 +38,19 @@ Route::get('/personal', function () {
     return view('procurement.personal');
 });
 Route::get('/cart', function () {
-    return view('procurement.cart');
+    // Mengambil data cart dari session, jika tidak ada maka cartItems akan kosong
+    $cartItems = session()->get('cart', []);
+
+    // Menghitung total harga cart jika diperlukan
+    $totalPrice = 0;
+    foreach ($cartItems as $item) {
+        $totalPrice += $item['price'] * $item['quantity'];
+    }
+
+    // Mengirimkan data cartItems dan totalPrice ke view
+    return view('procurement.cart', compact('cartItems', 'totalPrice'));
 });
+
 Route::get('/detail', function () {
     return view('procurement.detail');
 });
