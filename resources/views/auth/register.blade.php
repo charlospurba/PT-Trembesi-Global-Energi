@@ -34,7 +34,7 @@
       <!-- Sign In Text -->
       <div class="mt-10 border-t pt-4 text-center text-sm text-gray-600">
         Already have an account?
-        <a href="/login" class="text-blue-600 hover:underline">Sign in</a>
+        <a href="/signin" class="text-blue-600 hover:underline">Sign in</a>
       </div>
     </div>
 

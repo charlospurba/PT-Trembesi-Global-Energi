@@ -5,14 +5,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('dashboard');
 });
-Route::get('/login', function () {
+Route::get('/signin', function () {
     return view('auth.login');
 });
-Route::get('/register', function () {
+Route::get('/signup', function () {
     return view('auth.register');
 })->name('auth.register');
 
-Route::get('/register/form', function () {
+Route::get('/signup/form', function () {
     return view('auth.register_form');
 })->name('auth.register_form');
 

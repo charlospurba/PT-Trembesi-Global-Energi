@@ -31,8 +31,8 @@
                 <i class="fas fa-bell"></i>
                 <span class="badge notification-badge" id="notificationBadge" style="display: none;">0</span>
             </a>
-            <a href="/login" class="nav-button login">Log In</a>
-            <a href="/register" class="nav-button register">Register</a>
+            <a href="/signin" class="nav-button login">Sign In</a>
+            <a href="/signup" class="nav-button register">Sign Up</a>
         </div>
     </div>
 </nav>
