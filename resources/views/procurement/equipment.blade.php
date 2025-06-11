@@ -5,7 +5,7 @@
     @include('components.navbar')
 
     <!-- Material Collection -->
-    <div class="collection">
+    <div class="collection mt-6">
     
         <div class="products-grid">
             @for($i = 0; $i < 6; $i++)
@@ -50,7 +50,7 @@
     </div>
 
     <!-- Equipment Collection -->
-    <div class="collection">
+   <div class="collection mt-6">
         <div class="equipment-grid">
             @for($row = 0; $row < 2; $row++)
                 @for($col = 0; $col < 6; $col++)
