@@ -2,7 +2,7 @@
 <nav class="navbar">
     <div class="nav-container">
         <div class="logo-section">
-            <a href="/" class="logo">
+            <a href="" class="logo">
                 <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Trembesi Logo" class="logo-img">
             </a>
         </div>
