@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\VendorHomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -23,16 +24,14 @@ Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->na
 Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
 
 // ✅ Setelah login, redirect berdasarkan role ke halaman dashboard masing-masing
-Route::middleware('auth')->group(function () {
-    Route::view('/dashboard/superadmin', 'dashboard.superadmin')->name('dashboard.superadmin');
-    Route::view('/dashboard/procurement', 'dashboard.procurement')->name('dashboard.procurement');
-    Route::view('/dashboard/vendor', 'dashboard.vendor')->name('dashboard.vendor');
-    Route::view('/dashboard/productmanager', 'dashboard.productmanager')->name('dashboard.productmanager');
-});
-
 // 👷 Khusus route Procurement yang hanya bisa diakses setelah login & cek middleware
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/procurement', [ProcurementHomeController::class, 'index'])->name('procurement.dashboardproc');
+    Route::get('/dashboard/vendor', [VendorHomeController::class, 'index'])->name('vendor.dashboardvendor');
+
+    //belum
+    Route::view('/dashboard/superadmin', 'dashboard.superadmin')->name('dashboard.superadmin');
+    Route::view('/dashboard/productmanager', 'dashboard.productmanager')->name('dashboard.productmanager');
 
     // Procurement views
     Route::view('/material', 'procurement.material')->name('procurement.material');
@@ -42,6 +41,10 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/personal', 'procurement.personal')->name('procurement.personal');
     Route::view('/cart', 'procurement.cart')->name('procurement.cart');
     Route::view('/detail', 'procurement.detail')->name('procurement.detail');
+
+    //Vendor views
+    Route::view('/myproducts', 'vendor.vendor_myproducts')->name('vendor.vendor_myproducts');
+
 });
 
 

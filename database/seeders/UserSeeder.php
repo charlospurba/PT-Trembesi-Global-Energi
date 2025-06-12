@@ -57,6 +57,22 @@ class UserSeeder extends Seeder
             'daftar_pengalaman' => '-',
             'role' => 'product_manager',
         ]);
+
+        User::create([
+            'name' => 'Vendor',
+            'email' => 'vendor@example.com',
+            'phone_number' => '0800000007',
+            'npwp' => '-',
+            'username' => 'vendor',
+            'password' => Hash::make('password123'),
+            'nib' => '-',
+            'comp_profile' => '-',
+            'izin_perusahaan' => '-',
+            'sppkp' => '-',
+            'struktur_organisasi' => '-',
+            'daftar_pengalaman' => '-',
+            'role' => 'vendor',
+        ]);
     }
 }
 
