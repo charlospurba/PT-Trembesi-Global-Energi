@@ -22,6 +22,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register.form');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
+Route::get('/register/detail', [RegisterController::class, 'showDetailForm'])->name('auth.register_detail');
+Route::post('/register/detail', [RegisterController::class, 'submitDetailForm'])->name('auth.register_detail_submit');
+Route::get('/register-detail', function () {
+    return view('auth.register_form_detail');
+})->name('register.step2');
 
 // ✅ Setelah login, redirect berdasarkan role ke halaman dashboard masing-masing
 // 👷 Khusus route Procurement yang hanya bisa diakses setelah login & cek middleware
