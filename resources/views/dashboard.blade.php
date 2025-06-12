@@ -1,48 +1,48 @@
-@extends('layouts.app') 
+@extends('layouts.app')
 
 @section('content')
-    <!-- Include Navbar Component -->
-     @include('components.navold')
+<!-- Include Navbar Component -->
+@include('components.navold')
 
-    <!-- Main Content -->
-    <div class="container">
-        <!-- Categories Section -->
-        <div class="section-title">Kategori</div>
-        <div class="categories-grid">
-            <a href="/login" class="category-card">
-                <i class="fas fa-cube"></i>
-                <span>Material</span>
-            </a>
-            <a href="/equipment" class="category-card">
-                <i class="fas fa-tools"></i>
-                <span>Equipment</span>
-            </a>
-            <a href="/electrical" class="category-card">
-                <i class="fas fa-bolt"></i>
-                <span>Electrical Tools</span>
-            </a>
-            <a href="/consumables" class="category-card">
-                <i class="fas fa-shopping-bag"></i>
-                <span>Consumables</span>
-            </a>
-            <a href="/personal" class="category-card">
-                <i class="fas fa-hard-hat"></i>
-                <span>Personal Protective Equipment</span>
-            </a>
-        </div>
+<!-- Main Content -->
+<div class="container">
+    <!-- Categories Section -->
+    <div class="section-title">Categories</div>
+    <div class="categories-grid">
+        <a href="/login" class="category-card">
+            <i class="fas fa-cube"></i>
+            <span>Material</span>
+        </a>
+        <a href="/equipment" class="category-card">
+            <i class="fas fa-tools"></i>
+            <span>Equipment</span>
+        </a>
+        <a href="/electrical" class="category-card">
+            <i class="fas fa-bolt"></i>
+            <span>Electrical Tools</span>
+        </a>
+        <a href="/consumables" class="category-card">
+            <i class="fas fa-shopping-bag"></i>
+            <span>Consumables</span>
+        </a>
+        <a href="/personal" class="category-card">
+            <i class="fas fa-hard-hat"></i>
+            <span>Personal Protective Equipment</span>
+        </a>
+    </div>
 
-        <!-- Recommendations Section -->
-        <div class="recommendations-section">
-            <div class="recommendations-title">REKOMENDASI</div>
-            
-            <!-- Material Collection -->
-            <div class="collection">
-                <div class="collection-header">
-                    <h3>Koleksi Material</h3>
-                    <a href="#" class="view-all">Lihat Semua ></a>
-                </div>
-                <div class="products-grid">
-                    @for($i = 0; $i < 6; $i++)
+    <!-- Recommendations Section -->
+    <div class="recommendations-section">
+        <div class="recommendations-title">RECOMMENDATIONS</div>
+
+        <!-- Material Collection -->
+        <div class="collection">
+            <div class="collection-header">
+                <h3>Material Collection</h3>
+                <a href="#" class="view-all">See all ></a>
+            </div>
+            <div class="products-grid">
+                @for($i = 0; $i < 6; $i++)
                     <div class="product-card">
                         <div class="product-image">
                             @if($i == 1)
@@ -79,19 +79,19 @@
                             </p>
                         </div>
                     </div>
-                    @endfor
-                </div>
+                @endfor
             </div>
+        </div>
 
-            <!-- Equipment Collection -->
-            <div class="collection">
-                <div class="collection-header">
-                    <h3>Koleksi Equipment</h3>
-                    <a href="#" class="view-all">Lihat Semua ></a>
-                </div>
-                <div class="equipment-grid">
-                    @for($row = 0; $row < 2; $row++)
-                        @for($col = 0; $col < 6; $col++)
+        <!-- Equipment Collection -->
+        <div class="collection">
+            <div class="collection-header">
+                <h3>Equipment Collection</h3>
+                <a href="#" class="view-all">See all ></a>
+            </div>
+            <div class="equipment-grid">
+                @for($row = 0; $row < 2; $row++)
+                    @for($col = 0; $col < 6; $col++)
                         <div class="product-card">
                             <div class="product-image">
                                 @if($col == 1)
@@ -128,11 +128,9 @@
                                 </p>
                             </div>
                         </div>
-                        @endfor
                     @endfor
-                </div>
+                @endfor
             </div>
         </div>
     </div>
-
-    
+</div>

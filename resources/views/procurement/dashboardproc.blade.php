@@ -7,7 +7,7 @@
     <!-- Main Content -->
     <div class="container">
         <!-- Categories Section -->
-        <div class="section-title">Kategori</div>
+        <div class="section-title">Category</div>
         <div class="categories-grid">
             <a href="/material" class="category-card">
                 <i class="fas fa-cube"></i>
@@ -33,7 +33,7 @@
 
         <!-- Recommendations Section -->
         <div class="recommendations-section">
-            <div class="recommendations-title">REKOMENDASI</div>
+            <div class="recommendations-title">RECOMMENDATIOS</div>
             
             <!-- Material Collection -->
             <div class="collection">
