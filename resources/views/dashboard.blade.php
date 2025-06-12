@@ -13,19 +13,19 @@
             <i class="fas fa-cube"></i>
             <span>Material</span>
         </a>
-        <a href="/equipment" class="category-card">
+        <a href="/login" class="category-card">
             <i class="fas fa-tools"></i>
             <span>Equipment</span>
         </a>
-        <a href="/electrical" class="category-card">
+        <a href="/login" class="category-card">
             <i class="fas fa-bolt"></i>
             <span>Electrical Tools</span>
         </a>
-        <a href="/consumables" class="category-card">
+        <a href="/login" class="category-card">
             <i class="fas fa-shopping-bag"></i>
             <span>Consumables</span>
         </a>
-        <a href="/personal" class="category-card">
+        <a href="/login" class="category-card">
             <i class="fas fa-hard-hat"></i>
             <span>Personal Protective Equipment</span>
         </a>
