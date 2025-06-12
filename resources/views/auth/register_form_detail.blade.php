@@ -91,7 +91,7 @@
               <!-- File Name Display -->
               <div id="{{ $field['id'] }}_label"
                 class="flex-1 px-4 py-2 text-sm text-gray-500 bg-white border-none select-none truncate">
-                Pilih file...
+                Choose a file...
               </div>
 
               <!-- Upload Button -->
