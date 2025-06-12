@@ -35,7 +35,8 @@
                 </div>
 
                 <!-- Login Form -->
-                <form class="space-y-6">
+                <form class="space-y-6" method="POST" action="{{ route('login') }}">
+                    @csrf
                     <!-- Username Field -->
                     <div>
                         <div class="relative">
@@ -71,29 +72,6 @@
                                 <button type="button" class="text-gray-400 hover:text-gray-600" onclick="togglePassword()">
                                     <i class="fas fa-eye" id="toggleIcon"></i>
                                 </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Project Selection -->
-                    <div>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-project-diagram text-gray-400"></i>
-                            </div>
-                            <select 
-                                name="project" 
-                                id="project"
-                                class="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-gray-50 text-gray-900 appearance-none cursor-pointer"
-                                required
-                            >
-                                <option value="" disabled selected>select project</option>
-                                <option value="project1">Project Alpha</option>
-                                <option value="project2">Project Beta</option>
-                                <option value="project3">Project Gamma</option>
-                            </select>
-                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                <i class="fas fa-chevron-down text-gray-400"></i>
                             </div>
                         </div>
                     </div>
@@ -146,24 +124,6 @@
                 toggleIcon.classList.add('fa-eye');
             }
         }
-
-        // Add form validation
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const project = document.getElementById('project').value;
-            
-            if (!username || !password || !project) {
-                alert('Please fill in all required fields');
-                return;
-            }
-            
-            // Here you would typically send the data to your Laravel backend
-            console.log('Login attempt:', { username, password, project });
-            alert('Login functionality would be implemented in your Laravel backend');
-        });
     </script>
 </body>
 
