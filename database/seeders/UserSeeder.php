@@ -23,6 +23,7 @@ class UserSeeder extends Seeder
             'sppkp' => '-',
             'struktur_organisasi' => '-',
             'daftar_pengalaman' => '-',
+            'profile_picture' => '-',
             'role' => 'super_admin',
         ]);
 
@@ -39,6 +40,7 @@ class UserSeeder extends Seeder
             'sppkp' => '-',
             'struktur_organisasi' => '-',
             'daftar_pengalaman' => '-',
+            'profile_picture' => '-',
             'role' => 'procurement',
         ]);
 
@@ -55,6 +57,7 @@ class UserSeeder extends Seeder
             'sppkp' => '-',
             'struktur_organisasi' => '-',
             'daftar_pengalaman' => '-',
+            'profile_picture' => '-',
             'role' => 'product_manager',
         ]);
 
@@ -71,6 +74,7 @@ class UserSeeder extends Seeder
             'sppkp' => '-',
             'struktur_organisasi' => '-',
             'daftar_pengalaman' => '-',
+            'profile_picture' => '-',
             'role' => 'vendor',
         ]);
     }

@@ -30,6 +30,7 @@ class User extends Authenticatable
     'sppkp',
     'struktur_organisasi',
     'daftar_pengalaman',
+    'profile_picture',
     'role', // <--- Tambahkan ini
     ];
 

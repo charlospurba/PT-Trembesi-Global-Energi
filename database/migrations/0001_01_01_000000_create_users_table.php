@@ -26,6 +26,7 @@ return new class extends Migration {
                 $table->string('sppkp')->nullable(); // tambahkan
                 $table->string('struktur_organisasi')->nullable(); // tambahkan
                 $table->string('daftar_pengalaman')->nullable(); // tambahkan
+                $table->string('profile_picture')->nullable(); // tambahkan
                 $table->timestamp('email_verified_at')->nullable(); // tambahkan
                 $table->rememberToken();
                 $table->timestamps();

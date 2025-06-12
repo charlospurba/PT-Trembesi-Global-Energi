@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProcurementHomeController;
+use App\Http\Controllers\ProfileController;
 
 // 🏠 Default route tetap dashboard walaupun belum login
 Route::get('/', fn() => view('dashboard'))->name('dashboard');
@@ -67,6 +68,6 @@ Route::get('/cart', function () {
     return view('procurement.cart', compact('cartItems', 'totalPrice'));
 });
 
-Route::get('/dashboard/profile', function () {
-    return view('components.profile');
-})->name('components.profile');
+
+Route::get('/dashboard/profile', [ProfileController::class, 'edit'])->name('components.profile');
+Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');

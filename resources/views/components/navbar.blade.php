@@ -35,13 +35,25 @@
             <div class="profile-dropdown" style="position: relative;">
                 <div class="profile-trigger" onclick="toggleDropdown()"
                     style="cursor: pointer; display: flex; align-items: center; color: white;">
-                    <i class="fas fa-user-circle" style="font-size: 24px; margin-right: 8px;"></i>
                     @auth
+                        @php
+                            $profilePicture = Auth::user()->profile_picture
+                                ? asset('storage/profile_picture/' . Auth::user()->profile_picture)
+                                : asset('assets/images/default-profile.png');
+                        @endphp
+                        <div style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden; margin-right: 8px;">
+                            <img src="{{ $profilePicture }}" alt="Profile Picture"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
                         <span>{{ Auth::user()->name }}</span>
                     @endauth
+
+
                     @guest
+                        <i class="fas fa-user-circle" style="font-size: 24px; margin-right: 8px;"></i>
                         <span>Guest</span>
                     @endguest
+
                     <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
                 </div>
 

@@ -1,8 +1,6 @@
 @extends('layouts.app') 
 
 @section('content')
-    <!-- Include Navbar Component -->
-    @include('components.navbar')
 
     <!-- Main Content -->
     <div class="container">
@@ -134,5 +132,4 @@
             </div>
         </div>
     </div>
-
-    
+@endsection
