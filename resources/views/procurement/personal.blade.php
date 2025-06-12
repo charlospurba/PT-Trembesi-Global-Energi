@@ -1,9 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- Include Navbar Component -->
-    @include('components.navbar')
-
     <!-- Safety Equipment Collection -->
     <div class="collection mt-6">
         <div class="equipment-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 px-4">

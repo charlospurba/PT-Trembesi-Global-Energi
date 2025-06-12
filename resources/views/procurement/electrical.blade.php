@@ -1,9 +1,6 @@
-@extends('layouts.app') 
+@extends('layouts.app')
 
 @section('content')
-    <!-- Include Navbar Component -->
-    @include('components.navbar')
-
     <!-- Electrical Collection -->
     <div class="collection mt-6">
         <div class="equipment-grid">
@@ -15,23 +12,18 @@
                 ];
             @endphp
 
-            @for($row = 0; $row < 1; $row++)
-                @for($col = 0; $col < count($electricalItems); $col++)
-                    @php
-                        $category = $electricalItems[$col];
-                    @endphp
-                    <div class="product-card">
-                        <div class="product-image">
-                            {{ $category }}
-                            <span class="product-badge">Toko Bangunan</span>
-                        </div>
-                        <div class="product-info">
-                            <h4>PUTIH 100</h4>
-                            <p class="product-desc">Deskripsi {{ $category }}</p>
-                        </div>
+            @foreach($electricalItems as $category)
+                <div class="product-card">
+                    <div class="product-image">
+                        {{ $category }}
+                        <span class="product-badge">Toko Bangunan</span>
                     </div>
-                @endfor
-            @endfor
+                    <div class="product-info">
+                        <h4>PUTIH 100</h4>
+                        <p class="product-desc">Deskripsi {{ $category }}</p>
+                    </div>
+                </div>
+            @endforeach
         </div>
     </div>
 @endsection

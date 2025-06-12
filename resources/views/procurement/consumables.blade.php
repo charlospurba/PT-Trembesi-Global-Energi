@@ -1,10 +1,6 @@
 @extends('layouts.app') 
 
 @section('content')
-
-    <!-- Include Navbar Component -->
-    @include('components.navbar')
-
     <!-- Consumables Collection -->
     <div class="collection mt-6">
         <div class="equipment-grid">
@@ -31,5 +27,4 @@
             @endforeach
         </div>
     </div>
-    
 @endsection

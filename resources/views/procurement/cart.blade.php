@@ -1,12 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-@include('components.navbar')
-
 
 <div class="min-h-screen bg-gray-100 pb-20">
     <div class="container mx-auto px-4 py-6">
-       <h5 class="text-lg font-bold mb-6">
+        {{-- Breadcrumb Navigation --}}
+        <h5 class="text-lg font-bold mb-6">
             <a href="{{ route('procurement.dashboardproc') }}" class="text-black hover:underline">Dashboard</a>
             <span class="text-red-500"> > Cart</span>
         </h5>

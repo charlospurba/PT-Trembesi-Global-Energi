@@ -1,12 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- Include Navbar Component -->
-    @include('components.navbar')
-
     <!-- Material Collection -->
     <div class="collection mt-6">
-    
         <div class="products-grid">
             @for($i = 0; $i < 6; $i++)
             <div class="product-card">
@@ -50,7 +46,7 @@
     </div>
 
     <!-- Equipment Collection -->
-   <div class="collection mt-6">
+    <div class="collection mt-6">
         <div class="equipment-grid">
             @for($row = 0; $row < 2; $row++)
                 @for($col = 0; $col < 6; $col++)
