@@ -32,8 +32,9 @@
                 <span class="badge notification-badge" id="notificationBadge" style="display: none;">0</span>
             </a>
             <!-- Profile Dropdown -->
-            <div class="profile-dropdown">
-                <div class="profile-trigger" onclick="toggleDropdown()">
+            <div class="profile-dropdown" style="position: relative;">
+                <div class="profile-trigger" onclick="toggleDropdown()"
+                    style="cursor: pointer; display: flex; align-items: center; color: white;">
                     <i class="fas fa-user-circle" style="font-size: 24px; margin-right: 8px;"></i>
                     @auth
                         <span>{{ Auth::user()->name }}</span>
@@ -43,30 +44,56 @@
                     @endguest
                     <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
                 </div>
-                <div id="dropdownMenu" class="dropdown-menu" style="display: none;">
-                    <a href="/dashboard/profile" class="dropdown-item">My Profile</a>
-                    <form method="POST" action="/logout" class="dropdown-item" style="margin: 0;">
+
+                <!-- Dropdown Menu -->
+                <div id="dropdownMenu" class="dropdown-menu"
+                    style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; min-width: 150px; z-index: 999;">
+                    <a href="/dashboard/profile" class="dropdown-item"
+                        style="display: block; padding: 10px 15px; text-decoration: none; color: black;">My Profile</a>
+                    <form id="logoutForm" method="POST" action="/logout" style="margin: 0;">
                         @csrf
-                        <button type="submit"
-                            style="background: none; border: none; padding: 0; color: inherit; cursor: pointer;">Logout</button>
+                        <button type="button" id="logoutBtn" class="dropdown-item"
+                            style="width: 100%; text-align: left; background: none; border: none; padding: 10px 15px; cursor: pointer;">
+                            Logout
+                        </button>
                     </form>
                 </div>
             </div>
-
         </div>
     </div>
 </nav>
+
 <script>
     function toggleDropdown() {
-        var menu = document.getElementById("dropdownMenu");
-        menu.style.display = menu.style.display === "block" ? "none" : "block";
+        const dropdown = document.getElementById("dropdownMenu");
+        dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
     }
 
-    window.addEventListener('click', function (e) {
-        const trigger = document.querySelector('.profile-trigger');
+    window.addEventListener("click", function (e) {
+        const trigger = document.querySelector(".profile-trigger");
         const dropdown = document.getElementById("dropdownMenu");
         if (!trigger.contains(e.target)) {
-            dropdown.style.display = 'none';
+            dropdown.style.display = "none";
         }
+    });
+
+    // Logout dengan SweetAlert
+    document.getElementById('logoutBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Yakin ingin logout?',
+            text: "Kamu akan keluar dari akun ini.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, logout',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('logoutForm').submit();
+            }
+        });
     });
 </script>

@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/material.css') }}">
 
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 <body>
