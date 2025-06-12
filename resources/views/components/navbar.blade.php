@@ -35,14 +35,20 @@
             <div class="profile-dropdown">
                 <div class="profile-trigger" onclick="toggleDropdown()">
                     <i class="fas fa-user-circle" style="font-size: 24px; margin-right: 8px;"></i>
-                    <span>Gracesia Romauli</span>
+                    @auth
+                        <span>{{ Auth::user()->name }}</span>
+                    @endauth
+                    @guest
+                        <span>Guest</span>
+                    @endguest
                     <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
                 </div>
                 <div id="dropdownMenu" class="dropdown-menu" style="display: none;">
                     <a href="/dashboard/profile" class="dropdown-item">My Profile</a>
                     <form method="POST" action="/logout" class="dropdown-item" style="margin: 0;">
                         @csrf
-                        <button type="submit" style="background: none; border: none; padding: 0; color: inherit; cursor: pointer;">Logout</button>
+                        <button type="submit"
+                            style="background: none; border: none; padding: 0; color: inherit; cursor: pointer;">Logout</button>
                     </form>
                 </div>
             </div>
@@ -56,7 +62,7 @@
         menu.style.display = menu.style.display === "block" ? "none" : "block";
     }
 
-    window.addEventListener('click', function(e) {
+    window.addEventListener('click', function (e) {
         const trigger = document.querySelector('.profile-trigger');
         const dropdown = document.getElementById("dropdownMenu");
         if (!trigger.contains(e.target)) {
