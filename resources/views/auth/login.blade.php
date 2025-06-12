@@ -20,7 +20,7 @@
             <!-- Logo -->
             <div class="relative z-10 mb-8">
                 <div>
-                    <img src="{{ asset('assets/images/trembesi.png') }}" alt="logo_trembesi" class="w-full h-full object-contain">
+                    <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="logo_trembesi" class="w-full h-full object-contain">
                 </div>
             </div>
         </div>
