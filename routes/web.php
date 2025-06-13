@@ -51,7 +51,8 @@ Route::middleware(['auth'])->group(function () {
     //Vendor views
     Route::view('/myproducts', 'vendor.vendor_myproducts')->name('vendor.vendor_myproducts');
     Route::view('/add_product', 'vendor.add_product')->name('vendor.add_product');
-
+    Route::view('/orders', 'vendor.orders')->name('vendor.orders');
+    Route::view('/report', 'vendor.report')->name('vendor.report');
 });
 
 
