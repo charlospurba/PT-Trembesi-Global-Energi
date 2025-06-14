@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\VendorHomeController;
+use App\Http\Controllers\VendorProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -30,12 +31,14 @@ Route::get('/register-detail', function () {
 })->name('register.step2');
 
 // ✅ Setelah login, redirect berdasarkan role ke halaman dashboard masing-masing
-// 👷 Khusus route Procurement yang hanya bisa diakses setelah login & cek middleware
 Route::middleware(['auth'])->group(function () {
+    // 👷 Procurement
     Route::get('/dashboard/procurement', [ProcurementHomeController::class, 'index'])->name('procurement.dashboardproc');
+
+    // 🛍️ Vendor
     Route::get('/dashboard/vendor', [VendorHomeController::class, 'index'])->name('vendor.dashboardvendor');
 
-    //belum
+    // Superadmin & Product Manager (belum dibuat)
     Route::view('/dashboard/superadmin', 'dashboard.superadmin')->name('dashboard.superadmin');
     Route::view('/dashboard/productmanager', 'dashboard.productmanager')->name('dashboard.productmanager');
 
@@ -45,31 +48,33 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/electrical', 'procurement.electrical')->name('procurement.electrical');
     Route::view('/consumables', 'procurement.consumables')->name('procurement.consumables');
     Route::view('/personal', 'procurement.personal')->name('procurement.personal');
-    Route::view('/cart', 'procurement.cart')->name('procurement.cart');
     Route::view('/detail', 'procurement.detail')->name('procurement.detail');
 
-    //Vendor views
-    Route::view('/myproducts', 'vendor.vendor_myproducts')->name('vendor.vendor_myproducts');
-    Route::view('/add_product', 'vendor.add_product')->name('vendor.add_product');
+    // Cart
+    Route::get('/cart', function () {
+        $cartItems = session()->get('cart', []);
+        $totalPrice = 0;
+        foreach ($cartItems as $item) {
+            $totalPrice += $item['price'] * $item['quantity'];
+        }
+        return view('procurement.cart', compact('cartItems', 'totalPrice'));
+    })->name('procurement.cart');
+
+    // Vendor product routes
+    Route::get('/myproducts', [VendorProductController::class, 'index'])->name('vendor.myproducts');
+    Route::get('/add_product', [VendorProductController::class, 'create'])->name('vendor.add_product');
+    Route::post('/add_product', [VendorProductController::class, 'store'])->name('vendor.add_product.store');
+    Route::get('/products/{id}/edit', [VendorProductController::class, 'edit'])->name('vendor.edit_product');
+    Route::put('/products/{id}', [VendorProductController::class, 'update'])->name('vendor.update_product');
+    Route::delete('/products/{id}', [VendorProductController::class, 'destroy'])->name('vendor.destroy_product');
+
+    // Alias untuk vendor.myproducts
+    Route::get('/vendor/myproducts', [VendorProductController::class, 'index'])->name('vendor.vendor_myproducts');
+
     Route::view('/orders', 'vendor.orders')->name('vendor.orders');
     Route::view('/report', 'vendor.report')->name('vendor.report');
 });
 
-
-Route::get('/cart', function () {
-    // Mengambil data cart dari session, jika tidak ada maka cartItems akan kosong
-    $cartItems = session()->get('cart', []);
-
-    // Menghitung total harga cart jika diperlukan
-    $totalPrice = 0;
-    foreach ($cartItems as $item) {
-        $totalPrice += $item['price'] * $item['quantity'];
-    }
-
-    // Mengirimkan data cartItems dan totalPrice ke view
-    return view('procurement.cart', compact('cartItems', 'totalPrice'));
-});
-
-
+// Profile
 Route::get('/dashboard/profile', [ProfileController::class, 'edit'])->name('components.profile');
 Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
