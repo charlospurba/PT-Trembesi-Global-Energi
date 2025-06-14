@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class VendorProductController extends Controller
 {
@@ -106,23 +107,30 @@ class VendorProductController extends Controller
       'remove_image' => 'nullable|in:0,1',
     ]);
 
+    Log::info('remove_image value: ' . $request->input('remove_image')); // Debug
     if ($request->input('remove_image') === '1') {
-      // Hapus gambar dari storage jika ada
-      if ($product->image_path) {
+      Log::info('Attempting to remove image: ' . $product->image_path); // Debug
+      if ($product->image_path && Storage::disk('public')->exists($product->image_path)) {
         Storage::disk('public')->delete($product->image_path);
+        Log::info('Image deleted: ' . $product->image_path);
+        $validated['image_path'] = null;
+      } else {
+        Log::warning('Image not found in storage: ' . ($product->image_path ?? 'null'));
         $validated['image_path'] = null;
       }
     } elseif ($request->hasFile('image')) {
-      // Hapus gambar lama jika ada
-      if ($product->image_path) {
+      Log::info('Uploading new image'); // Debug
+      if ($product->image_path && Storage::disk('public')->exists($product->image_path)) {
         Storage::disk('public')->delete($product->image_path);
+        Log::info('Old image deleted: ' . $product->image_path);
       }
-      // Simpan gambar baru
       $path = $request->file('image')->store('product_images', 'public');
       $validated['image_path'] = $path;
+      Log::info('New image stored: ' . $path);
     }
 
     $product->update($validated);
+    Log::info('Product updated', $validated); // Debug
 
     return redirect()->route('vendor.myproducts')->with('success', 'Produk berhasil diperbarui.');
   }
@@ -132,13 +140,13 @@ class VendorProductController extends Controller
     /** @var \App\Models\User|null $user */
     $user = Auth::user();
     if (!$user) {
-      abort(403, 'Unauthorized');
+      return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
     }
 
     $product = Product::findOrFail($id);
 
     if ($product->vendor_id !== $user->id) {
-      abort(403);
+      return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
     }
 
     if ($product->image_path) {
@@ -147,6 +155,6 @@ class VendorProductController extends Controller
 
     $product->delete();
 
-    return redirect()->route('vendor.myproducts')->with('success', 'Produk berhasil dihapus.');
+    return response()->json(['success' => true, 'message' => 'Product deleted successfully']);
   }
 }
