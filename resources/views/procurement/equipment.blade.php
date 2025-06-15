@@ -1,93 +1,43 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- Material Collection -->
-    <div class="collection mt-6">
-        <div class="products-grid">
-            @for($i = 0; $i < 6; $i++)
-            <div class="product-card">
-                <div class="product-image">
-                    @if($i == 1)
-                        Steel
-                    @elseif($i == 2)
-                        Gyp
-                    @else
-                        PVC
-                    @endif
-                    <span class="product-badge">Toko Bangunan</span>
+
+    <div class="collection mt-6 px-4 max-w-7xl">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            @forelse($products as $product)
+                <div class="bg-white rounded-xl shadow-md overflow-hidden max-w-[300px] sm:max-w-[340px] w-full">
+                    <div class="bg-red-600 p-4 flex justify-center h-40">
+                        <img src="{{ $product->image_path ? asset('storage/' . $product->image_path . '?' . time()) : 'https://via.placeholder.com/150' }}"
+                            alt="{{ $product->name }}" class="h-full object-contain rounded" />
+                    </div>
+                    <div class="p-4">
+                        <!-- Supplier -->
+                        <span
+                            class="inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-200 text-gray-800 rounded-full mb-2">
+                            {{ $product->supplier }}
+                        </span>
+                        <!-- Name -->
+                        <h3 class="text-lg font-semibold">{{ $product->name }}</h3>
+                        <!-- Price -->
+                        <p class="text-black font-bold">Rp{{ number_format($product->price, 0, ',', '.') }}</p>
+                        <!-- Address -->
+                        <div class="flex items-center text-sm text-gray-600 mt-1">
+                            <svg class="w-4 h-4 text-red-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M10 2a6 6 0 016 6c0 4.418-6 10-6 10S4 12.418 4 8a6 6 0 016-6zM8 8a2 2 0 114 0 2 2 0 01-4 0z" />
+                            </svg>
+                            {{ $product->address ?? '-' }}
+                        </div>
+                        <!-- Stock -->
+                        <div class="text-sm text-red-600 font-medium mt-1">
+                            Stok : {{ $product->quantity }}
+                        </div>
+                    </div>
                 </div>
-                <div class="product-info">
-                    <h4>
-                        @if($i == 1)
-                            HITAM 450
-                        @else
-                            PUTIH 100
-                        @endif
-                    </h4>
-                    <p class="product-desc">
-                        @if($i == 1)
-                            Pipa Steel 3 inch
-                        @elseif($i == 2)
-                            Gypsum Board Standard
-                        @elseif($i == 3)
-                            Pipa PVC 6 inch
-                        @elseif($i == 4)
-                            Pipa PVC 2 inch
-                        @elseif($i == 5)
-                            Pipa PVC 8 inch
-                        @else
-                            Pipa PVC 4 inch
-                        @endif
-                    </p>
-                </div>
-            </div>
-            @endfor
+            @empty
+                <p class="col-span-4 text-center text-gray-500">Tidak ada produk kategori Material.</p>
+            @endforelse
         </div>
     </div>
 
-    <!-- Equipment Collection -->
-    <div class="collection mt-6">
-        <div class="equipment-grid">
-            @for($row = 0; $row < 2; $row++)
-                @for($col = 0; $col < 6; $col++)
-                <div class="product-card">
-                    <div class="product-image">
-                        @if($col == 1)
-                            Steel
-                        @elseif($col == 2)
-                            Gyp
-                        @else
-                            PVC
-                        @endif
-                        <span class="product-badge">Toko Bangunan</span>
-                    </div>
-                    <div class="product-info">
-                        <h4>
-                            @if($col == 1)
-                                HITAM 450
-                            @else
-                                PUTIH 100
-                            @endif
-                        </h4>
-                        <p class="product-desc">
-                            @if($col == 1)
-                                Pipa Steel 3 inch
-                            @elseif($col == 2)
-                                Gypsum Board Standard
-                            @elseif($col == 3)
-                                Pipa PVC 6 inch
-                            @elseif($col == 4)
-                                Pipa PVC 2 inch
-                            @elseif($col == 5)
-                                Pipa PVC 8 inch
-                            @else
-                                Pipa PVC 4 inch
-                            @endif
-                        </p>
-                    </div>
-                </div>
-                @endfor
-            @endfor
-        </div>
-    </div>
 @endsection

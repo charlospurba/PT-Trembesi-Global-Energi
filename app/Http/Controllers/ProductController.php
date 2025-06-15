@@ -44,4 +44,52 @@ class ProductController extends Controller
     $products = Product::all();
     return view('vendor.vendor_myproducts', compact('products'));
   }
+
+  public function materialProducts()
+  {
+    $products = Product::where('category', 'Material')->get();
+    return view('procurement.material', compact('products'));
+  }
+
+  public function equipmentProducts()
+  {
+    $products = Product::where('category', 'Equipment')->get();
+    return view('procurement.equipment', compact('products'));
+  }
+
+  public function consumablesProducts()
+  {
+    $products = Product::where('category', 'Consumables')->get();
+    return view('procurement.consumables', compact('products'));
+  }
+
+  public function electricalProducts()
+  {
+    $products = Product::where('category', 'Electrical')->get();
+    return view('procurement.electrical', compact('products'));
+  }
+
+  public function personalProducts()
+  {
+    $products = Product::where('category', 'Personal')->get();
+    return view('procurement.personal', compact('products'));
+  }
+
+  public function dashboard()
+  {
+    $randomMaterials = Product::where('category', 'Material')->inRandomOrder()->limit(6)->get();
+    $randomEquipments = Product::where('category', 'Equipment')->inRandomOrder()->limit(6)->get();
+    $randomElectricals = Product::where('category', 'Electrical')->inRandomOrder()->limit(6)->get();
+    $randomConsumables = Product::where('category', 'Consumables')->inRandomOrder()->limit(6)->get();
+    $randomPPEs = Product::where('category', 'Personal')->inRandomOrder()->limit(6)->get();
+
+    return view('procurement.dashboardproc', compact(
+      'randomMaterials',
+      'randomEquipments',
+      'randomElectricals',
+      'randomConsumables',
+      'randomPPEs'
+    ));
+  }
+
 }

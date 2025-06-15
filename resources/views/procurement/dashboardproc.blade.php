@@ -1,4 +1,4 @@
-@extends('layouts.app') 
+@extends('layouts.app')
 
 @section('content')
 
@@ -32,104 +32,134 @@
         <!-- Recommendations Section -->
         <div class="recommendations-section">
             <div class="recommendations-title">RECOMMENDATIOS</div>
-            
+
             <!-- Material Collection -->
+            <!-- Contoh Koleksi Material -->
             <div class="collection">
                 <div class="collection-header">
                     <h3>Koleksi Material</h3>
-                    <a href="#" class="view-all">Lihat Semua ></a>
+                    <a href="{{ route('procurement.material') }}" class="view-all">Lihat Semua ></a>
                 </div>
                 <div class="products-grid">
-                    @for($i = 0; $i < 6; $i++)
-                    <div class="product-card">
-                        <div class="product-image">
-                            @if($i == 1)
-                                Steel
-                            @elseif($i == 2)
-                                Gyp
-                            @else
-                                PVC
-                            @endif
-                            <span class="product-badge">Toko Bangunan</span>
+                    @forelse($randomMaterials as $product)
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="{{ $product->image_path ? asset('storage/' . $product->image_path) : 'https://via.placeholder.com/150' }}"
+                                    class="object-cover h-32 w-full rounded-t" />
+                                <span class="product-badge">{{ $product->supplier }}</span>
+                            </div>
+                            <div class="product-info">
+                                <h4>{{ $product->name }}</h4>
+                                <p class="product-desc">{{ $product->description ?? '-' }}</p>
+                            </div>
                         </div>
-                        <div class="product-info">
-                            <h4>
-                                @if($i == 1)
-                                    HITAM 450
-                                @else
-                                    PUTIH 100
-                                @endif
-                            </h4>
-                            <p class="product-desc">
-                                @if($i == 1)
-                                    Pipa Steel 3 inch
-                                @elseif($i == 2)
-                                    Gypsum Board Standard
-                                @elseif($i == 3)
-                                    Pipa PVC 6 inch
-                                @elseif($i == 4)
-                                    Pipa PVC 2 inch
-                                @elseif($i == 5)
-                                    Pipa PVC 8 inch
-                                @else
-                                    Pipa PVC 4 inch
-                                @endif
-                            </p>
-                        </div>
-                    </div>
-                    @endfor
+                    @empty
+                        <p class="text-center text-gray-500">Tidak ada produk Material tersedia.</p>
+                    @endforelse
                 </div>
             </div>
+
 
             <!-- Equipment Collection -->
             <div class="collection">
                 <div class="collection-header">
                     <h3>Koleksi Equipment</h3>
-                    <a href="#" class="view-all">Lihat Semua ></a>
+                    <a href="{{ route('procurement.equipment') }}" class="view-all">Lihat Semua ></a>
                 </div>
-                <div class="equipment-grid">
-                    @for($row = 0; $row < 2; $row++)
-                        @for($col = 0; $col < 6; $col++)
+                <div class="products-grid">
+                    @forelse($randomEquipments as $product)
                         <div class="product-card">
                             <div class="product-image">
-                                @if($col == 1)
-                                    Steel
-                                @elseif($col == 2)
-                                    Gyp
-                                @else
-                                    PVC
-                                @endif
-                                <span class="product-badge">Toko Bangunan</span>
+                                <img src="{{ $product->image_path ? asset('storage/' . $product->image_path) : 'https://via.placeholder.com/150' }}"
+                                    class="object-cover h-32 w-full rounded-t" />
+                                <span class="product-badge">{{ $product->supplier }}</span>
                             </div>
                             <div class="product-info">
-                                <h4>
-                                    @if($col == 1)
-                                        HITAM 450
-                                    @else
-                                        PUTIH 100
-                                    @endif
-                                </h4>
-                                <p class="product-desc">
-                                    @if($col == 1)
-                                        Pipa Steel 3 inch
-                                    @elseif($col == 2)
-                                        Gypsum Board Standard
-                                    @elseif($col == 3)
-                                        Pipa PVC 6 inch
-                                    @elseif($col == 4)
-                                        Pipa PVC 2 inch
-                                    @elseif($col == 5)
-                                        Pipa PVC 8 inch
-                                    @else
-                                        Pipa PVC 4 inch
-                                    @endif
-                                </p>
+                                <h4>{{ $product->name }}</h4>
+                                <p class="product-desc">{{ $product->description ?? '-' }}</p>
                             </div>
                         </div>
-                        @endfor
-                    @endfor
+                    @empty
+                        <p class="text-center text-gray-500">Tidak ada produk Material tersedia.</p>
+                    @endforelse
                 </div>
             </div>
+
+            <!-- Electrical Collection -->
+            <div class="collection">
+                <div class="collection-header">
+                    <h3>Koleksi Electrical</h3>
+                    <a href="{{ route('procurement.electrical') }}" class="view-all">Lihat Semua ></a>
+                </div>
+                <div class="products-grid">
+                    @forelse($randomElectricals as $product)
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="{{ $product->image_path ? asset('storage/' . $product->image_path) : 'https://via.placeholder.com/150' }}"
+                                    class="object-cover h-32 w-full rounded-t" />
+                                <span class="product-badge">{{ $product->supplier }}</span>
+                            </div>
+                            <div class="product-info">
+                                <h4>{{ $product->name }}</h4>
+                                <p class="product-desc">{{ $product->description ?? '-' }}</p>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-center text-gray-500">Tidak ada produk Electrical tersedia.</p>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Consumables Collection -->
+            <div class="collection">
+                <div class="collection-header">
+                    <h3>Koleksi Consumables</h3>
+                    <a href="{{ route('procurement.consumables') }}" class="view-all">Lihat Semua ></a>
+                </div>
+                <div class="products-grid">
+                    @forelse($randomConsumables as $product)
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="{{ $product->image_path ? asset('storage/' . $product->image_path) : 'https://via.placeholder.com/150' }}"
+                                    class="object-cover h-32 w-full rounded-t" />
+                                <span class="product-badge">{{ $product->supplier }}</span>
+                            </div>
+                            <div class="product-info">
+                                <h4>{{ $product->name }}</h4>
+                                <p class="product-desc">{{ $product->description ?? '-' }}</p>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-center text-gray-500">Tidak ada produk Consumables tersedia.</p>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Personal Protective Equipment Collection -->
+            <div class="collection">
+                <div class="collection-header">
+                    <h3>Koleksi Personal Protective Equipment</h3>
+                    <a href="{{ route('procurement.personal') }}" class="view-all">Lihat Semua ></a>
+                </div>
+                <div class="products-grid">
+                    @forelse($randomPPEs as $product)
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="{{ $product->image_path ? asset('storage/' . $product->image_path) : 'https://via.placeholder.com/150' }}"
+                                    class="object-cover h-32 w-full rounded-t" />
+                                <span class="product-badge">{{ $product->supplier }}</span>
+                            </div>
+                            <div class="product-info">
+                                <h4>{{ $product->name }}</h4>
+                                <p class="product-desc">{{ $product->description ?? '-' }}</p>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-center text-gray-500">Tidak ada produk PPE tersedia.</p>
+                    @endforelse
+                </div>
+            </div>
+
         </div>
     </div>
 @endsection

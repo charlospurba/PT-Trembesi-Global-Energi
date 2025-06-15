@@ -5,8 +5,8 @@ use App\Http\Controllers\VendorProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\ProcurementHomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProductController;
 
 // 🏠 Default route tetap dashboard walaupun belum login
 Route::get('/', fn() => view('dashboard'))->name('dashboard');
@@ -32,8 +32,6 @@ Route::get('/register-detail', function () {
 
 // ✅ Setelah login, redirect berdasarkan role ke halaman dashboard masing-masing
 Route::middleware(['auth'])->group(function () {
-    // 👷 Procurement
-    Route::get('/dashboard/procurement', [ProcurementHomeController::class, 'index'])->name('procurement.dashboardproc');
 
     // 🛍️ Vendor
     Route::get('/dashboard/vendor', [VendorHomeController::class, 'index'])->name('vendor.dashboardvendor');
@@ -42,12 +40,13 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/dashboard/superadmin', 'dashboard.superadmin')->name('dashboard.superadmin');
     Route::view('/dashboard/productmanager', 'dashboard.productmanager')->name('dashboard.productmanager');
 
-    // Procurement views
-    Route::view('/material', 'procurement.material')->name('procurement.material');
-    Route::view('/equipment', 'procurement.equipment')->name('procurement.equipment');
-    Route::view('/electrical', 'procurement.electrical')->name('procurement.electrical');
-    Route::view('/consumables', 'procurement.consumables')->name('procurement.consumables');
-    Route::view('/personal', 'procurement.personal')->name('procurement.personal');
+    // 👷 Procurement views
+    Route::get('/dashboard/procurement', [ProductController::class, 'dashboard'])->name('procurement.dashboardproc');
+    Route::get('/material', [ProductController::class, 'materialProducts'])->name('procurement.material');
+    Route::get('/equipment', [ProductController::class, 'equipmentProducts'])->name('procurement.equipment');
+    Route::get('/consumables', [ProductController::class, 'consumablesProducts'])->name('procurement.consumables');
+    Route::get('/electrical', [ProductController::class, 'electricalProducts'])->name('procurement.electrical');
+    Route::get('/personal', [ProductController::class, 'personalProducts'])->name('procurement.personal');
     Route::view('/detail', 'procurement.detail')->name('procurement.detail');
 
     // Cart

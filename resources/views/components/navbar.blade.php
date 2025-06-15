@@ -2,9 +2,21 @@
 <nav class="navbar">
     <div class="nav-container">
         <div class="logo-section">
-            <a href="" class="logo">
+            @php
+                $role = Auth::check() ? Auth::user()->role : null;
+
+                $dashboardLink = match ($role) {
+                    'procurement' => route('procurement.dashboardproc'),
+                    'superadmin' => route('dashboard.superadmin'),
+                    'product_manager' => route('dashboard.productmanager'),
+                    default => route('dashboard'),
+                };
+            @endphp
+
+            <a href="{{ $dashboardLink }}" class="logo">
                 <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Trembesi Logo" class="logo-img">
             </a>
+
         </div>
 
         <!-- Search Form -->
@@ -89,23 +101,24 @@
         }
     });
 
-    // Logout dengan SweetAlert
+    // Logout with SweetAlert
     document.getElementById('logoutBtn').addEventListener('click', function (e) {
         e.preventDefault();
 
         Swal.fire({
-            title: 'Yakin ingin logout?',
-            text: "Kamu akan keluar dari akun ini.",
+            title: 'Are you sure?',
+            text: "You will be signed out of your account.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, logout',
-            cancelButtonText: 'Batal'
+            confirmButtonText: 'Yes, log out',
+            cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
                 document.getElementById('logoutForm').submit();
             }
         });
     });
+
 </script>
