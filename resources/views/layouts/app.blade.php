@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,16 +20,26 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body class="bg-gray-50 text-gray-800">
-    
+
     {{-- Navbar Global --}}
-    @include('components.navbar')
+    @auth
+        {{-- Navbar untuk user yang sudah login --}}
+        @include('components.navbar')
+    @endauth
+
+    @guest
+        {{-- Navbar untuk pengunjung yang belum login --}}
+        @include('components.navold')
+    @endguest
 
     {{-- Main Content --}}
     <main class="min-h-screen">
         @yield('content')
     </main>
 
-     @stack('scripts')
+    @stack('scripts')
 </body>
+
 </html>
