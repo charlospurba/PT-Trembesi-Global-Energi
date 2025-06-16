@@ -66,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/products/{id}/edit', [VendorProductController::class, 'edit'])->name('vendor.edit_product');
     Route::put('/products/{id}', [VendorProductController::class, 'update'])->name('vendor.update_product');
     Route::delete('/products/{id}', [VendorProductController::class, 'destroy'])->name('vendor.destroy_product');
+    Route::get('/products/{id}/detail', [VendorProductController::class, 'show'])->name('vendor.product_detail');
 
     // Alias untuk vendor.myproducts
     Route::get('/vendor/myproducts', [VendorProductController::class, 'index'])->name('vendor.vendor_myproducts');

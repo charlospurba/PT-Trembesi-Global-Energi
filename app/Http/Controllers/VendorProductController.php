@@ -157,4 +157,21 @@ class VendorProductController extends Controller
 
     return response()->json(['success' => true, 'message' => 'Product deleted successfully']);
   }
+
+  public function show($id)
+  {
+    /** @var \App\Models\User|null $user */
+    $user = Auth::user();
+    if (!$user) {
+      abort(403, 'Unauthorized');
+    }
+
+    $product = Product::findOrFail($id);
+
+    if ($product->vendor_id !== $user->id) {
+      abort(403);
+    }
+
+    return view('vendor.product_detail', compact('product'));
+  }
 }

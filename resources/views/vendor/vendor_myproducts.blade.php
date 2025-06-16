@@ -53,7 +53,8 @@
                         <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
                             <img src="{{ $product->image_path ? asset('storage/' . $product->image_path . '?' . time()) : 'https://via.placeholder.com/150' }}"
                                 alt="{{ $product->name }}" class="w-24 h-24 object-cover rounded mx-auto mb-4" />
-                            <h3 class="text-lg font-semibold">{{ $product->name }}</h3>
+                            <a href="{{ route('vendor.product_detail', $product->id) }}"
+                                class="text-lg font-semibold text-red-600 hover:text-red-800">{{ $product->name }}</a>
                             <p class="text-gray-600">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
                             <div class="mt-4 flex justify-between">
                                 <a href="{{ route('vendor.edit_product', $product->id) }}"
