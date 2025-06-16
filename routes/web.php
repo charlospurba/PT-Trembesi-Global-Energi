@@ -49,7 +49,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/personal', [ProductController::class, 'personalProducts'])->name('procurement.personal');
     Route::view('/detail', 'procurement.detail')->name('procurement.detail');
     Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.detail');
-    
+
     // Cart
     Route::get('/cart', function () {
         $cartItems = session()->get('cart', []);
@@ -59,7 +59,11 @@ Route::middleware(['auth'])->group(function () {
         }
         return view('procurement.cart', compact('cartItems', 'totalPrice'));
     })->name('procurement.cart');
-
+    
+    //Checkout
+    Route::get('/procurement/checkout', function () {
+        return view('procurement.checkout');
+    })->name('procurement.checkout');
     // Vendor product routes
     Route::get('/myproducts', [VendorProductController::class, 'index'])->name('vendor.myproducts');
     Route::get('/add_product', [VendorProductController::class, 'create'])->name('vendor.add_product');

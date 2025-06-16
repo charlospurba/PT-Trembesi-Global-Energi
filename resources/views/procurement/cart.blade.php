@@ -194,9 +194,11 @@
                 <strong class="text-gray-800 mr-4">
                     Total (4 Products): <span class="text-red-500">Rp. 1,990,000</span>
                 </strong>
-                <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
-                    Check Out
-                </button>
+                <a href="{{ route('procurement.checkout') }}">
+    <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
+        Check Out
+    </button>
+</a>
             </div>
         </div>
     </div>
