@@ -1,5 +1,5 @@
 <!-- Navbar Component -->
-<nav class="navbar">
+<nav class="navbar bg-red-600 p-2 px-5 w-full shadow-md z-50">
     <div class="nav-container">
         <div class="logo-section">
             <a href="/" class="logo">

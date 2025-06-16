@@ -19,20 +19,12 @@
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 
 <body class="bg-gray-50 text-gray-800">
 
-    {{-- Navbar Global --}}
-    @auth
-        {{-- Navbar untuk user yang sudah login --}}
-        @include('components.navbar')
-    @endauth
-
-    @guest
-        {{-- Navbar untuk pengunjung yang belum login --}}
-        @include('components.navold')
-    @endguest
 
     {{-- Main Content --}}
     <main class="min-h-screen">

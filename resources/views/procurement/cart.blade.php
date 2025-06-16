@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Include Navbar Component -->
+@include('components.navbar')
 
 <div class="min-h-screen bg-gray-100 pb-20">
     <div class="container mx-auto px-4 py-6">
