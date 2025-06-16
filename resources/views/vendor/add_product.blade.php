@@ -74,7 +74,7 @@
                                 <option>Material</option>
                                 <option>Electrical Tools</option>
                                 <option>Consumables</option>
-                                <option>PPE</option>
+                                <option>Personal Protective Equipment</option>
                             </select>
                         </div>
                         <div>
