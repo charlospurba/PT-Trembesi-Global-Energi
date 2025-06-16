@@ -48,7 +48,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/electrical', [ProductController::class, 'electricalProducts'])->name('procurement.electrical');
     Route::get('/personal', [ProductController::class, 'personalProducts'])->name('procurement.personal');
     Route::view('/detail', 'procurement.detail')->name('procurement.detail');
-
+    Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.detail');
+    
     // Cart
     Route::get('/cart', function () {
         $cartItems = session()->get('cart', []);
