@@ -4,10 +4,11 @@
 <!-- Include Navbar Component -->
 @include('components.navbar')
 
-    <div class="collection mt-6 px-4 max-w-7xl">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            @forelse($products as $product)
-                <div class="bg-white rounded-xl shadow-md overflow-hidden max-w-[300px] sm:max-w-[340px] w-full">
+<div class="collection mt-6 px-4 max-w-7xl">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        @forelse($products as $product)
+            <a href="{{ route('product.detail', $product->id) }}" class="block">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden max-w-[300px] sm:max-w-[340px] w-full transition-transform hover:scale-105 duration-200">
                     <div class="bg-red-600 p-4 flex justify-center h-40">
                         <img src="{{ $product->image_path ? asset('storage/' . $product->image_path . '?' . time()) : 'https://via.placeholder.com/150' }}"
                             alt="{{ $product->name }}" class="h-full object-contain rounded" />
@@ -36,10 +37,11 @@
                         </div>
                     </div>
                 </div>
-            @empty
-                <p class="col-span-4 text-center text-gray-500">Tidak ada produk kategori Material.</p>
-            @endforelse
-        </div>
+            </a>
+        @empty
+            <p class="col-span-4 text-center text-gray-500">Tidak ada produk kategori Material.</p>
+        @endforelse
     </div>
+</div>
 
 @endsection
