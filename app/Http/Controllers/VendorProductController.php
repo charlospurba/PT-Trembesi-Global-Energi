@@ -12,7 +12,6 @@ class VendorProductController extends Controller
 {
   public function index()
   {
-    /** @var \App\Models\User|null $user */
     $user = Auth::user();
     if (!$user) {
       abort(403, 'Unauthorized');
@@ -29,7 +28,6 @@ class VendorProductController extends Controller
 
   public function store(Request $request)
   {
-    /** @var \App\Models\User|null $user */
     $user = Auth::user();
     if (!$user) {
       abort(403, 'Unauthorized');
@@ -37,23 +35,28 @@ class VendorProductController extends Controller
 
     $validated = $request->validate([
       'category' => 'required|string|max:255',
-      'brand' => 'nullable|string|max:255',
       'supplier' => 'required|string|max:255',
+      'brand' => 'nullable|string|max:255',
       'name' => 'required|string|max:255',
-      'specification' => 'required|string',
-      'custom_spec' => 'nullable|string',
+      'specification' => 'required|string|max:255',
+      'unit' => 'required|string|max:255',
       'quantity' => 'required|integer|min:1',
+      'price' => 'required|numeric|min:0',
       'description' => 'nullable|string',
       'address' => 'nullable|string|max:255',
-      'price' => 'required|numeric|min:0',
-      'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+      'image_paths' => 'nullable|array',
+      'image_paths.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120', // Max 5MB
     ]);
 
     $validated['vendor_id'] = $user->id;
 
-    if ($request->hasFile('image')) {
-      $path = $request->file('image')->store('product_images', 'public');
-      $validated['image_path'] = $path;
+    if ($request->hasFile('image_paths')) {
+      $imagePaths = [];
+      foreach ($request->file('image_paths') as $image) {
+        $path = $image->store('product_images', 'public');
+        $imagePaths[] = $path;
+      }
+      $validated['image_paths'] = $imagePaths;
     }
 
     Product::create($validated);
@@ -63,7 +66,6 @@ class VendorProductController extends Controller
 
   public function edit($id)
   {
-    /** @var \App\Models\User|null $user */
     $user = Auth::user();
     if (!$user) {
       abort(403, 'Unauthorized');
@@ -80,7 +82,6 @@ class VendorProductController extends Controller
 
   public function update(Request $request, $id)
   {
-    /** @var \App\Models\User|null $user */
     $user = Auth::user();
     if (!$user) {
       abort(403, 'Unauthorized');
@@ -94,50 +95,52 @@ class VendorProductController extends Controller
 
     $validated = $request->validate([
       'category' => 'required|string|max:255',
-      'brand' => 'nullable|string|max:255',
       'supplier' => 'required|string|max:255',
+      'brand' => 'nullable|string|max:255',
       'name' => 'required|string|max:255',
-      'specification' => 'required|string',
-      'custom_spec' => 'nullable|string',
+      'specification' => 'required|string|max:255',
+      'unit' => 'required|string|max:255',
       'quantity' => 'required|integer|min:1',
+      'price' => 'required|numeric|min:0',
       'description' => 'nullable|string',
       'address' => 'nullable|string|max:255',
-      'price' => 'required|numeric|min:0',
-      'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+      'image_paths' => 'nullable|array',
+      'image_paths.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
       'remove_image' => 'nullable|in:0,1',
     ]);
 
-    Log::info('remove_image value: ' . $request->input('remove_image')); // Debug
     if ($request->input('remove_image') === '1') {
-      Log::info('Attempting to remove image: ' . $product->image_path); // Debug
-      if ($product->image_path && Storage::disk('public')->exists($product->image_path)) {
-        Storage::disk('public')->delete($product->image_path);
-        Log::info('Image deleted: ' . $product->image_path);
-        $validated['image_path'] = null;
-      } else {
-        Log::warning('Image not found in storage: ' . ($product->image_path ?? 'null'));
-        $validated['image_path'] = null;
+      if ($product->image_paths && is_array($product->image_paths)) {
+        foreach ($product->image_paths as $imagePath) {
+          if (Storage::disk('public')->exists($imagePath)) {
+            Storage::disk('public')->delete($imagePath);
+          }
+        }
       }
-    } elseif ($request->hasFile('image')) {
-      Log::info('Uploading new image'); // Debug
-      if ($product->image_path && Storage::disk('public')->exists($product->image_path)) {
-        Storage::disk('public')->delete($product->image_path);
-        Log::info('Old image deleted: ' . $product->image_path);
+      $validated['image_paths'] = null;
+    } elseif ($request->hasFile('image_paths')) {
+      if ($product->image_paths && is_array($product->image_paths)) {
+        foreach ($product->image_paths as $imagePath) {
+          if (Storage::disk('public')->exists($imagePath)) {
+            Storage::disk('public')->delete($imagePath);
+          }
+        }
       }
-      $path = $request->file('image')->store('product_images', 'public');
-      $validated['image_path'] = $path;
-      Log::info('New image stored: ' . $path);
+      $imagePaths = [];
+      foreach ($request->file('image_paths') as $image) {
+        $path = $image->store('product_images', 'public');
+        $imagePaths[] = $path;
+      }
+      $validated['image_paths'] = $imagePaths;
     }
 
     $product->update($validated);
-    Log::info('Product updated', $validated); // Debug
 
     return redirect()->route('vendor.myproducts')->with('success', 'Produk berhasil diperbarui.');
   }
 
   public function destroy($id)
   {
-    /** @var \App\Models\User|null $user */
     $user = Auth::user();
     if (!$user) {
       return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
@@ -149,8 +152,12 @@ class VendorProductController extends Controller
       return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
     }
 
-    if ($product->image_path) {
-      Storage::disk('public')->delete($product->image_path);
+    if ($product->image_paths && is_array($product->image_paths)) {
+      foreach ($product->image_paths as $imagePath) {
+        if (Storage::disk('public')->exists($imagePath)) {
+          Storage::disk('public')->delete($imagePath);
+        }
+      }
     }
 
     $product->delete();
@@ -160,7 +167,6 @@ class VendorProductController extends Controller
 
   public function show($id)
   {
-    /** @var \App\Models\User|null $user */
     $user = Auth::user();
     if (!$user) {
       abort(403, 'Unauthorized');

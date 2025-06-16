@@ -73,41 +73,41 @@
                             <select name="category" required class="w-full border border-gray-300 rounded-md px-4 py-2">
                                 <option value="">Select Category</option>
                                 <option value="Equipment"
-                                    {{ old('category', $product->category) == 'Equipment' ? 'selected' : '' }}>
-                                    Equipment</option>
+                                    {{ old('category', $product->category) == 'Equipment' ? 'selected' : '' }}>Equipment
+                                </option>
                                 <option value="Material"
-                                    {{ old('category', $product->category) == 'Material' ? 'selected' : '' }}>
-                                    Material</option>
+                                    {{ old('category', $product->category) == 'Material' ? 'selected' : '' }}>Material
+                                </option>
                                 <option value="Electrical Tools"
                                     {{ old('category', $product->category) == 'Electrical Tools' ? 'selected' : '' }}>
                                     Electrical Tools</option>
                                 <option value="Consumables"
                                     {{ old('category', $product->category) == 'Consumables' ? 'selected' : '' }}>
                                     Consumables</option>
-                                <option value="PPE"
-                                    {{ old('category', $product->category) == 'PPE' ? 'selected' : '' }}>
-                                    PPE</option>
+                                <option value="Personal Protective Equipment"
+                                    {{ old('category', $product->category) == 'Personal Protective Equipment' ? 'selected' : '' }}>
+                                    Personal Protective Equipment</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block font-semibold text-gray-800 mb-1">Brand</label>
+                            <label class="block font-semibold text-gray-800 mb-1">Brand (optional)</label>
                             <input name="brand" type="text" value="{{ old('brand', $product->brand) }}"
-                                placeholder="Ex: Konecranes"
+                                placeholder="Ex: Magnaflux, Konecranes, Perkins..."
                                 class="w-full border border-gray-300 rounded-md px-4 py-2" />
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block font-semibold text-gray-800 mb-1">Supplier <span
+                                <label class="block font-semibold text-gray-800 mb-1">Fabric/Supplier <span
                                         class="text-red-500">*</span></label>
                                 <input name="supplier" type="text" value="{{ old('supplier', $product->supplier) }}"
-                                    placeholder="Ex: PT. ABC" class="w-full border border-gray-300 rounded-md px-4 py-2"
-                                    required />
+                                    placeholder="Ex: Surya Patria Crane, PT Konecranes Material Handling Indonesia"
+                                    class="w-full border border-gray-300 rounded-md px-4 py-2" required />
                             </div>
                             <div>
                                 <label class="block font-semibold text-gray-800 mb-1">Product Name <span
                                         class="text-red-500">*</span></label>
                                 <input name="name" type="text" value="{{ old('name', $product->name) }}"
-                                    placeholder="Excavator, Scaffolding"
+                                    placeholder="Ex: PIPA SCAFFOLDING, Excavator"
                                     class="w-full border border-gray-300 rounded-md px-4 py-2" required />
                             </div>
                         </div>
@@ -126,7 +126,7 @@
                                         class="text-red-500">*</span></label>
                                 <select name="specification" required
                                     class="w-full border border-gray-300 rounded-md px-4 py-2">
-                                    <option value="">Select Spec</option>
+                                    <option value="">Select Specification</option>
                                     <option value="Type A"
                                         {{ old('specification', $product->specification) == 'Type A' ? 'selected' : '' }}>
                                         Type A</option>
@@ -136,26 +136,30 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block font-semibold text-gray-800 mb-1">Custom Spec</label>
-                                <input name="custom_spec" type="text"
-                                    value="{{ old('custom_spec', $product->custom_spec) }}"
-                                    placeholder="Add specification"
-                                    class="w-full border border-gray-300 rounded-md px-4 py-2" />
+                                <label class="block font-semibold text-gray-800 mb-1">Unit <span
+                                        class="text-red-500">*</span></label>
+                                <input name="unit" type="text" value="{{ old('unit', $product->unit) }}"
+                                    placeholder="Ex: Surya Patria Crane, PT Konecranes Material Handling Indonesia"
+                                    class="w-full border border-gray-300 rounded-md px-4 py-2" required />
                             </div>
                         </div>
-                        <div>
-                            <label class="block font-semibold text-gray-800 mb-1">Quantity <span
-                                    class="text-red-500">*</span></label>
-                            <input name="quantity" type="number" min="1"
-                                value="{{ old('quantity', $product->quantity) }}"
-                                class="w-full border border-gray-300 rounded-md px-4 py-2" required />
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-gray-800 mb-1">Price (Rp) <span
-                                    class="text-red-500">*</span></label>
-                            <input name="price" type="number" min="0"
-                                value="{{ old('price', $product->price) }}" placeholder="Price in Rupiah"
-                                class="w-full border border-gray-300 rounded-md px-4 py-2" required />
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-semibold text-gray-800 mb-1">Quantity <span
+                                        class="text-red-500">*</span></label>
+                                <input name="quantity" type="number" min="1"
+                                    value="{{ old('quantity', $product->quantity) }}"
+                                    placeholder="Ex: Magnaflux, Konecranes, Perkins..."
+                                    class="w-full border border-gray-300 rounded-md px-4 py-2" required />
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-gray-800 mb-1">Price (Rp) <span
+                                        class="text-red-500">*</span></label>
+                                <input name="price" type="number" min="0"
+                                    value="{{ old('price', $product->price) }}"
+                                    placeholder="Ex: PIPA SCAFFOLDING, Excavator"
+                                    class="w-full border border-gray-300 rounded-md px-4 py-2" required />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -163,13 +167,19 @@
                 <div class="border rounded-md">
                     <div class="bg-gray-100 px-4 py-2 flex items-center gap-2 border-b">
                         <span class="text-red-600 text-xl">📝</span>
-                        <h3 class="font-semibold text-lg">Product Description & Address</h3>
+                        <h3 class="font-semibold text-lg">Product Description</h3>
                     </div>
                     <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <textarea name="description" placeholder="Description..." class="w-full border border-gray-300 rounded-md px-4 py-2"
-                            rows="4">{{ old('description', $product->description) }}</textarea>
-                        <textarea name="address" placeholder="Address..." class="w-full border border-gray-300 rounded-md px-4 py-2"
-                            rows="4">{{ old('address', $product->address) }}</textarea>
+                        <div>
+                            <label class="block font-semibold text-gray-800 mb-1">Product Description</label>
+                            <textarea name="description" placeholder="Product Description..."
+                                class="w-full border border-gray-300 rounded-md px-4 py-2" rows="4">{{ old('description', $product->description) }}</textarea>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-800 mb-1">Address</label>
+                            <textarea name="address" placeholder="Address..." class="w-full border border-gray-300 rounded-md px-4 py-2"
+                                rows="4">{{ old('address', $product->address) }}</textarea>
+                        </div>
                     </div>
                 </div>
 
@@ -179,32 +189,39 @@
                         <h3 class="font-semibold text-lg">Product Image</h3>
                     </div>
                     <div class="p-4">
-                        @if ($product->image_path)
-                            <div class="mb-4 relative inline-block" id="current-image-container">
-                                <p class="text-gray-600 mb-2">Current Image:</p>
-                                <img src="{{ asset('storage/' . $product->image_path) }}" alt="Current Product Image"
-                                    class="max-w-full h-auto rounded-md" style="max-height: 200px;" />
-                                <button type="button" id="remove-image"
-                                    class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
-                                    title="Remove Image">
-                                    &times;
-                                </button>
+                        @if ($product->image_paths && is_array($product->image_paths))
+                            <div class="mb-4" id="current-image-container">
+                                <p class="text-gray-600 mb-2">Current Images:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach ($product->image_paths as $index => $imagePath)
+                                        <div class="relative inline-block">
+                                            <img src="{{ asset('storage/' . $imagePath) }}"
+                                                alt="Current Product Image" class="max-w-xs h-auto rounded-md"
+                                                style="max-height: 200px;" />
+                                            <button type="button"
+                                                class="remove-image absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                                                data-index="{{ $index }}">×</button>
+                                        </div>
+                                    @endforeach
+                                </div>
                                 <input type="hidden" name="remove_image" id="remove-image-input" value="0" />
                             </div>
                         @endif
-                        <label for="image"
+                        <label for="image_paths"
                             class="cursor-pointer border-2 border-dashed border-red-300 bg-white rounded-md flex flex-col items-center justify-center py-10 text-center text-gray-500 hover:border-red-500">
                             <svg class="w-10 h-10 mb-2 text-red-400" fill="none" stroke="currentColor"
                                 stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                             </svg>
-                            <p>Drop new image here or click to upload</p>
-                            <input id="image" name="image" type="file" class="hidden" accept="image/*" />
+                            <p>Drop new images here or click to upload</p>
+                            <p class="text-sm text-gray-400">Supports: JPG, PNG, GIF (Max 5MB each)</p>
+                            <p class="text-sm text-gray-400">Recommended size: 800x800px or higher</p>
+                            <input id="image_paths" name="image_paths[]" type="file" class="hidden"
+                                accept="image/*" multiple />
                         </label>
                         <div id="image-preview" class="mt-4 hidden">
                             <p class="text-gray-600 mb-2">Image Preview:</p>
-                            <img id="preview-img" src="#" alt="Image Preview"
-                                class="max-w-full h-auto rounded-md" style="max-height: 200px;" />
+                            <div id="preview-container" class="flex flex-wrap gap-2"></div>
                         </div>
                     </div>
                 </div>
@@ -224,49 +241,34 @@
     </footer>
 
     <script>
-        // JavaScript untuk pratinjau gambar
-        document.getElementById('image')?.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const previewContainer = document.getElementById('image-preview');
-            const previewImg = document.getElementById('preview-img');
-            const currentImageContainer = document.getElementById('current-image-container');
-            const removeImageInput = document.getElementById('remove-image-input');
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImg.src = e.target.result;
-                    previewContainer.classList.remove('hidden');
-                    // Sembunyikan gambar saat ini jika ada gambar baru
-                    if (currentImageContainer) {
-                        currentImageContainer.classList.add('hidden');
-                    }
-                    // Reset remove_image jika pengguna mengunggah gambar baru
-                    if (removeImageInput) {
-                        removeImageInput.value = '0';
-                    }
-                };
-                reader.readAsDataURL(file);
-            } else {
-                previewContainer.classList.add('hidden');
-                previewImg.src = '#';
+        document.getElementById('image_paths').addEventListener('change', function(event) {
+            const files = event.target.files;
+            const previewContainer = document.getElementById('preview-container');
+            previewContainer.innerHTML = '';
+            if (files) {
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = 'Image Preview';
+                        img.className = 'max-w-xs h-auto rounded-md';
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                });
+                document.getElementById('image-preview').classList.remove('hidden');
             }
         });
 
-        // JavaScript untuk tombol hapus gambar
-        document.getElementById('remove-image')?.addEventListener('click', function() {
-            const currentImageContainer = document.getElementById('current-image-container');
-            const removeImageInput = document.getElementById('remove-image-input');
-            const imageInput = document.getElementById('image');
-
-            // Sembunyikan gambar saat ini
-            currentImageContainer.classList.add('hidden');
-            // Tandai bahwa gambar harus dihapus
-            removeImageInput.value = '1';
-            // Kosongkan input file
-            imageInput.value = '';
-            // Sembunyikan pratinjau jika ada
-            document.getElementById('image-preview').classList.add('hidden');
+        document.querySelectorAll('.remove-image').forEach(button => {
+            button.addEventListener('click', function() {
+                const index = this.getAttribute('data-index');
+                const currentImageContainer = document.getElementById('current-image-container');
+                const removeImageInput = document.getElementById('remove-image-input');
+                removeImageInput.value = '1'; // Mark for removal
+                this.parentElement.remove(); // Remove image from display
+            });
         });
     </script>
 </body>

@@ -9,21 +9,19 @@ return new class extends Migration {
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('vendor_id')->nullable();
             $table->string('category');
-            $table->string('brand')->nullable();
-            $table->string('supplier')->nullable();
+            $table->string('supplier');
+            $table->string('brand');
             $table->string('name');
-            $table->string('specification');
-            $table->string('custom_spec')->nullable();
+            $table->string('specification')->nullable();
+            $table->string('unit')->nullable();
             $table->integer('quantity');
+            $table->decimal('price', 15, 2);
             $table->text('description')->nullable();
             $table->string('address')->nullable();
-            $table->decimal('price', 10, 2);
-            $table->string('image_path')->nullable();
+            $table->json('image_paths')->nullable();
+            $table->unsignedBigInteger('vendor_id');
             $table->timestamps();
-
-            $table->foreign('vendor_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 
@@ -32,3 +30,4 @@ return new class extends Migration {
         Schema::dropIfExists('products');
     }
 };
+

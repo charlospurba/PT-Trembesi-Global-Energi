@@ -12,15 +12,19 @@ class Product extends Model
   protected $fillable = [
     'vendor_id',
     'category',
-    'brand',
     'supplier',
+    'brand',
     'name',
     'specification',
-    'custom_spec',
+    'unit',
     'quantity',
+    'price',
     'description',
     'address',
-    'price',
-    'image_path',
+    'image_paths',
+  ];
+
+  protected $casts = [
+    'image_paths' => 'array',
   ];
 }

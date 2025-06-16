@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-red-50 font-sans">
+<body class="bg-gray-100 font-sans">
     <header class="bg-gradient-to-r from-red-600 to-red-400 shadow-md p-4 flex justify-between items-center text-white">
         <div class="flex items-center gap-2">
             <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Logo Trembesi" class="w-10 h-auto" />
@@ -79,20 +79,20 @@
                         </div>
                         <div>
                             <label class="block font-semibold text-gray-800 mb-1">Brand</label>
-                            <input name="brand" type="text" placeholder="Ex: Konecranes"
+                            <input name="brand" type="text" placeholder="Ex: Magnaflux, Konecranes, Perkins..."
                                 class="w-full border border-gray-300 rounded-md px-4 py-2" />
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block font-semibold text-gray-800 mb-1">Supplier <span
                                         class="text-red-500">*</span></label>
-                                <input name="supplier" type="text" placeholder="Ex: PT. ABC"
+                                <input name="supplier" type="text" placeholder="Ex: PT Supplier"
                                     class="w-full border border-gray-300 rounded-md px-4 py-2" required />
                             </div>
                             <div>
                                 <label class="block font-semibold text-gray-800 mb-1">Product Name <span
                                         class="text-red-500">*</span></label>
-                                <input name="name" type="text" placeholder="Excavator, Scaffolding"
+                                <input name="name" type="text" placeholder="Ex: PIPA SCAFFOLDING, Excavator"
                                     class="w-full border border-gray-300 rounded-md px-4 py-2" required />
                             </div>
                         </div>
@@ -100,7 +100,7 @@
                 </div>
 
                 <div class="border rounded-md">
-                    <div class="bg-red-50 px-4 py-2 flex items-center gap-2 border-b">
+                    <div class="bg-gray-100 px-4 py-2 flex items-center gap-2 border-b">
                         <span class="text-red-600 text-xl">⚙️</span>
                         <h3 class="font-semibold text-lg">Specification & Stock</h3>
                     </div>
@@ -111,28 +111,31 @@
                                         class="text-red-500">*</span></label>
                                 <select name="specification" required
                                     class="w-full border border-gray-300 rounded-md px-4 py-2">
-                                    <option value="">Select Spec</option>
+                                    <option value="">Select Specification</option>
                                     <option>Type A</option>
                                     <option>Type B</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block font-semibold text-gray-800 mb-1">Custom Spec</label>
-                                <input name="custom_spec" type="text" placeholder="Add specification"
-                                    class="w-full border border-gray-300 rounded-md px-4 py-2" />
+                                <label class="block font-semibold text-gray-800 mb-1">Unit <span
+                                        class="text-red-500">*</span></label>
+                                <input name="unit" type="text" placeholder="Ex: kg, meter"
+                                    class="w-full border border-gray-300 rounded-md px-4 py-2" required />
                             </div>
                         </div>
-                        <div>
-                            <label class="block font-semibold text-gray-800 mb-1">Quantity <span
-                                    class="text-red-500">*</span></label>
-                            <input name="quantity" type="number" min="1"
-                                class="w-full border border-gray-300 rounded-md px-4 py-2" required />
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-gray-800 mb-1">Price (Rp) <span
-                                    class="text-red-500">*</span></label>
-                            <input name="price" type="number" min="0" placeholder="Price in Rupiah"
-                                class="w-full border border-gray-300 rounded-md px-4 py-2" required />
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-semibold text-gray-800 mb-1">Quantity <span
+                                        class="text-red-500">*</span></label>
+                                <input name="quantity" type="number" min="1" placeholder="Quantity"
+                                    class="w-full border border-gray-300 rounded-md px-4 py-2" required />
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-gray-800 mb-1">Price (Rp) <span
+                                        class="text-red-500">*</span></label>
+                                <input name="price" type="number" min="0" placeholder="Price"
+                                    class="w-full border border-gray-300 rounded-md px-4 py-2" required />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -140,34 +143,35 @@
                 <div class="border rounded-md">
                     <div class="bg-gray-100 px-4 py-2 flex items-center gap-2 border-b">
                         <span class="text-red-600 text-xl">📝</span>
-                        <h3 class="font-semibold text-lg">Product Description & Address</h3>
+                        <h3 class="font-semibold text-lg">Product Description</h3>
                     </div>
                     <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <textarea name="description" placeholder="Description..." class="w-full border border-gray-300 rounded-md px-4 py-2"
-                            rows="4"></textarea>
+                        <textarea name="description" placeholder="Product Description..."
+                            class="w-full border border-gray-300 rounded-md px-4 py-2" rows="4"></textarea>
                         <textarea name="address" placeholder="Address..." class="w-full border border-gray-300 rounded-md px-4 py-2"
                             rows="4"></textarea>
                     </div>
                 </div>
 
                 <div class="border rounded-md">
-                    <div class="bg-red-50 px-4 py-2 flex items-center gap-2 border-b">
+                    <div class="bg-gray-100 px-4 py-2 flex items-center gap-2 border-b">
                         <span class="text-red-600 text-xl">🖼️</span>
                         <h3 class="font-semibold text-lg">Product Image</h3>
                     </div>
                     <div class="p-4">
-                        <label for="image"
+                        <label for="image_paths"
                             class="cursor-pointer border-2 border-dashed border-red-300 bg-white rounded-md flex flex-col items-center justify-center py-10 text-center text-gray-500 hover:border-red-500">
                             <svg class="w-10 h-10 mb-2 text-red-400" fill="none" stroke="currentColor"
                                 stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                             </svg>
-                            <p>Drop image here or click to upload</p>
-                            <input id="image" name="image" type="file" class="hidden" accept="image/*" />
+                            <p>Drop images here or click to upload</p>
+                            <p class="text-sm text-gray-400">Supports: JPG, PNG, GIF (Max 5MB each)</p>
+                            <input id="image_paths" name="image_paths[]" type="file" class="hidden"
+                                accept="image/*" multiple />
                         </label>
                         <div id="image-preview" class="mt-4 hidden">
-                            <img id="preview-img" src="#" alt="Image Preview"
-                                class="max-w-full h-auto rounded-md" style="max-height: 200px;" />
+                            <div id="preview-container" class="flex flex-wrap gap-2"></div>
                         </div>
                     </div>
                 </div>
@@ -187,22 +191,27 @@
     </footer>
 
     <script>
-        // JavaScript untuk pratinjau gambar
-        document.getElementById('image').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const previewContainer = document.getElementById('image-preview');
-            const previewImg = document.getElementById('preview-img');
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImg.src = e.target.result;
-                    previewContainer.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
+        document.getElementById('image_paths').addEventListener('change', function(event) {
+            const files = event.target.files;
+            const previewContainer = document.getElementById('preview-container');
+            previewContainer.innerHTML = '';
+            if (files.length > 0) {
+                Array.from(files).forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.alt = 'Image Preview';
+                            img.className = 'w-32 h-32 object-cover rounded border';
+                            previewContainer.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+                document.getElementById('image-preview').classList.remove('hidden');
             } else {
-                previewContainer.classList.add('hidden');
-                previewImg.src = '#';
+                document.getElementById('image-preview').classList.add('hidden');
             }
         });
     </script>

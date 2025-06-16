@@ -26,8 +26,7 @@
             <nav class="space-y-4 font-medium">
                 <a href="{{ route('vendor.dashboardvendor') }}" class="block text-gray-700 hover:text-red-500">📦
                     Dashboard</a>
-                <a href="{{ route('vendor.myproducts') }}" class="block text-gray-700 hover:text-red-500">🛍️ My
-                    Products</a>
+                <a href="{{ route('vendor.myproducts') }}" class="block text-red-700 font-semibold">🛍️ My Products</a>
                 <a href="{{ route('vendor.add_product') }}" class="block text-gray-700 hover:text-red-500">➕ Add
                     Products</a>
                 <a href="{{ route('vendor.orders') }}" class="block text-gray-700 hover:text-red-500">📋 Orders</a>
@@ -48,11 +47,21 @@
             @endif
 
             <div class="bg-white p-6 rounded shadow">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="mb-4">
+                    <input type="text" id="searchInput" placeholder="Search by name or supplier..."
+                        class="w-full max-w-md border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500" />
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="productGrid">
                     @forelse ($products as $product)
-                        <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                            <img src="{{ $product->image_path ? asset('storage/' . $product->image_path . '?' . time()) : 'https://via.placeholder.com/150' }}"
-                                alt="{{ $product->name }}" class="w-24 h-24 object-cover rounded mx-auto mb-4" />
+                        <div class="border rounded-lg p-4 hover:shadow-md transition-shadow product-item"
+                            data-name="{{ $product->name }}" data-supplier="{{ $product->supplier }}">
+                            @if ($product->image_paths && is_array($product->image_paths) && count($product->image_paths) > 0)
+                                <img src="{{ asset('storage/' . $product->image_paths[0]) }}" alt="{{ $product->name }}"
+                                    class="w-24 h-24 object-cover rounded mx-auto mb-4" />
+                            @else
+                                <img src="https://via.placeholder.com/150" alt="{{ $product->name }}"
+                                    class="w-24 h-24 object-cover rounded mx-auto mb-4" />
+                            @endif
                             <a href="{{ route('vendor.product_detail', $product->id) }}"
                                 class="text-lg font-semibold text-red-600 hover:text-red-800">{{ $product->name }}</a>
                             <p class="text-gray-600">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
@@ -84,7 +93,7 @@
                 const productId = this.getAttribute('data-id');
                 Swal.fire({
                     title: 'Are you sure?',
-                    text: 'Do you really want to delete these product? This process cannot be undone.',
+                    text: 'Do you really want to delete this product? This process cannot be undone.',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#FF0000',
@@ -117,6 +126,19 @@
                             });
                     }
                 });
+            });
+        });
+
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.product-item').forEach(item => {
+                const name = item.getAttribute('data-name').toLowerCase();
+                const supplier = item.getAttribute('data-supplier').toLowerCase();
+                if (name.includes(searchTerm) || supplier.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
             });
         });
     </script>

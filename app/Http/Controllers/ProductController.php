@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -15,28 +16,51 @@ class ProductController extends Controller
 
   public function store(Request $request)
   {
-    $validated = $request->validate([
-      'category' => 'required',
-      'brand' => 'nullable|string',
-      'supplier' => 'required|string',
-      'name' => 'required|string',
-      'specification' => 'required',
-      'custom_spec' => 'nullable|string',
+    // Validasi input
+    $request->validate([
+      'category' => 'required|string|max:255',
+      'brand' => 'nullable|string|max:255',
+      'supplier' => 'required|string|max:255',
+      'name' => 'required|string|max:255',
+      'specification' => 'required|string|max:255',
+      'unit' => 'required|string|max:255',
       'quantity' => 'required|integer|min:1',
+      'price' => 'required|numeric|min:0',
       'description' => 'nullable|string',
       'address' => 'nullable|string',
-      'price' => 'required|integer|min:0',
-      'productImage' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+      'image_paths.*' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120', // max 5MB
     ]);
 
-    if ($request->hasFile('productImage')) {
-      $path = $request->file('productImage')->store('public/products');
-      $validated['image_path'] = Storage::url($path);
+    // Simpan data produk
+    $product = new Product();
+    $product->category = $request->category;
+    $product->brand = $request->brand;
+    $product->supplier = $request->supplier;
+    $product->name = $request->name;
+    $product->specification = $request->specification;
+    $product->unit = $request->unit;
+    $product->quantity = $request->quantity;
+    $product->price = $request->price;
+    $product->description = $request->description;
+    $product->address = $request->address;
+
+    // Simpan dulu untuk dapat ID
+    $product->save();
+
+    // Simpan gambar jika ada
+    if ($request->hasFile('image_paths')) {
+      $imagePaths = [];
+      foreach ($request->file('image_paths') as $file) {
+        $path = $file->store('products', 'public'); // simpan di storage/app/public/products
+        $imagePaths[] = $path;
+      }
+      // Misalnya Anda punya kolom images di tabel produk (type text/json)
+      $product->images = json_encode($imagePaths);
+      $product->save();
     }
 
-    Product::create($validated);
-
-    return redirect()->route('vendor.myproducts')->with('success', 'Product added successfully!');
+    return redirect()->route('vendor.add_product')
+      ->with('success', 'Product added successfully!');
   }
 
   public function index()
@@ -94,8 +118,7 @@ class ProductController extends Controller
 
   public function show($id)
   {
-        $product = Product::findOrFail($id);
-        return view('procurement.detail', compact('product'));
+    $product = Product::findOrFail($id);
+    return view('procurement.detail', compact('product'));
   }
-
 }
