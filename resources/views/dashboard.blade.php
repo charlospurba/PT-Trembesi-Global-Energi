@@ -2,6 +2,8 @@
 
 @section('content')
 
+@include('components.navold')
+
     <!-- Main Content -->
     <div class="container">
         <!-- Categories Section -->
