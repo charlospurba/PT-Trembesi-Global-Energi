@@ -8,7 +8,7 @@
 
         {{-- Breadcrumb --}}
         <h5 class="text-lg font-bold mb-6">
-            <a href="/dashboardproc" class="text-black hover:underline">Dashboard</a>
+            <a href="{{ route('procurement.dashboardproc') }}" class="text-black hover:underline">Dashboard</a>
             <span class="text-gray-500"> > </span>
             <a href="/cart" class="text-black hover:underline">Cart</a>
             <span class="text-red-500 font-bold"> > Check Out</span>
