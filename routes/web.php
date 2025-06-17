@@ -79,26 +79,18 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/orders', 'vendor.orders')->name('vendor.orders');
     Route::view('/report', 'vendor.report')->name('vendor.report');
     Route::view('/vendor/view', 'vendor.view')->name('vendor.view');
+
+     //Superadmin
+    // Superadmin Dashboard
+    Route::view('/dashboard/superadmin', 'superadmin.dashboardadm')->name('superadmin.dashboard');
+    // Add User
+    Route::view('/dashboard/superadmin/add_users', 'superadmin.add_users')->name('superadmin.add_users');
+    // Request List
+    Route::view('/dashboard/superadmin/requests', 'superadmin.requests.index')->name('superadmin.requests.index');
+
 });
 
- //Superadmin
-    Route::view('/dashboard/superadmin', 'dashboard.superadmin')->name('dashboard.superadmin');
-    Route::view('/dashboard/superadmin', 'superadmin.dashboardadm')->name('dashboard.superadmin');
- // Dashboard
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
 
- // Add User
-    Route::get('/admin/users/create', function () {
-        return view('admin.users.create');
-    })->name('admin.users.create');
-
- // Request
-    Route::get('/admin/requests', function () {
-        return view('admin.requests.index');
-    })->name('admin.requests.index');
-    
 // Profile
 Route::get('/dashboard/profile', [ProfileController::class, 'edit'])->name('components.profile');
 Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');

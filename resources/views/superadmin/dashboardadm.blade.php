@@ -48,7 +48,7 @@
 </div>
                 <!-- Add User Button -->
                 <div class="flex justify-end mb-4">
-                    <a href="{{ route('admin.users.create') }}"
+                    <a href="{{ route('superadmin.add_users') }}"
                        class="bg-[#2962FF] hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md shadow flex items-center gap-2 text-sm">
                         <i class="fas fa-plus"></i> Add User
                     </a>
