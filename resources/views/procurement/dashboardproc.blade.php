@@ -37,26 +37,57 @@
 
             <!-- Material Collection -->
             <div class="collection">
-                <div class="collection-header">
-                    <h3>Koleksi Material</h3>
-                    <a href="{{ route('procurement.material') }}" class="view-all">Lihat Semua ></a>
+                <div class="collection-header flex justify-between items-center mb-3">
+                    <h3 class="text-base font-semibold">Koleksi Material</h3>
+                    <a href="{{ route('procurement.material') }}" class="text-sm text-red-600 hover:underline">Lihat Semua
+                        ></a>
                 </div>
-                <div class="products-grid">
+
+                <div class="products-grid grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     @forelse($randomMaterials as $product)
-                        <a href="{{ route('product.detail', $product->id) }}"
-                            class="product-card block hover:shadow-lg transition">
-                            <div class="product-image">
-                                <img src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0 ? asset('storage/' . $product->image_paths[0] . '?' . time()) : 'https://via.placeholder.com/300' }}"
-                                    alt="{{ $product->name }}" class="w-full h-64 object-cover rounded-md mb-4" />
-                                <span class="product-badge">{{ $product->supplier }}</span>
-                            </div>
-                            <div class="product-info">
-                                <h4>{{ $product->name }}</h4>
-                                <p class="product-desc">{{ $product->description ?? '-' }}</p>
-                            </div>
-                        </a>
+                                <a href="{{ route('product.detail', $product->id) }}" class="block">
+                                    <div
+                                        class="bg-white rounded-xl shadow-md overflow-hidden max-w-[280px] w-full transition-transform hover:scale-105">
+                                        <!-- Gambar -->
+                                        <div class="bg-red-600 p-3 flex justify-center items-center h-32">
+                                            <img src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0
+                        ? asset('storage/' . $product->image_paths[0] . '?' . time())
+                        : 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}"
+                                                class="w-full h-full object-contain rounded-md" />
+                                        </div>
+
+                                        <!-- Konten -->
+                                        <div class="px-4 py-3 space-y-1.5 text-xs leading-relaxed">
+                                            <!-- Supplier -->
+                                            <span class="inline-block px-2 py-0.5 bg-gray-200 text-gray-800 text-[11px] rounded-full">
+                                                {{ $product->supplier }}
+                                            </span>
+
+                                            <!-- Nama Produk -->
+                                            <h3 class="text-sm font-semibold">{{ $product->name }}</h3>
+
+                                            <!-- Harga -->
+                                            <p class="text-black font-bold text-sm">Rp{{ number_format($product->price, 0, ',', '.') }}
+                                            </p>
+
+                                            <!-- Alamat -->
+                                            <div class="flex items-start text-[11px] text-gray-600">
+                                                <svg class="w-4 h-4 text-red-500 mr-1 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path
+                                                        d="M10 2a6 6 0 016 6c0 4.418-6 10-6 10S4 12.418 4 8a6 6 0 016-6zM8 8a2 2 0 114 0 2 2 0 01-4 0z" />
+                                                </svg>
+                                                {{ $product->address ?? '-' }}
+                                            </div>
+
+                                            <!-- Stok -->
+                                            <div class="text-[11px] text-red-600 font-medium">
+                                                Stok: {{ $product->quantity }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
                     @empty
-                        <p class="text-center text-gray-500">Tidak ada produk Material tersedia.</p>
+                        <p class="text-center text-gray-500 text-sm">Tidak ada produk Material tersedia.</p>
                     @endforelse
                 </div>
             </div>
@@ -69,18 +100,47 @@
                 </div>
                 <div class="products-grid">
                     @forelse($randomEquipments as $product)
-                        <a href="{{ route('product.detail', $product->id) }}"
-                            class="product-card block hover:shadow-lg transition">
-                            <div class="product-image">
-                                <img src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0 ? asset('storage/' . $product->image_paths[0] . '?' . time()) : 'https://via.placeholder.com/300' }}"
-                                    alt="{{ $product->name }}" class="w-full h-64 object-cover rounded-md mb-4" />
-                                <span class="product-badge">{{ $product->supplier }}</span>
-                            </div>
-                            <div class="product-info">
-                                <h4>{{ $product->name }}</h4>
-                                <p class="product-desc">{{ $product->description ?? '-' }}</p>
-                            </div>
-                        </a>
+                                <a href="{{ route('product.detail', $product->id) }}" class="block">
+                                    <div
+                                        class="bg-white rounded-xl shadow-md overflow-hidden max-w-[280px] w-full transition-transform hover:scale-105">
+                                        <!-- Gambar -->
+                                        <div class="bg-red-600 p-3 flex justify-center items-center h-32">
+                                            <img src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0
+                        ? asset('storage/' . $product->image_paths[0] . '?' . time())
+                        : 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}"
+                                                class="w-full h-full object-contain rounded-md" />
+                                        </div>
+
+                                        <!-- Konten -->
+                                        <div class="px-4 py-3 space-y-1.5 text-xs leading-relaxed">
+                                            <!-- Supplier -->
+                                            <span class="inline-block px-2 py-0.5 bg-gray-200 text-gray-800 text-[11px] rounded-full">
+                                                {{ $product->supplier }}
+                                            </span>
+
+                                            <!-- Nama Produk -->
+                                            <h3 class="text-sm font-semibold">{{ $product->name }}</h3>
+
+                                            <!-- Harga -->
+                                            <p class="text-black font-bold text-sm">Rp{{ number_format($product->price, 0, ',', '.') }}
+                                            </p>
+
+                                            <!-- Alamat -->
+                                            <div class="flex items-start text-[11px] text-gray-600">
+                                                <svg class="w-4 h-4 text-red-500 mr-1 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path
+                                                        d="M10 2a6 6 0 016 6c0 4.418-6 10-6 10S4 12.418 4 8a6 6 0 016-6zM8 8a2 2 0 114 0 2 2 0 01-4 0z" />
+                                                </svg>
+                                                {{ $product->address ?? '-' }}
+                                            </div>
+
+                                            <!-- Stok -->
+                                            <div class="text-[11px] text-red-600 font-medium">
+                                                Stok: {{ $product->quantity }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
                     @empty
                         <p class="text-center text-gray-500">Tidak ada produk Equipment tersedia.</p>
                     @endforelse
@@ -95,18 +155,47 @@
                 </div>
                 <div class="products-grid">
                     @forelse($randomElectricals as $product)
-                        <a href="{{ route('product.detail', $product->id) }}"
-                            class="product-card block hover:shadow-lg transition">
-                            <div class="product-image">
-                                <img src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0 ? asset('storage/' . $product->image_paths[0] . '?' . time()) : 'https://via.placeholder.com/300' }}"
-                                    alt="{{ $product->name }}" class="w-full h-64 object-cover rounded-md mb-4" />
-                                <span class="product-badge">{{ $product->supplier }}</span>
-                            </div>
-                            <div class="product-info">
-                                <h4>{{ $product->name }}</h4>
-                                <p class="product-desc">{{ $product->description ?? '-' }}</p>
-                            </div>
-                        </a>
+                                <a href="{{ route('product.detail', $product->id) }}" class="block">
+                                    <div
+                                        class="bg-white rounded-xl shadow-md overflow-hidden max-w-[280px] w-full transition-transform hover:scale-105">
+                                        <!-- Gambar -->
+                                        <div class="bg-red-600 p-3 flex justify-center items-center h-32">
+                                            <img src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0
+                        ? asset('storage/' . $product->image_paths[0] . '?' . time())
+                        : 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}"
+                                                class="w-full h-full object-contain rounded-md" />
+                                        </div>
+
+                                        <!-- Konten -->
+                                        <div class="px-4 py-3 space-y-1.5 text-xs leading-relaxed">
+                                            <!-- Supplier -->
+                                            <span class="inline-block px-2 py-0.5 bg-gray-200 text-gray-800 text-[11px] rounded-full">
+                                                {{ $product->supplier }}
+                                            </span>
+
+                                            <!-- Nama Produk -->
+                                            <h3 class="text-sm font-semibold">{{ $product->name }}</h3>
+
+                                            <!-- Harga -->
+                                            <p class="text-black font-bold text-sm">Rp{{ number_format($product->price, 0, ',', '.') }}
+                                            </p>
+
+                                            <!-- Alamat -->
+                                            <div class="flex items-start text-[11px] text-gray-600">
+                                                <svg class="w-4 h-4 text-red-500 mr-1 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path
+                                                        d="M10 2a6 6 0 016 6c0 4.418-6 10-6 10S4 12.418 4 8a6 6 0 016-6zM8 8a2 2 0 114 0 2 2 0 01-4 0z" />
+                                                </svg>
+                                                {{ $product->address ?? '-' }}
+                                            </div>
+
+                                            <!-- Stok -->
+                                            <div class="text-[11px] text-red-600 font-medium">
+                                                Stok: {{ $product->quantity }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
                     @empty
                         <p class="text-center text-gray-500">Tidak ada produk Electrical tersedia.</p>
                     @endforelse
@@ -121,18 +210,47 @@
                 </div>
                 <div class="products-grid">
                     @forelse($randomConsumables as $product)
-                        <a href="{{ route('product.detail', $product->id) }}"
-                            class="product-card block hover:shadow-lg transition">
-                            <div class="product-image">
-                                <img src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0 ? asset('storage/' . $product->image_paths[0] . '?' . time()) : 'https://via.placeholder.com/300' }}"
-                                    alt="{{ $product->name }}" class="w-full h-64 object-cover rounded-md mb-4" />
-                                <span class="product-badge">{{ $product->supplier }}</span>
-                            </div>
-                            <div class="product-info">
-                                <h4>{{ $product->name }}</h4>
-                                <p class="product-desc">{{ $product->description ?? '-' }}</p>
-                            </div>
-                        </a>
+                                <a href="{{ route('product.detail', $product->id) }}" class="block">
+                                    <div
+                                        class="bg-white rounded-xl shadow-md overflow-hidden max-w-[280px] w-full transition-transform hover:scale-105">
+                                        <!-- Gambar -->
+                                        <div class="bg-red-600 p-3 flex justify-center items-center h-32">
+                                            <img src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0
+                        ? asset('storage/' . $product->image_paths[0] . '?' . time())
+                        : 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}"
+                                                class="w-full h-full object-contain rounded-md" />
+                                        </div>
+
+                                        <!-- Konten -->
+                                        <div class="px-4 py-3 space-y-1.5 text-xs leading-relaxed">
+                                            <!-- Supplier -->
+                                            <span class="inline-block px-2 py-0.5 bg-gray-200 text-gray-800 text-[11px] rounded-full">
+                                                {{ $product->supplier }}
+                                            </span>
+
+                                            <!-- Nama Produk -->
+                                            <h3 class="text-sm font-semibold">{{ $product->name }}</h3>
+
+                                            <!-- Harga -->
+                                            <p class="text-black font-bold text-sm">Rp{{ number_format($product->price, 0, ',', '.') }}
+                                            </p>
+
+                                            <!-- Alamat -->
+                                            <div class="flex items-start text-[11px] text-gray-600">
+                                                <svg class="w-4 h-4 text-red-500 mr-1 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path
+                                                        d="M10 2a6 6 0 016 6c0 4.418-6 10-6 10S4 12.418 4 8a6 6 0 016-6zM8 8a2 2 0 114 0 2 2 0 01-4 0z" />
+                                                </svg>
+                                                {{ $product->address ?? '-' }}
+                                            </div>
+
+                                            <!-- Stok -->
+                                            <div class="text-[11px] text-red-600 font-medium">
+                                                Stok: {{ $product->quantity }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
                     @empty
                         <p class="text-center text-gray-500">Tidak ada produk Consumables tersedia.</p>
                     @endforelse
@@ -147,18 +265,47 @@
                 </div>
                 <div class="products-grid">
                     @forelse($randomPPEs as $product)
-                        <a href="{{ route('product.detail', $product->id) }}"
-                            class="product-card block hover:shadow-lg transition">
-                            <div class="product-image">
-                                <img src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0 ? asset('storage/' . $product->image_paths[0] . '?' . time()) : 'https://via.placeholder.com/300' }}"
-                                    alt="{{ $product->name }}" class="w-full h-64 object-cover rounded-md mb-4" />
-                                <span class="product-badge">{{ $product->supplier }}</span>
-                            </div>
-                            <div class="product-info">
-                                <h4>{{ $product->name }}</h4>
-                                <p class="product-desc">{{ $product->description ?? '-' }}</p>
-                            </div>
-                        </a>
+                                <a href="{{ route('product.detail', $product->id) }}" class="block">
+                                    <div
+                                        class="bg-white rounded-xl shadow-md overflow-hidden max-w-[280px] w-full transition-transform hover:scale-105">
+                                        <!-- Gambar -->
+                                        <div class="bg-red-600 p-3 flex justify-center items-center h-32">
+                                            <img src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0
+                        ? asset('storage/' . $product->image_paths[0] . '?' . time())
+                        : 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}"
+                                                class="w-full h-full object-contain rounded-md" />
+                                        </div>
+
+                                        <!-- Konten -->
+                                        <div class="px-4 py-3 space-y-1.5 text-xs leading-relaxed">
+                                            <!-- Supplier -->
+                                            <span class="inline-block px-2 py-0.5 bg-gray-200 text-gray-800 text-[11px] rounded-full">
+                                                {{ $product->supplier }}
+                                            </span>
+
+                                            <!-- Nama Produk -->
+                                            <h3 class="text-sm font-semibold">{{ $product->name }}</h3>
+
+                                            <!-- Harga -->
+                                            <p class="text-black font-bold text-sm">Rp{{ number_format($product->price, 0, ',', '.') }}
+                                            </p>
+
+                                            <!-- Alamat -->
+                                            <div class="flex items-start text-[11px] text-gray-600">
+                                                <svg class="w-4 h-4 text-red-500 mr-1 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path
+                                                        d="M10 2a6 6 0 016 6c0 4.418-6 10-6 10S4 12.418 4 8a6 6 0 016-6zM8 8a2 2 0 114 0 2 2 0 01-4 0z" />
+                                                </svg>
+                                                {{ $product->address ?? '-' }}
+                                            </div>
+
+                                            <!-- Stok -->
+                                            <div class="text-[11px] text-red-600 font-medium">
+                                                Stok: {{ $product->quantity }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
                     @empty
                         <p class="text-center text-gray-500">Tidak ada produk PPE tersedia.</p>
                     @endforelse
