@@ -47,8 +47,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/consumables', [ProductController::class, 'consumablesProducts'])->name('procurement.consumables');
     Route::get('/electrical', [ProductController::class, 'electricalProducts'])->name('procurement.electrical');
     Route::get('/personal', [ProductController::class, 'personalProducts'])->name('procurement.personal');
-    Route::view('/detail', 'procurement.detail')->name('procurement.detail');
     Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.detail');
+
+    //Procurement Detail product
+    Route::view('/detail', 'procurement.detail')->name('procurement.detail');
 
     // Cart
     Route::get('/cart', function () {
@@ -64,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/procurement/checkout', function () {
         return view('procurement.checkout');
     })->name('procurement.checkout');
+
     // Vendor product routes
     Route::get('/myproducts', [VendorProductController::class, 'index'])->name('vendor.myproducts');
     Route::get('/add_product', [VendorProductController::class, 'create'])->name('vendor.add_product');
@@ -73,11 +76,16 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/products/{id}', [VendorProductController::class, 'destroy'])->name('vendor.destroy_product');
     Route::get('/products/{id}/detail', [VendorProductController::class, 'show'])->name('vendor.product_detail');
 
+     // Vendor view order product routes
+    Route::get('/vendor/view', function () {return view('vendor.view'); })->name('vendor.view');
+
     // Alias untuk vendor.myproducts
     Route::get('/vendor/myproducts', [VendorProductController::class, 'index'])->name('vendor.vendor_myproducts');
 
     Route::view('/orders', 'vendor.orders')->name('vendor.orders');
     Route::view('/report', 'vendor.report')->name('vendor.report');
+    Route::view('/vendor/view', 'vendor.view')->name('vendor.view');
+    
 });
 
 // Profile
