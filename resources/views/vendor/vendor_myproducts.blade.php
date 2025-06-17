@@ -1,39 +1,10 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Products | Trembesi Shop</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-
-<body class="bg-red-50 font-sans">
-    <header class="bg-gradient-to-r from-red-600 to-red-400 shadow-md p-4 flex justify-between items-center text-white">
-        <div class="flex items-center gap-2">
-            <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Logo Trembesi" class="w-10 h-auto" />
-            <h1 class="text-xl font-bold">Trembesi Shop</h1>
-        </div>
-        <div class="flex items-center gap-4">
-            <span class="text-gray-200">Halo, Vendor</span>
-            <img src="https://via.placeholder.com/40" class="rounded-full w-10 h-10" />
-        </div>
-    </header>
+@section('content')
+    @include('components.navvendor')
 
     <div class="flex min-h-screen">
-        <aside class="w-64 bg-white p-6 shadow hidden md:block">
-            <nav class="space-y-4 font-medium">
-                <a href="{{ route('vendor.dashboardvendor') }}" class="block text-gray-700 hover:text-red-500">📦
-                    Dashboard</a>
-                <a href="{{ route('vendor.myproducts') }}" class="block text-red-700 font-semibold">🛍️ My Products</a>
-                <a href="{{ route('vendor.add_product') }}" class="block text-gray-700 hover:text-red-500">➕ Add
-                    Products</a>
-                <a href="{{ route('vendor.orders') }}" class="block text-gray-700 hover:text-red-500">📋 Orders</a>
-                <a href="#" class="block text-gray-700 hover:text-red-500">💬 Review</a>
-            </nav>
-        </aside>
-
+        @include('components.sidevendor')
         <main class="flex-1 p-6 space-y-6">
             <div class="bg-red-500 text-white px-6 py-4 rounded-md shadow">
                 <h2 class="text-xl font-bold">My Products</h2>
@@ -86,6 +57,9 @@
     <footer class="bg-white text-center p-4 text-sm text-gray-500">
         © 2025 Trembesi Shop
     </footer>
+    @endsection
+
+    @push('scripts')
 
     <script>
         document.querySelectorAll('.delete-product').forEach(button => {
@@ -142,6 +116,6 @@
             });
         });
     </script>
-</body>
+    @endpush
 
-</html>
+

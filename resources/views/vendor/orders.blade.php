@@ -1,36 +1,10 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trembesi Shop</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 font-sans">
-    <!-- Header -->
-    <header class="bg-red-600 p-4 flex justify-between items-center text-white">
-        <div class="flex items-center gap-3">
-            <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Logo" class="w-10 h-10">
-            <h1 class="text-lg font-bold">Trembesi Shop</h1>
-        </div>
-        <div class="flex items-center gap-2">
-            <span>Hello, Vendor</span>
-            <img src="https://via.placeholder.com/40" alt="User" class="w-10 h-10 rounded-full">
-        </div>
-    </header>
+@extends('layouts.app')
+
+@section('content')
+    @include('components.navvendor')
 
     <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-white p-6 shadow hidden md:block">
-            <nav class="space-y-4 font-medium">
-                <a href="{{ route('vendor.dashboardvendor') }}" class="block text-gray-700 hover:text-red-500">📦 Dashboard</a>
-                <a href="{{ route('vendor.vendor_myproducts') }}" class="block hover:text-red-500">🛍️ My Products</a>
-                <a href="{{ route('vendor.add_product') }}" class="block hover:text-red-500">➕ Add Product</a>
-                <a href="{{ route('vendor.orders') }}" class="block text-red-600 font-bold">📋 Orders</a>
-                <a href="#" class="block hover:text-red-500">💬 Review</a>
-            </nav>
-        </aside>
-
+        @include('components.sidevendor')
         <!-- Main Content -->
         <main class="flex-1 p-6">
             <div class="bg-white p-6 rounded shadow">
@@ -134,5 +108,4 @@
             </div>
         </main>
     </div>
-</body>
-</html>
+@endsection
