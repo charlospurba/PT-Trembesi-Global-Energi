@@ -1,53 +1,13 @@
-<!-- Navbar Component -->
-<nav class="navbar bg-red-600 p-2 px-5 w-full shadow-md z-50">
-    <div class="nav-container">
-        <div class="logo-section">
-            @php
-                $role = Auth::check() ? Auth::user()->role : null;
-
-                $dashboardLink = match ($role) {
-                    'procurement' => route('procurement.dashboardproc'),
-                    'superadmin' => route('dashboard.superadmin'),
-                    'product_manager' => route('dashboard.productmanager'),
-                    default => route('dashboard'),
-                };
-            @endphp
-
-            <a href="{{ $dashboardLink }}" class="logo">
-                <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Trembesi Logo" class="logo-img">
-            </a>
-
-        </div>
-
-        <!-- Search Form -->
-        <form id="searchForm" action="/search" method="GET"
-            style="flex-grow: 1; max-width: 600px; min-width: 300px; margin-right: 10px;">
-            <div
-                style="display: flex; width: 100%; border-radius: 999px; overflow: hidden; background-color: transparent; border: 1px solid white; align-items: center; height: 45px;">
-                <div style="padding: 0 15px; color: white; display: flex; align-items: center;">
-                    <i class="fas fa-search" style="font-size: 20px;"></i>
-                </div>
-                <input type="search" name="query" placeholder="Cari produk atau vendor" aria-label="Search"
-                    style="flex-grow: 1; border: none; outline: none; height: 100%; font-size: 16px; padding: 0 10px; color: white; background-color: transparent;">
-                <button type="submit"
-                    style="padding: 0 20px; height: 100%; background-color: white; color: black; border: none; font-weight: bold; font-size: 16px; cursor: pointer; border-top-right-radius: 999px; border-bottom-right-radius: 999px;">Search</button>
-            </div>
-        </form>
-
-        <div class="nav-right">
-            <a href="/cart" class="nav-icon">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="badge cart-badge" id="cartBadge" style="display: none;">0</span>
-            </a>
-            <a href="/notifications" class="nav-icon">
-                <i class="fas fa-bell"></i>
-                <span class="badge notification-badge" id="notificationBadge" style="display: none;">0</span>
-            </a>
-            <!-- Profile Dropdown -->
+<header class="bg-red-600 shadow-md p-4 flex justify-between items-center text-white w-full z-50">
+    <div class="flex items-center gap-2">
+        <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Logo Trembesi" class="logo-img" />
+    </div>
+      <!-- Profile Dropdown -->
             <div class="profile-dropdown" style="position: relative;">
                 <div class="profile-trigger" onclick="toggleDropdown()"
                     style="cursor: pointer; display: flex; align-items: center; color: white;">
                     @auth
+                    <span>Hello, {{ Auth::user()->name }} </span> 
                         @php
                             $profilePicture = Auth::user()->profile_picture
                                 ? asset('storage/profile_picture/' . Auth::user()->profile_picture)
@@ -57,7 +17,6 @@
                             <img src="{{ $profilePicture }}" alt="Profile Picture"
                                 style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
-                        <span>{{ Auth::user()->name }}</span>
                     @endauth
 
 
@@ -83,9 +42,7 @@
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
-</nav>
+</header>
 
 <script>
     function toggleDropdown() {

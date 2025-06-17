@@ -38,7 +38,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Superadmin & Product Manager (belum dibuat)
     Route::view('/dashboard/superadmin', 'dashboard.superadmin')->name('dashboard.superadmin');
-    Route::view('/dashboard/productmanager', 'dashboard.productmanager')->name('dashboard.productmanager');
+    Route::view('/dashboard/productmanager', 'productmanager.dashboardpm')->name('dashboard.productmanager');
+    Route::view('/productmanager', 'productmanager.addrequest')->name('productmanager.addrequest');
 
     // 👷 Procurement views
     Route::get('/dashboard/procurement', [ProductController::class, 'dashboard'])->name('procurement.dashboardproc');
