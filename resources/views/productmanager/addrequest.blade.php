@@ -10,7 +10,7 @@
                 <!-- Header -->
                 <div class="flex justify-between items-center mb-6">
                     <h1 class="text-3xl font-bold text-gray-800">Add New Request</h1>
-                    <a href="{{ route('productmanager.addrequest') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+                    <a href="{{ route('dashboard.productmanager') }}" class="bg-gray-500 hover:bg-gray-600 text-black px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
@@ -138,13 +138,16 @@
                             </div>
 
                             <!-- Form Actions -->
-                            <div class="flex gap-3 justify-end pt-6 border-t border-gray-200">
-                                <a  class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                                    Cancel
-                                </a>
-                                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                                    Save Request
-                                </button>
+                            <div class="relative mt-10">
+                                <!-- Tombol Save & Cancel -->
+                                <div class="absolute bottom-0 right-0 flex gap-3">
+                                    <button type="button" onclick="window.location.href='{{ route('dashboard.productmanager') }}'" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm">
+                                        Save Request
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </form>

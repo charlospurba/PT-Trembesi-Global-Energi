@@ -6,7 +6,13 @@
     <div class="flex min-h-screen">
           @include('components.sidepm')
           <div class="bg-gray-100 min-h-screen p-6 flex-1">
-    <div class="max-w-7xl mx-auto">
+             <div class="bg-red-500 text-white px-6 py-4 rounded-md shadow">
+                <h2 class="text-xl font-bold">Procurement Request </h2>
+                <p class="text-sm">Manage your team's procurement needs</p>
+            </div>
+
+      <div class="max-w-7xl mx-auto mt-6">
+
         <!-- Header -->
        <div class="flex justify-end items-center mb-6">
           <a href="{{ route('productmanager.addrequest') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ml-auto">
@@ -81,11 +87,11 @@
                         
                         <!-- Action Buttons -->
                         <div class="flex gap-3 mt-6 justify-end">
-                            <button type="button" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm inline-block">
-                              Edit
-                            </button>
                             <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm">
                                 Delete
+                            </button>
+                            <button type="button" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm inline-block">
+                                Edit
                             </button>
                         </div>
                     </div>
@@ -153,11 +159,11 @@
                         
                         <!-- Action Buttons -->
                         <div class="flex gap-3 mt-6 justify-end">
-                            <button type="button" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm inline-block">
-                              Edit
-                            </button>
                             <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm">
                                 Delete
+                            </button>
+                            <button type="button" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm inline-block">
+                                Edit
                             </button>
                         </div>
                     </div>
