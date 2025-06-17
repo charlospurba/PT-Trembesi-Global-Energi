@@ -16,7 +16,6 @@
             <a href="{{ $dashboardLink }}" class="logo">
                 <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Trembesi Logo" class="logo-img">
             </a>
-
         </div>
 
         <!-- Search Form -->
@@ -60,7 +59,6 @@
                         <span>{{ Auth::user()->name }}</span>
                     @endauth
 
-
                     @guest
                         <i class="fas fa-user-circle" style="font-size: 24px; margin-right: 8px;"></i>
                         <span>Guest</span>
@@ -71,7 +69,7 @@
 
                 <!-- Dropdown Menu -->
                 <div id="dropdownMenu" class="dropdown-menu"
-                    style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; min-width: 150px; z-index: 999;">
+                    style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px10px rgba(0,0,0,0.1); display: none; min-width: 150px; z-index: 999;">
                     <a href="/dashboard/profile" class="dropdown-item"
                         style="display: block; padding: 10px 15px; text-decoration: none; color: black;">My Profile</a>
                     <form id="logoutForm" method="POST" action="/logout" style="margin: 0;">
@@ -93,7 +91,7 @@
         dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
     }
 
-    window.addEventListener("click", function (e) {
+    window.addEventListener("click", function(e) {
         const trigger = document.querySelector(".profile-trigger");
         const dropdown = document.getElementById("dropdownMenu");
         if (!trigger.contains(e.target)) {
@@ -102,9 +100,8 @@
     });
 
     // Logout with SweetAlert
-    document.getElementById('logoutBtn').addEventListener('click', function (e) {
+    document.getElementById('logoutBtn').addEventListener('click', function(e) {
         e.preventDefault();
-
         Swal.fire({
             title: 'Are you sure?',
             text: "You will be signed out of your account.",
@@ -121,4 +118,19 @@
         });
     });
 
+    // Initialize cart badge
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/cart/count', {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.getElementById('cartBadge');
+                badge.textContent = data.count;
+                badge.style.display = data.count > 0 ? 'inline-block' : 'none';
+            });
+    });
 </script>

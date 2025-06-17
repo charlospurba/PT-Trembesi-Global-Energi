@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\VendorHomeController;
 use App\Http\Controllers\VendorProductController;
+use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -32,11 +33,10 @@ Route::get('/register-detail', function () {
 
 // ✅ Setelah login, redirect berdasarkan role ke halaman dashboard masing-masing
 Route::middleware(['auth'])->group(function () {
-
     // 🛍️ Vendor
     Route::get('/dashboard/vendor', [VendorHomeController::class, 'index'])->name('vendor.dashboardvendor');
 
-    // Superadmin & Product Manager (belum dibuat)
+    // Superadmin & Product Manager
     Route::view('/dashboard/superadmin', 'dashboard.superadmin')->name('dashboard.superadmin');
     Route::view('/dashboard/productmanager', 'productmanager.dashboardpm')->name('dashboard.productmanager');
     Route::view('/productmanager', 'productmanager.addrequest')->name('productmanager.addrequest');
@@ -50,23 +50,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/personal', [ProductController::class, 'personalProducts'])->name('procurement.personal');
     Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.detail');
 
-    //Procurement Detail product
-    Route::view('/detail', 'procurement.detail')->name('procurement.detail');
+    // Cart routes
+    Route::get('/cart', [CartController::class, 'showCart'])->name('procurement.cart');
+    Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::post('/cart/buy-now/{id}', [CartController::class, 'buyNow'])->name('cart.buy-now');
+    Route::post('/cart/update/{id}', [CartController::class, 'updateCart'])->name('cart.update');
+    Route::post('/cart/remove/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+    Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
 
-    // Cart
-    Route::get('/cart', function () {
-        $cartItems = session()->get('cart', []);
-        $totalPrice = 0;
-        foreach ($cartItems as $item) {
-            $totalPrice += $item['price'] * $item['quantity'];
-        }
-        return view('procurement.cart', compact('cartItems', 'totalPrice'));
-    })->name('procurement.cart');
-    
-    //Checkout
-    Route::get('/procurement/checkout', function () {
-        return view('procurement.checkout');
-    })->name('procurement.checkout');
+    // Checkout
+    Route::get('/procurement/checkout', [CartController::class, 'checkout'])->name('procurement.checkout');
+    Route::post('/procurement/checkout', [CartController::class, 'submitCheckout'])->name('procurement.checkout.submit');
 
     // Vendor product routes
     Route::get('/myproducts', [VendorProductController::class, 'index'])->name('vendor.myproducts');
@@ -77,16 +71,14 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/products/{id}', [VendorProductController::class, 'destroy'])->name('vendor.destroy_product');
     Route::get('/products/{id}/detail', [VendorProductController::class, 'show'])->name('vendor.product_detail');
 
-     // Vendor view order product routes
-    Route::get('/vendor/view', function () {return view('vendor.view'); })->name('vendor.view');
-
-    // Alias untuk vendor.myproducts
+    // Vendor view order product routes
+    Route::get('/vendor/view', function () {
+        return view('vendor.view');
+    })->name('vendor.view');
     Route::get('/vendor/myproducts', [VendorProductController::class, 'index'])->name('vendor.vendor_myproducts');
-
     Route::view('/orders', 'vendor.orders')->name('vendor.orders');
     Route::view('/report', 'vendor.report')->name('vendor.report');
     Route::view('/vendor/view', 'vendor.view')->name('vendor.view');
-    
 });
 
 // Profile
