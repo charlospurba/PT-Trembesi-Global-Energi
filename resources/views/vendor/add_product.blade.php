@@ -4,7 +4,7 @@
     @include('components.navvendor')
 
     <div class="flex min-h-screen">
-          @include('components.sidevendor')
+        @include('components.sidevendor')
 
         <main class="flex-1 p-6 space-y-6">
             <div class="bg-red-500 text-white px-6 py-4 rounded-md shadow">
@@ -121,8 +121,8 @@
                     <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <textarea name="description" placeholder="Product Description..."
                             class="w-full border border-gray-300 rounded-md px-4 py-2" rows="4"></textarea>
-                        <textarea name="address" placeholder="Address..." class="w-full border border-gray-300 rounded-md px-4 py-2"
-                            rows="4"></textarea>
+                        <textarea name="address" placeholder="Address..."
+                            class="w-full border border-gray-300 rounded-md px-4 py-2" rows="4"></textarea>
                     </div>
                 </div>
 
@@ -134,14 +134,14 @@
                     <div class="p-4">
                         <label for="image_paths"
                             class="cursor-pointer border-2 border-dashed border-red-300 bg-white rounded-md flex flex-col items-center justify-center py-10 text-center text-gray-500 hover:border-red-500">
-                            <svg class="w-6 h-6 mb-2 text-red-400" fill="none" stroke="currentColor"
-                                stroke-width="2" viewBox="0 0 24 24">
+                            <svg class="w-6 h-6 mb-2 text-red-400" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                             </svg>
                             <p>Drop images here or click to upload</p>
                             <p class="text-sm text-gray-400">Supports: JPG, PNG, GIF (Max 5MB each)</p>
-                            <input id="image_paths" name="image_paths[]" type="file" class="hidden"
-                                accept="image/*" multiple />
+                            <input id="image_paths" name="image_paths[]" type="file" class="hidden" accept="image/*"
+                                multiple />
                         </label>
                         <div id="image-preview" class="mt-4 hidden">
                             <div id="preview-container" class="flex flex-wrap gap-2"></div>
@@ -165,7 +165,7 @@
 @endsection
 @push('scripts')
     <script>
-        document.getElementById('image_paths').addEventListener('change', function(event) {
+        document.getElementById('image_paths').addEventListener('change', function (event) {
             const files = event.target.files;
             const previewContainer = document.getElementById('preview-container');
             previewContainer.innerHTML = '';
@@ -173,7 +173,7 @@
                 Array.from(files).forEach(file => {
                     if (file.type.startsWith('image/')) {
                         const reader = new FileReader();
-                        reader.onload = function(e) {
+                        reader.onload = function (e) {
                             const img = document.createElement('img');
                             img.src = e.target.result;
                             img.alt = 'Image Preview';
@@ -189,4 +189,4 @@
             }
         });
     </script>
-    @endpush
+@endpush

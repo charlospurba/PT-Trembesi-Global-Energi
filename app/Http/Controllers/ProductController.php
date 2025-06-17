@@ -15,23 +15,21 @@ class ProductController extends Controller
   }
 
   public function store(Request $request)
-  {
-    // Validasi input
+{
     $request->validate([
-      'category' => 'required|string|max:255',
-      'brand' => 'nullable|string|max:255',
-      'supplier' => 'required|string|max:255',
-      'name' => 'required|string|max:255',
-      'specification' => 'required|string|max:255',
-      'unit' => 'required|string|max:255',
-      'quantity' => 'required|integer|min:1',
-      'price' => 'required|numeric|min:0',
-      'description' => 'nullable|string',
-      'address' => 'nullable|string',
-      'image_paths.*' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120', // max 5MB
+        'category' => 'required|string|max:255',
+        'brand' => 'nullable|string|max:255',
+        'supplier' => 'required|string|max:255',
+        'name' => 'required|string|max:255',
+        'specification' => 'required|string|max:255',
+        'unit' => 'required|string|max:255',
+        'quantity' => 'required|integer|min:1',
+        'price' => 'required|numeric|min:0',
+        'description' => 'nullable|string',
+        'address' => 'nullable|string',
+        'image_paths.*' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
     ]);
 
-    // Simpan data produk
     $product = new Product();
     $product->category = $request->category;
     $product->brand = $request->brand;
@@ -43,25 +41,27 @@ class ProductController extends Controller
     $product->price = $request->price;
     $product->description = $request->description;
     $product->address = $request->address;
-
-    // Simpan dulu untuk dapat ID
+    $product->vendor_id = auth()->id();
     $product->save();
 
-    // Simpan gambar jika ada
+    $imageNames = [];
+
     if ($request->hasFile('image_paths')) {
-      $imagePaths = [];
-      foreach ($request->file('image_paths') as $file) {
-        $path = $file->store('products', 'public'); // simpan di storage/app/public/products
-        $imagePaths[] = $path;
-      }
-      // Misalnya Anda punya kolom images di tabel produk (type text/json)
-      $product->images = json_encode($imagePaths);
-      $product->save();
+        foreach ($request->file('image_paths') as $image) {
+            if ($image->isValid()) {
+                $filename = uniqid() . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('image_paths', $filename, 'public');
+                $imageNames[] = $filename;
+            }
+        }
     }
 
-    return redirect()->route('vendor.add_product')
-      ->with('success', 'Product added successfully!');
-  }
+    // Simpan sebagai JSON
+    $product->image_paths = $imageNames;
+    $product->save();
+
+    return redirect()->route('vendor.add_product')->with('success', 'Product added successfully!');
+}
 
   public function index()
   {

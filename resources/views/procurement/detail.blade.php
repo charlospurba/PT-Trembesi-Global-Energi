@@ -13,14 +13,6 @@
             <div class="lg:col-span-1">
                 <img src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0 ? asset('storage/' . $product->image_paths[0] . '?' . time()) : 'https://via.placeholder.com/300' }}"
                     alt="{{ $product->name }}" class="w-full h-64 object-cover rounded-md mb-4" />
-                <div class="flex gap-2 mt-4">
-                    @if (!empty($product->image_paths) && is_array($product->image_paths))
-                        @foreach ($product->image_paths as $image)
-                            <img src="{{ asset('storage/' . $image) }}"
-                                class="w-24 h-24 object-cover rounded border cursor-pointer" />
-                        @endforeach
-                    @endif
-                </div>
             </div>
 
             <!-- CENTER PRODUCT DETAIL -->
