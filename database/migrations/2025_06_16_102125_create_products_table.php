@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('category');
             $table->string('supplier');
-            $table->string('brand');
+            $table->string('brand')->nullable();
             $table->string('name');
             $table->string('specification')->nullable();
             $table->string('unit')->nullable();
