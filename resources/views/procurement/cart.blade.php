@@ -35,8 +35,7 @@
                                 <input type="checkbox" class="mr-4 w-4 h-4 text-blue-600 rounded item-checkbox"
                                     data-id="{{ $item['id'] }}" data-supplier="{{ $supplier }}">
                                 <img src="{{ $item['image'] ? asset('storage/' . $item['image']) : '/images/pipa-besi.png' }}"
-                                    width="60" height="60"
-                                    class="mr-4 rounded-md border border-gray-200 object-cover">
+                                    width="60" height="60" class="mr-4 rounded-md border border-gray-200 object-cover">
                                 <div class="flex-1">
                                     <div class="font-semibold text-gray-800 mb-1">{{ $item['name'] }}</div>
                                     <div class="text-gray-600 mb-2">
@@ -59,16 +58,14 @@
                                     <button
                                         class="w-8 h-8 border border-gray-300 rounded-l-md flex items-center justify-center hover:bg-gray-50 qty-btn"
                                         onclick="updateCartQuantity({{ $item['id'] }}, -1)">−</button>
-                                    <input type="text"
-                                        class="w-12 h-8 border-t border-b border-gray-300 text-center text-sm"
+                                    <input type="text" class="w-12 h-8 border-t border-b border-gray-300 text-center text-sm"
                                         value="{{ $item['quantity'] }}" id="quantity-{{ $item['id'] }}"
                                         onchange="updateCartQuantity({{ $item['id'] }}, this.value)">
                                     <button
                                         class="w-8 h-8 border border-gray-300 rounded-r-md flex items-center justify-center hover:bg-gray-50 qty-btn"
                                         onclick="updateCartQuantity({{ $item['id'] }}, 1)">+</button>
                                 </div>
-                                <button class="text-red-500 hover:text-red-700 text-lg"
-                                    onclick="removeFromCart({{ $item['id'] }})">
+                                <button class="text-red-500 hover:text-red-700 text-lg" onclick="removeFromCart({{ $item['id'] }})">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd"
                                             d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
@@ -89,9 +86,11 @@
                         <strong class="text-gray-800">Select All</strong>
                     </div>
                     <div class="flex items-center">
-                        <strong class="text-gray-800 mr-4">
-                            Total ({{ count($cartItems) }} Products): <span class="text-red-500" id="total-price">Rp.
-                                {{ number_format($totalPrice, 0, ',', '.') }}</span>
+                        <strong class="text-gray-800 mr-4" id="total-text">
+                            Total (<span id="total-item-count">{{ count($cartItems) }}</span> Products):
+                            <span class="text-red-500" id="total-price">
+                                Rp. {{ number_format($totalPrice, 0, ',', '.') }}
+                            </span>
                         </strong>
                         <a href="{{ route('procurement.checkout') }}">
                             <button
@@ -106,187 +105,166 @@
     </div>
 
     <script>
-        function updateCartQuantity(productId, value) {
-            console.log('updateCartQuantity called - Product ID:', productId, 'Value:', value);
-            let quantityInput = document.getElementById('quantity-' + productId);
+    function updateCartQuantity(productId, value) {
+        const quantityInput = document.getElementById('quantity-' + productId);
+        if (!quantityInput) {
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Cart item not found' });
+            return;
+        }
 
-            if (!quantityInput) {
-                console.warn('Quantity input not found for product ID:', productId);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Cart item not found'
-                });
-                return;
+        const buttons = document.querySelectorAll(`[data-item-id="${productId}"] .qty-btn`);
+        buttons.forEach(btn => btn.disabled = true);
+
+        let quantity = typeof value === 'string' ? parseInt(value) : parseInt(quantityInput.value) + value;
+        if (isNaN(quantity) || quantity <= 0) {
+            quantity = 1;
+            quantityInput.value = 1;
+            buttons.forEach(btn => btn.disabled = false);
+            Swal.fire({ icon: 'warning', title: 'Invalid Quantity', text: 'Quantity must be a positive number' });
+            return;
+        }
+
+        fetch('/cart/update/' + productId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ quantity: quantity })
+        })
+        .then(response => response.json())
+        .then(data => {
+            buttons.forEach(btn => btn.disabled = false);
+            if (data.success) {
+                quantityInput.value = quantity;
+                updateCartBadge(data.cart_count);
+                updateTotalPrice();
+                Swal.fire({ icon: 'success', title: 'Success', text: data.message, timer: 1500, showConfirmButton: false });
+
+                if (quantity <= 0) {
+                    const itemElement = quantityInput.closest('[data-item-id]');
+                    if (itemElement) itemElement.remove();
+                }
+            } else {
+                Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'Failed to update cart' });
             }
+        })
+        .catch(error => {
+            buttons.forEach(btn => btn.disabled = false);
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update cart: ' + error.message });
+        });
+    }
 
-            // Disable buttons to prevent double-clicks
-            let buttons = document.querySelectorAll(`[data-item-id="${productId}"] .qty-btn`);
-            buttons.forEach(btn => btn.disabled = true);
-
-            let quantity = typeof value === 'string' ? parseInt(value) : parseInt(quantityInput.value) + value;
-
-            if (isNaN(quantity) || quantity < 0) {
-                quantityInput.value = 1;
-                buttons.forEach(btn => btn.disabled = false);
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Invalid Quantity',
-                    text: 'Quantity must be a positive number'
-                });
-                return;
-            }
-
-            fetch('/cart/update/' + productId, {
+    function removeFromCart(productId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to remove this item from cart?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, remove it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/cart/remove/' + productId, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        quantity: quantity
-                    })
+                    }
                 })
                 .then(response => response.json())
                 .then(data => {
-                    buttons.forEach(btn => btn.disabled = false);
                     if (data.success) {
-                        quantityInput.value = quantity > 0 ? quantity : 1;
                         updateCartBadge(data.cart_count);
                         updateTotalPrice();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: data.message,
-                            timer: 1500
-                        });
-                        if (quantity <= 0) {
-                            // Remove the item from the DOM if deleted
-                            let itemElement = quantityInput.closest('[data-item-id]');
-                            if (itemElement) itemElement.remove();
-                        }
+                        const itemElement = document.querySelector(`[data-item-id="${productId}"]`);
+                        if (itemElement) itemElement.remove();
+                        Swal.fire({ icon: 'success', title: 'Removed', text: data.message, timer: 1500, showConfirmButton: false });
                     } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message || 'Failed to update cart'
-                        });
+                        Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'Failed to remove product' });
                     }
                 })
                 .catch(error => {
-                    console.error('Fetch Error:', error);
-                    buttons.forEach(btn => btn.disabled = false);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Failed to update cart: ' + error.message
-                    });
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to remove product: ' + error.message });
                 });
+            }
+        });
+    }
+
+    function updateCartBadge(count) {
+        const badge = document.getElementById('cartBadge');
+        if (badge) {
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'inline-block' : 'none';
+        }
+    }
+
+    function updateTotalPrice() {
+        let total = 0;
+        let itemCount = 0;
+
+        document.querySelectorAll('.item-checkbox:checked').forEach(checkbox => {
+            const item = checkbox.closest('[data-item-id]');
+            const quantityInput = item.querySelector('input[id^="quantity-"]');
+            const quantity = parseInt(quantityInput.value) || 0;
+
+            const priceElement = item.querySelector('.text-gray-600');
+            const priceText = priceElement ? priceElement.textContent.match(/Rp\.\s*([\d\.]+)/) : null;
+            const price = priceText ? parseFloat(priceText[1].replace(/\./g, '')) : 0;
+
+            total += price * quantity;
+            itemCount++;
+        });
+
+        const totalPriceElement = document.getElementById('total-price');
+        if (totalPriceElement) {
+            totalPriceElement.textContent = 'Rp. ' + total.toLocaleString('id-ID');
         }
 
-        function removeFromCart(productId) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to remove this item from cart?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, remove it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch('/cart/remove/' + productId, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                updateCartBadge(data.cart_count);
-                                updateTotalPrice();
-                                let itemElement = document.querySelector(`[data-item-id="${productId}"]`);
-                                if (itemElement) itemElement.remove();
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Success',
-                                    text: data.message,
-                                    timer: 1500
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: data.message || 'Failed to remove product'
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Fetch Error:', error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Failed to remove product: ' + error.message
-                            });
-                        });
-                }
+        const totalItemCountElement = document.getElementById('total-item-count');
+        if (totalItemCountElement) {
+            totalItemCountElement.textContent = itemCount;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectAllCheckbox = document.getElementById('select-all');
+
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function () {
+                const checked = this.checked;
+                document.querySelectorAll('.item-checkbox, .select-supplier').forEach(cb => cb.checked = checked);
+                updateTotalPrice();
             });
         }
 
-        function updateCartBadge(count) {
-            let badge = document.getElementById('cartBadge');
-            if (badge) {
-                badge.textContent = count;
-                badge.style.display = count > 0 ? 'inline-block' : 'none';
-            }
-        }
-
-        function updateTotalPrice() {
-            let total = 0;
-            let itemCount = 0;
-            document.querySelectorAll('[data-item-id]').forEach(item => {
-                let quantityInput = item.querySelector('input[id^="quantity-"]');
-                if (quantityInput) {
-                    let quantity = parseInt(quantityInput.value);
-                    let priceText = item.querySelector('.text-gray-600').childNodes[1].textContent.trim();
-                    let price = parseFloat(priceText.replace(/Rp\.|\./g, ''));
-                    total += price * quantity;
-                    itemCount++;
-                }
-            });
-            let totalPriceElement = document.getElementById('total-price');
-            if (totalPriceElement) {
-                totalPriceElement.textContent = 'Rp. ' + total.toLocaleString('id-ID');
-            }
-            let totalTextElement = document.querySelector('.text-gray-800.mr-4');
-            if (totalTextElement) {
-                totalTextElement.childNodes[1].textContent = `Total (${itemCount} Products): `;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Select All functionality
-            document.getElementById('select-all').addEventListener('change', function() {
-                document.querySelectorAll('.item-checkbox').forEach(checkbox => {
-                    checkbox.checked = this.checked;
+        document.querySelectorAll('.select-supplier').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const supplier = this.dataset.supplier;
+                const isChecked = this.checked;
+                document.querySelectorAll(`.item-checkbox[data-supplier="${supplier}"]`).forEach(item => {
+                    item.checked = isChecked;
                 });
-                document.querySelectorAll('.select-supplier').forEach(checkbox => {
-                    checkbox.checked = this.checked;
-                });
-            });
-
-            // Select Supplier functionality
-            document.querySelectorAll('.select-supplier').forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const supplier = this.dataset.supplier;
-                    document.querySelectorAll(`.item-checkbox[data-supplier="${supplier}"]`)
-                        .forEach(item => {
-                            item.checked = this.checked;
-                        });
-                });
+                updateTotalPrice();
             });
         });
-    </script>
+
+        document.querySelectorAll('.item-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                updateTotalPrice();
+                if (selectAllCheckbox) {
+                    const all = document.querySelectorAll('.item-checkbox').length;
+                    const checked = document.querySelectorAll('.item-checkbox:checked').length;
+                    selectAllCheckbox.checked = (all === checked);
+                }
+            });
+        });
+
+        // Hitung total awal saat halaman dimuat
+        updateTotalPrice();
+    });
+</script>
+
+
 @endsection
