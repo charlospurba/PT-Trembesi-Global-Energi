@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+    <!-- Include Navbar Component -->
+    @include('components.navbar')
 
     <div style="padding: 20px;">
         <div style="font-size: 14px; color: #6B7280; margin-bottom: 10px;">
