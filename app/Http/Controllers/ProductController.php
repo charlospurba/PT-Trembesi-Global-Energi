@@ -15,19 +15,19 @@ class ProductController extends Controller
   }
 
   public function store(Request $request)
-{
+  {
     $request->validate([
-        'category' => 'required|string|max:255',
-        'brand' => 'nullable|string|max:255',
-        'supplier' => 'required|string|max:255',
-        'name' => 'required|string|max:255',
-        'specification' => 'required|string|max:255',
-        'unit' => 'required|string|max:255',
-        'quantity' => 'required|integer|min:1',
-        'price' => 'required|numeric|min:0',
-        'description' => 'nullable|string',
-        'address' => 'nullable|string',
-        'image_paths.*' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
+      'category' => 'required|string|max:255',
+      'brand' => 'nullable|string|max:255',
+      'supplier' => 'required|string|max:255',
+      'name' => 'required|string|max:255',
+      'specification' => 'required|string|max:255',
+      'unit' => 'required|string|max:255',
+      'quantity' => 'required|integer|min:1',
+      'price' => 'required|numeric|min:0',
+      'description' => 'nullable|string',
+      'address' => 'nullable|string',
+      'image_paths.*' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
     ]);
 
     $product = new Product();
@@ -47,13 +47,13 @@ class ProductController extends Controller
     $imageNames = [];
 
     if ($request->hasFile('image_paths')) {
-        foreach ($request->file('image_paths') as $image) {
-            if ($image->isValid()) {
-                $filename = uniqid() . '.' . $image->getClientOriginalExtension();
-                $image->storeAs('image_paths', $filename, 'public');
-                $imageNames[] = $filename;
-            }
+      foreach ($request->file('image_paths') as $image) {
+        if ($image->isValid()) {
+          $filename = uniqid() . '.' . $image->getClientOriginalExtension();
+          $image->storeAs('image_paths', $filename, 'public');
+          $imageNames[] = $filename;
         }
+      }
     }
 
     // Simpan sebagai JSON
@@ -61,7 +61,7 @@ class ProductController extends Controller
     $product->save();
 
     return redirect()->route('vendor.add_product')->with('success', 'Product added successfully!');
-}
+  }
 
   public function index()
   {
@@ -99,7 +99,7 @@ class ProductController extends Controller
     return view('procurement.personal', compact('products'));
   }
 
-  public function dashboard()
+  public function dashboard(Request $request)
   {
     $randomMaterials = Product::where('category', 'Material')->inRandomOrder()->limit(6)->get();
     $randomEquipments = Product::where('category', 'Equipment')->inRandomOrder()->limit(6)->get();
@@ -107,13 +107,26 @@ class ProductController extends Controller
     $randomConsumables = Product::where('category', 'Consumables')->inRandomOrder()->limit(6)->get();
     $randomPPEs = Product::where('category', 'Personal Protective Equipment')->inRandomOrder()->limit(6)->get();
 
-    return view('procurement.dashboardproc', compact(
+    $data = compact(
       'randomMaterials',
       'randomEquipments',
       'randomElectricals',
       'randomConsumables',
       'randomPPEs'
-    ));
+    );
+
+    // ✅ Periksa apakah user sudah login
+    if (auth()->check()) {
+      // Jika user login, arahkan berdasarkan peran
+      if (auth()->user()->role === 'procurement') {
+        return view('procurement.dashboardproc', $data);
+      } else {
+        return view('dashboard', $data);
+      }
+    } else {
+      // ✅ Jika belum login, tampilkan dashboard umum (guest)
+      return view('dashboard', $data);
+    }
   }
 
   public function show($id)

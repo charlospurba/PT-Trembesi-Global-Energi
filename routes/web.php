@@ -10,8 +10,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 
 // 🏠 Default route tetap dashboard walaupun belum login
-Route::get('/', fn() => view('dashboard'))->name('dashboard');
-Route::get('/dashboard', fn() => view('dashboard'));
+Route::get('/', [ProductController::class, 'dashboard'])->name('dashboard');
+Route::get('/dashboard', action: [ProductController::class, 'dashboard']);
 
 // 📄 Optional route ke login/signup via tombol (view langsung)
 Route::view('/signin', 'auth.login')->name('signin');
