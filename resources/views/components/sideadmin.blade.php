@@ -8,8 +8,8 @@
            class="block {{ request()->routeIs('superadmin.add_users') ? 'text-red-700 font-semibold' : 'text-gray-700 hover:text-red-500' }}">
             ➕ Add User
         </a>
-        <a href="{{ route('superadmin.requests.index') }}"
-           class="block {{ request()->routeIs('superadmin.requests.index') ? 'text-red-700 font-semibold' : 'text-gray-700 hover:text-red-500' }}">
+        <a href="{{ route('superadmin.request') }}"
+          class="block {{ request()->routeIs('superadmin.request') ? 'text-red-700 font-semibold' : 'text-gray-700 hover:text-red-500' }}">
             🔄 Request
         </a>
     </nav>

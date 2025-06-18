@@ -80,13 +80,11 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/report', 'vendor.report')->name('vendor.report');
     Route::view('/vendor/view', 'vendor.view')->name('vendor.view');
 
-     //Superadmin
-    // Superadmin Dashboard
+    //Superadmin
+
     Route::view('/dashboard/superadmin', 'superadmin.dashboardadm')->name('superadmin.dashboard');
-    // Add User
     Route::view('/dashboard/superadmin/add_users', 'superadmin.add_users')->name('superadmin.add_users');
-    // Request List
-    Route::view('/dashboard/superadmin/requests', 'superadmin.requests.index')->name('superadmin.requests.index');
+    Route::view('/dashboard/superadmin/request', 'superadmin.request')->name('superadmin.request');
 
 });
 
