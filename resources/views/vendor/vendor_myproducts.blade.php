@@ -19,13 +19,20 @@
 
             <div class="bg-white p-6 rounded shadow">
                 <div class="mb-4">
-                    <input type="text" id="searchInput" placeholder="Search by name or supplier..."
-                        class="w-full max-w-md border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500" />
+                    <select id="sortSelect"
+                        class="w-full max-w-md border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 ml-10">
+                        <option value="">All Product</option>
+                        <option value="Material">Material</option>
+                        <option value="Equipment">Equipment</option>
+                        <option value="Electrical Tools">Electrical Tools</option>
+                        <option value="Consumables">Consumables</option>
+                        <option value="Personal Protective Equipment">Personal Protective Equipment</option>
+                    </select>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="productGrid">
                     @forelse ($products as $product)
                         <div class="border rounded-lg p-4 hover:shadow-md transition-shadow product-item"
-                            data-name="{{ $product->name }}" data-supplier="{{ $product->supplier }}">
+                            data-name="{{ $product->name }}" data-category="{{ $product->category }}">
                             @if ($product->image_paths && is_array($product->image_paths) && count($product->image_paths) > 0)
                                 <img src="{{ asset('storage/' . $product->image_paths[0]) }}" alt="{{ $product->name }}"
                                     class="w-24 h-24 object-cover rounded mx-auto mb-4" />
@@ -57,10 +64,9 @@
     <footer class="bg-white text-center p-4 text-sm text-gray-500">
         © 2025 Trembesi Shop
     </footer>
-    @endsection
+@endsection
 
-    @push('scripts')
-
+@push('scripts')
     <script>
         document.querySelectorAll('.delete-product').forEach(button => {
             button.addEventListener('click', function() {
@@ -103,12 +109,11 @@
             });
         });
 
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
+        document.getElementById('sortSelect').addEventListener('change', function(e) {
+            const sortValue = e.target.value.toLowerCase();
             document.querySelectorAll('.product-item').forEach(item => {
-                const name = item.getAttribute('data-name').toLowerCase();
-                const supplier = item.getAttribute('data-supplier').toLowerCase();
-                if (name.includes(searchTerm) || supplier.includes(searchTerm)) {
+                const category = item.getAttribute('data-category').toLowerCase();
+                if (sortValue === '' || category.includes(sortValue)) {
                     item.style.display = 'block';
                 } else {
                     item.style.display = 'none';
@@ -116,6 +121,4 @@
             });
         });
     </script>
-    @endpush
-
-
+@endpush
