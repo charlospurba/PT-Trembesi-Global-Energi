@@ -23,6 +23,9 @@
                             class="text-xs font-normal float-right">*Required</span></h2>
                     <form id="checkout-form" action="{{ route('procurement.checkout.submit') }}" method="POST">
                         @csrf
+                        @foreach ($cartItems as $item)
+                            <input type="hidden" name="selected_ids[]" value="{{ $item['id'] }}">
+                        @endforeach
                         <div class="mb-4">
                             <label class="block mb-1 font-semibold">Email *</label>
                             <input type="email" value="{{ auth()->user()->email }}" disabled
@@ -103,8 +106,9 @@
                     </div>
 
                     <div class="flex flex-col gap-2">
-                        <button type="button" onclick="printEBilling()"
-                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 rounded text-sm">Print
+                        <button type="button" id="print-ebilling-btn" onclick="printEBilling()"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 rounded text-sm"
+                            disabled>Print
                             E-Billing</button>
                         <button type="button" onclick="cancelCheckout()"
                             class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-1.5 rounded text-sm">Cancel</button>
@@ -115,12 +119,65 @@
     </div>
 
     <script>
+        let checkoutCompleted = false;
+
         function printEBilling() {
-            Swal.fire({
-                icon: 'info',
-                title: 'Print E-Billing',
-                text: 'This feature is under development.'
-            });
+            if (!checkoutCompleted) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Checkout Required',
+                    text: 'Please complete the checkout process before generating e-billing.'
+                });
+                return;
+            }
+
+            const selectedIds = @json(array_column($cartItems, 'id'));
+            if (selectedIds.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No Items',
+                    text: 'No items selected for e-billing.'
+                });
+                return;
+            }
+
+            fetch('/cart/e-billing', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        selected_ids: selectedIds
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: data.message,
+                            timer: 1500
+                        });
+                        updateNotificationBadge();
+                        document.getElementById('print-ebilling-btn').disabled = true;
+                        window.open(data.pdf_path, '_blank');
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to generate E-Billing: ' + error.message
+                    });
+                });
         }
 
         function cancelCheckout() {
@@ -139,8 +196,33 @@
             });
         }
 
+        function updateNotificationBadge() {
+            fetch('/notifications/count', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('notificationBadge');
+                    badge.textContent = data.count;
+                    badge.style.display = data.count > 0 ? 'inline-block' : 'none';
+                });
+        }
+
         document.getElementById('checkout-form').addEventListener('submit', function(e) {
             e.preventDefault();
+            const selectedIds = @json(array_column($cartItems, 'id'));
+            if (selectedIds.length === 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'No Items',
+                    text: 'No items selected for checkout.'
+                });
+                return;
+            }
+
             fetch(this.action, {
                     method: 'POST',
                     headers: {
@@ -152,7 +234,8 @@
                         country: this.querySelector('input[name="country"]').value,
                         state: this.querySelector('input[name="state"]').value,
                         postal_code: this.querySelector('input[name="postal_code"]').value,
-                        street_address: this.querySelector('textarea[name="street_address"]').value
+                        street_address: this.querySelector('textarea[name="street_address"]').value,
+                        selected_ids: selectedIds
                     })
                 })
                 .then(response => {
@@ -168,9 +251,10 @@
                             title: 'Success',
                             text: data.message || 'Checkout completed successfully!',
                             timer: 1500
-                        }).then(() => {
-                            window.location.href = '{{ route('procurement.dashboardproc') }}';
                         });
+                        checkoutCompleted = true;
+                        document.getElementById('print-ebilling-btn').disabled = false;
+                        updateNotificationBadge();
                     } else {
                         Swal.fire({
                             icon: 'error',

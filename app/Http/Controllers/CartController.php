@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Cart;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class CartController extends Controller
 {
@@ -26,7 +29,6 @@ class CartController extends Controller
 
       Log::info('Add to Cart - Product ID: ' . $id . ', Quantity: ' . $quantity . ', Available Quantity: ' . ($product->quantity ?? 'Unlimited'));
 
-      // Validate quantity
       if ($quantity <= 0) {
         return response()->json([
           'success' => false,
@@ -42,7 +44,6 @@ class CartController extends Controller
       $existingQuantity = $cartItem ? $cartItem->quantity : 0;
       $totalQuantity = $existingQuantity + $quantity;
 
-      // Validate total quantity against available quantity
       if ($totalQuantity > $availableQuantity) {
         return response()->json([
           'success' => false,
@@ -50,7 +51,6 @@ class CartController extends Controller
         ], 422);
       }
 
-      // Update or add to cart
       if ($cartItem) {
         $cartItem->update(['quantity' => $totalQuantity]);
       } else {
@@ -123,7 +123,6 @@ class CartController extends Controller
       $product = Product::findOrFail($id);
       $availableQuantity = $product->quantity ?? PHP_INT_MAX;
 
-      // Validate quantity
       if ($quantity <= 0) {
         $cartItem->delete();
         $cartCount = Cart::where('user_id', $user->id)->count();
@@ -223,25 +222,35 @@ class CartController extends Controller
     return view('procurement.cart', compact('cartItems', 'totalPrice'));
   }
 
-  public function checkout()
+  public function checkout(Request $request)
   {
     $user = Auth::user();
-    $cartItems = Cart::where('user_id', $user->id)
-      ->with('product')
-      ->get()
-      ->map(function ($cartItem) {
-        return [
-          'id' => $cartItem->product_id,
-          'name' => $cartItem->product->name,
-          'price' => $cartItem->product->price,
-          'quantity' => $cartItem->quantity,
-          'image' => !empty($cartItem->product->image_paths) && is_array($cartItem->product->image_paths)
-            ? $cartItem->product->image_paths[0]
-            : null,
-          'variant' => $cartItem->variant ?? 'default',
-          'supplier' => $cartItem->product->supplier,
-        ];
-      })->toArray();
+    $selectedIds = $request->input('selected_ids', []);
+
+    $query = Cart::where('user_id', $user->id)->with('product');
+
+    if (!empty($selectedIds)) {
+      $query->whereIn('product_id', $selectedIds);
+    }
+
+    $cartItems = $query->get()->map(function ($cartItem) {
+      return [
+        'id' => $cartItem->product_id,
+        'name' => $cartItem->product->name,
+        'price' => $cartItem->product->price,
+        'quantity' => $cartItem->quantity,
+        'image' => !empty($cartItem->product->image_paths) && is_array($cartItem->product->image_paths)
+          ? $cartItem->product->image_paths[0]
+          : null,
+        'variant' => $cartItem->variant ?? 'default',
+        'supplier' => $cartItem->product->supplier,
+      ];
+    })->toArray();
+
+    $suppliers = array_unique(array_column($cartItems, 'supplier'));
+    if (count($suppliers) > 1) {
+      return redirect()->back()->withErrors(['vendor' => 'Please select products from only one vendor for checkout.']);
+    }
 
     $totalPrice = array_sum(array_map(function ($item) {
       return $item['price'] * $item['quantity'];
@@ -266,21 +275,185 @@ class CartController extends Controller
         'postal_code' => 'required|string|max:20',
         'street_address' => 'required|string|max:500',
         'state' => 'nullable|string|max:255',
+        'selected_ids' => 'required|array',
       ]);
 
       $user = Auth::user();
-      // Placeholder: Process the order (e.g., create an order record)
-      Cart::where('user_id', $user->id)->delete();
+      $selectedIds = $request->input('selected_ids', []);
+
+      Log::info('Submit Checkout - User: ' . $user->id . ', Selected IDs: ', $selectedIds);
+
+      if (empty($selectedIds)) {
+        Log::warning('No selected IDs provided for checkout');
+        return response()->json([
+          'success' => false,
+          'message' => 'No items selected for checkout.'
+        ], 422);
+      }
+
+      $cartItems = Cart::where('user_id', $user->id)
+        ->whereIn('product_id', $selectedIds)
+        ->with('product')
+        ->get();
+
+      if ($cartItems->isEmpty()) {
+        Log::warning('No cart items found for selected IDs', ['selected_ids' => $selectedIds]);
+        return response()->json([
+          'success' => false,
+          'message' => 'No valid items found in cart for checkout.'
+        ], 422);
+      }
+
+      $suppliers = $cartItems->pluck('product.supplier')->unique()->toArray();
+      if (count($suppliers) > 1) {
+        Log::warning('Multiple vendors detected in checkout', ['suppliers' => $suppliers]);
+        return response()->json([
+          'success' => false,
+          'message' => 'Checkout can only include products from one vendor.'
+        ], 422);
+      }
+
+      $checkoutItems = $cartItems->map(function ($cartItem) {
+        return [
+          'id' => $cartItem->product_id,
+          'name' => $cartItem->product->name,
+          'price' => $cartItem->product->price,
+          'quantity' => $cartItem->quantity,
+          'variant' => $cartItem->variant ?? 'default',
+          'supplier' => $cartItem->product->supplier,
+        ];
+      })->toArray();
+
+      Log::info('Checkout items stored in session', ['checkout_items' => $checkoutItems]);
+      session()->put('checkout_items', $checkoutItems);
+
+      Notification::create([
+        'user_id' => $user->id,
+        'type' => 'order',
+        'message' => 'New order placed with ' . $suppliers[0] . ' for ' . $cartItems->count() . ' items.',
+        'data' => json_encode([
+          'order_details' => $cartItems->map(function ($item) {
+            return [
+              'product_name' => $item->product->name,
+              'quantity' => $item->quantity,
+              'price' => $item->product->price,
+            ];
+          })->toArray(),
+        ]),
+      ]);
+
+      Cart::where('user_id', $user->id)
+        ->whereIn('product_id', $selectedIds)
+        ->delete();
 
       return response()->json([
         'success' => true,
         'message' => 'Checkout completed successfully!'
       ]);
     } catch (\Exception $e) {
-      Log::error('Checkout Error: ' . $e->getMessage());
+      Log::error('Checkout Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
       return response()->json([
         'success' => false,
-        'message' => 'Failed to complete checkout'
+        'message' => 'Failed to complete checkout: ' . $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function generateEBilling(Request $request)
+  {
+    try {
+      $user = Auth::user();
+      $checkoutItems = session()->get('checkout_items', []);
+      $selectedIds = $request->input('selected_ids', []);
+
+      Log::info('Generate E-Billing - User: ' . $user->id . ', Session Items: ', ['checkout_items' => $checkoutItems, 'selected_ids' => $selectedIds]);
+
+      if (empty($checkoutItems) && !empty($selectedIds)) {
+        Log::info('No session items found, attempting to fetch from cart with selected IDs');
+        $cartItems = Cart::where('user_id', $user->id)
+          ->whereIn('product_id', $selectedIds)
+          ->with('product')
+          ->get();
+
+        if ($cartItems->isEmpty()) {
+          Log::warning('No cart items found for selected IDs', ['selected_ids' => $selectedIds]);
+          return response()->json([
+            'success' => false,
+            'message' => 'No valid items found for e-billing.'
+          ], 422);
+        }
+
+        $checkoutItems = $cartItems->map(function ($cartItem) {
+          return [
+            'id' => $cartItem->product_id,
+            'name' => $cartItem->product->name,
+            'price' => $cartItem->product->price,
+            'quantity' => $cartItem->quantity,
+            'variant' => $cartItem->variant ?? 'default',
+            'supplier' => $cartItem->product->supplier,
+          ];
+        })->toArray();
+      }
+
+      if (empty($checkoutItems)) {
+        Log::warning('No checkout items found for e-billing');
+        return response()->json([
+          'success' => false,
+          'message' => 'No items found for e-billing. Please complete checkout first.'
+        ], 422);
+      }
+
+      $suppliers = array_unique(array_column($checkoutItems, 'supplier'));
+      if (count($suppliers) > 1) {
+        Log::warning('Multiple vendors detected in e-billing', ['suppliers' => $suppliers]);
+        return response()->json([
+          'success' => false,
+          'message' => 'E-Billing can only include products from one vendor.'
+        ], 422);
+      }
+
+      $data = [
+        'cartItems' => array_map(function ($item) {
+          return [
+            'name' => $item['name'],
+            'quantity' => $item['quantity'],
+            'price' => $item['price'],
+            'total' => $item['price'] * $item['quantity'],
+          ];
+        }, $checkoutItems),
+        'totalPrice' => array_sum(array_map(function ($item) {
+          return $item['price'] * $item['quantity'];
+        }, $checkoutItems)),
+        'user' => $user,
+        'vendor' => $suppliers[0],
+        'date' => now()->format('Y-m-d'),
+      ];
+
+      Log::info('E-Billing data prepared', ['data' => $data]);
+
+      $pdf = PDF::loadView('procurement.ebilling', $data);
+      $filename = 'e-billing-' . time() . '.pdf';
+      Storage::disk('public')->put($filename, $pdf->output());
+
+      Notification::create([
+        'user_id' => $user->id,
+        'type' => 'e-billing',
+        'message' => 'E-Billing generated for order with ' . $suppliers[0],
+        'data' => json_encode(['pdf_path' => $filename]),
+      ]);
+
+      session()->forget('checkout_items');
+
+      return response()->json([
+        'success' => true,
+        'message' => 'E-Billing generated and sent to notifications!',
+        'pdf_path' => Storage::url($filename),
+      ]);
+    } catch (\Exception $e) {
+      Log::error('E-Billing Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+      return response()->json([
+        'success' => false,
+        'message' => 'Failed to generate E-Billing: ' . $e->getMessage()
       ], 500);
     }
   }

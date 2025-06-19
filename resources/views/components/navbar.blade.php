@@ -7,7 +7,7 @@
 
                 $dashboardLink = match ($role) {
                     'procurement' => route('procurement.dashboardproc'),
-                    'superadmin' => route('dashboard.superadmin'),
+                    'superadmin' => route('superadmin.dashboard'),
                     'product_manager' => route('dashboard.productmanager'),
                     default => route('dashboard'),
                 };
@@ -38,13 +38,21 @@
                 <i class="fas fa-shopping-cart"></i>
                 <span class="badge cart-badge" id="cartBadge" style="display: none;">0</span>
             </a>
-            <a href="/notifications" class="nav-icon">
-                <i class="fas fa-bell"></i>
-                <span class="badge notification-badge" id="notificationBadge" style="display: none;">0</span>
-            </a>
+            <div class="notification-dropdown" style="position: relative; display: inline-block;">
+                <a href="#" class="nav-icon" onclick="toggleNotificationDropdown(event)">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge notification-badge" id="notificationBadge" style="display: none;">0</span>
+                </a>
+                <div id="notificationDropdown" class="dropdown-menu"
+                    style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; min-width: 250px; z-index: 999;">
+                    <div id="notificationList" style="max-height: 300px; overflow-y: auto;">
+                        <!-- Notifications will be loaded here -->
+                    </div>
+                </div>
+            </div>
             <!-- Profile Dropdown -->
             <div class="profile-dropdown" style="position: relative;">
-                <div class="profile-trigger" onclick="toggleDropdown()"
+                <div class="profile-trigger" onclick="toggleProfileDropdown()"
                     style="cursor: pointer; display: flex; align-items: center; color: white;">
                     @auth
                         @php
@@ -68,7 +76,7 @@
                 </div>
 
                 <!-- Dropdown Menu -->
-                <div id="dropdownMenu" class="dropdown-menu"
+                <div id="profileDropdown" class="dropdown-menu"
                     style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px10px rgba(0,0,0,0.1); display: none; min-width: 150px; z-index: 999;">
                     <a href="/dashboard/profile" class="dropdown-item"
                         style="display: block; padding: 10px 15px; text-decoration: none; color: black;">My Profile</a>
@@ -86,18 +94,81 @@
 </nav>
 
 <script>
-    function toggleDropdown() {
-        const dropdown = document.getElementById("dropdownMenu");
+    function toggleProfileDropdown() {
+        const dropdown = document.getElementById("profileDropdown");
         dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+        document.getElementById("notificationDropdown").style.display = "none";
+    }
+
+    function toggleNotificationDropdown(event) {
+        event.preventDefault();
+        const dropdown = document.getElementById("notificationDropdown");
+        dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+        document.getElementById("profileDropdown").style.display = "none";
+        if (dropdown.style.display === "block") {
+            loadNotifications();
+        }
     }
 
     window.addEventListener("click", function(e) {
-        const trigger = document.querySelector(".profile-trigger");
-        const dropdown = document.getElementById("dropdownMenu");
-        if (!trigger.contains(e.target)) {
-            dropdown.style.display = "none";
+        const profileTrigger = document.querySelector(".profile-trigger");
+        const profileDropdown = document.getElementById("profileDropdown");
+        const notificationTrigger = document.querySelector(".notification-dropdown .nav-icon");
+        const notificationDropdown = document.getElementById("notificationDropdown");
+        if (!profileTrigger.contains(e.target) && !profileDropdown.contains(e.target)) {
+            profileDropdown.style.display = "none";
+        }
+        if (!notificationTrigger.contains(e.target) && !notificationDropdown.contains(e.target)) {
+            notificationDropdown.style.display = "none";
         }
     });
+
+    function loadNotifications() {
+        fetch('/notifications', {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const notificationList = document.getElementById('notificationList');
+                notificationList.innerHTML = '';
+                if (data.notifications.length === 0) {
+                    notificationList.innerHTML =
+                        '<div style="padding: 10px; text-align: center;">No notifications</div>';
+                } else {
+                    data.notifications.forEach(notification => {
+                        const div = document.createElement('div');
+                        div.style.padding = '10px 15px';
+                        div.style.borderBottom = '1px solid #ddd';
+                        div.style.backgroundColor = notification.read ? '#fff' : '#f9f9f9';
+                        div.innerHTML = `
+                        <div style="font-weight: ${notification.read ? 'normal' : 'bold'}">${notification.message}</div>
+                        <div style="font-size: 12px; color: #666;">${notification.created_at}</div>
+                        ${notification.type === 'e-billing' ? `<a href="/storage/${notification.data.pdf_path}" target="_blank" style="color: #3085d6; text-decoration: none;">View E-Billing</a>` : ''}
+                    `;
+                        div.addEventListener('click', () => markAsRead(notification.id));
+                        notificationList.appendChild(div);
+                    });
+                }
+                const badge = document.getElementById('notificationBadge');
+                badge.textContent = data.unread_count;
+                badge.style.display = data.unread_count > 0 ? 'inline-block' : 'none';
+            });
+    }
+
+    function markAsRead(notificationId) {
+        fetch(`/notifications/${notificationId}/read`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(() => loadNotifications());
+    }
 
     // Logout with SweetAlert
     document.getElementById('logoutBtn').addEventListener('click', function(e) {
@@ -118,7 +189,7 @@
         });
     });
 
-    // Initialize cart badge
+    // Initialize cart and notification badges
     document.addEventListener('DOMContentLoaded', function() {
         fetch('/cart/count', {
                 method: 'GET',
@@ -132,5 +203,7 @@
                 badge.textContent = data.count;
                 badge.style.display = data.count > 0 ? 'inline-block' : 'none';
             });
+
+        loadNotifications();
     });
 </script>

@@ -3,6 +3,7 @@
 use App\Http\Controllers\VendorHomeController;
 use App\Http\Controllers\VendorProductController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -55,13 +56,19 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/update/{id}', [CartController::class, 'updateCart'])->name('cart.update');
     Route::post('/cart/remove/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
     Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
+    Route::post('/cart/e-billing', [CartController::class, 'generateEBilling'])->name('cart.e-billing');
 
     // Checkout
-    Route::get('/procurement/checkout', [CartController::class, 'checkout'])->name('procurement.checkout');
-    Route::post('/procurement/checkout', [CartController::class, 'submitCheckout'])->name('procurement.checkout.submit');
+    Route::match(['get', 'post'], '/procurement/checkout', [CartController::class, 'checkout'])->name('procurement.checkout');
+    Route::post('/procurement/checkout/submit', [CartController::class, 'submitCheckout'])->name('procurement.checkout.submit');
+    Route::get('/dashboard/vendor', [VendorHomeController::class, 'index'])->name('vendor.dashboardvendor');
+
+    // Notification routes
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+    Route::get('/notifications/count', [NotificationController::class, 'count'])->name('notifications.count');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
 
     // Vendor product routes
-    Route::get('/dashboard/vendor', [VendorHomeController::class, 'index'])->name('vendor.dashboardvendor');
     Route::get('/myproducts', [VendorProductController::class, 'index'])->name('vendor.myproducts');
     Route::get('/add_product', [VendorProductController::class, 'create'])->name('vendor.add_product');
     Route::post('/add_product', [VendorProductController::class, 'store'])->name('vendor.add_product.store');
@@ -80,13 +87,10 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/vendor/view', 'vendor.view')->name('vendor.view');
 
     //Superadmin
-
     Route::view('/dashboard/superadmin', 'superadmin.dashboardadm')->name('superadmin.dashboard');
     Route::view('/dashboard/superadmin/add_users', 'superadmin.add_users')->name('superadmin.add_users');
     Route::view('/dashboard/superadmin/request', 'superadmin.request')->name('superadmin.request');
-
 });
-
 
 // Profile
 Route::get('/dashboard/profile', [ProfileController::class, 'edit'])->name('components.profile');
