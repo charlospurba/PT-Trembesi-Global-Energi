@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('type'); // e.g., 'order', 'e-billing'
+            $table->string('type');
             $table->text('message');
             $table->json('data')->nullable();
             $table->boolean('read')->default(false);

@@ -92,7 +92,7 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/dashboard/superadmin/add_users', 'superadmin.add_users')->name('superadmin.add_users');
     Route::view('/dashboard/superadmin/request', 'superadmin.request')->name('superadmin.request');
 
-     Route::get('/superadmin/users/create', [UserManagementController::class, 'create'])->name('superadmin.users.create');
+    Route::get('/superadmin/users/create', [UserManagementController::class, 'create'])->name('superadmin.users.create');
     Route::post('/superadmin/users/store', [UserManagementController::class, 'store'])->name('superadmin.users.store');
 
 });

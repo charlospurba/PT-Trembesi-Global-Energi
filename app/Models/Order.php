@@ -9,11 +9,6 @@ class Order extends Model
 {
   use HasFactory;
 
-  /**
-   * The attributes that are mass assignable.
-   *
-   * @var array<string>
-   */
   protected $fillable = [
     'user_id',
     'vendor',
@@ -25,26 +20,15 @@ class Order extends Model
     'state',
   ];
 
-  /**
-   * The attributes that should be cast.
-   *
-   * @var array<string, string>
-   */
   protected $casts = [
     'total_price' => 'decimal:2',
   ];
 
-  /**
-   * Get the user that owns the order.
-   */
   public function user()
   {
     return $this->belongsTo(User::class);
   }
 
-  /**
-   * Get the items for the order.
-   */
   public function orderItems()
   {
     return $this->hasMany(OrderItem::class);

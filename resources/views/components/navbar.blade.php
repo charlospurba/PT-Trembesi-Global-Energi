@@ -1,10 +1,8 @@
-<!-- Navbar Component -->
 <nav class="navbar bg-red-600 p-2 px-5 w-full shadow-md z-50">
     <div class="nav-container">
         <div class="logo-section">
             @php
                 $role = Auth::check() ? Auth::user()->role : null;
-
                 $dashboardLink = match ($role) {
                     'procurement' => route('procurement.dashboardproc'),
                     'superadmin' => route('superadmin.dashboard'),
@@ -12,13 +10,11 @@
                     default => route('dashboard'),
                 };
             @endphp
-
             <a href="{{ $dashboardLink }}" class="logo">
                 <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Trembesi Logo" class="logo-img">
             </a>
         </div>
 
-        <!-- Search Form -->
         <form id="searchForm" action="/search" method="GET"
             style="flex-grow: 1; max-width: 600px; min-width: 300px; margin-right: 10px;">
             <div
@@ -46,11 +42,9 @@
                 <div id="notificationDropdown" class="dropdown-menu"
                     style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; min-width: 250px; z-index: 999;">
                     <div id="notificationList" style="max-height: 300px; overflow-y: auto;">
-                        <!-- Notifications will be loaded here -->
                     </div>
                 </div>
             </div>
-            <!-- Profile Dropdown -->
             <div class="profile-dropdown" style="position: relative;">
                 <div class="profile-trigger" onclick="toggleProfileDropdown()"
                     style="cursor: pointer; display: flex; align-items: center; color: white;">
@@ -66,16 +60,12 @@
                         </div>
                         <span>{{ Auth::user()->name }}</span>
                     @endauth
-
                     @guest
                         <i class="fas fa-user-circle" style="font-size: 24px; margin-right: 8px;"></i>
                         <span>Guest</span>
                     @endguest
-
                     <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
                 </div>
-
-                <!-- Dropdown Menu -->
                 <div id="profileDropdown" class="dropdown-menu"
                     style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px10px rgba(0,0,0,0.1); display: none; min-width: 150px; z-index: 999;">
                     <a href="/dashboard/profile" class="dropdown-item"
@@ -144,10 +134,10 @@
                         div.style.borderBottom = '1px solid #ddd';
                         div.style.backgroundColor = notification.read ? '#fff' : '#f9f9f9';
                         div.innerHTML = `
-                        <div style="font-weight: ${notification.read ? 'normal' : 'bold'}">${notification.message}</div>
-                        <div style="font-size: 12px; color: #666;">${notification.created_at}</div>
-                        ${notification.type === 'e-billing' ? `<a href="/storage/${notification.data.pdf_path}" target="_blank" style="color: #3085d6; text-decoration: none;">View E-Billing</a>` : ''}
-                    `;
+                            <div style="font-weight: ${notification.read ? 'normal' : 'bold'}">${notification.message}</div>
+                            <div style="font-size: 12px; color: #666;">${notification.created_at}</div>
+                            ${notification.type === 'e-billing' ? `<a href="/storage/${notification.data.pdf_path}" target="_blank" style="color: #3085d6; text-decoration: none;">View E-Billing</a>` : ''}
+                        `;
                         div.addEventListener('click', () => markAsRead(notification.id));
                         notificationList.appendChild(div);
                     });
@@ -155,6 +145,9 @@
                 const badge = document.getElementById('notificationBadge');
                 badge.textContent = data.unread_count;
                 badge.style.display = data.unread_count > 0 ? 'inline-block' : 'none';
+            })
+            .catch(error => {
+                console.error('Failed to load notifications:', error);
             });
     }
 
@@ -167,10 +160,12 @@
                 }
             })
             .then(response => response.json())
-            .then(() => loadNotifications());
+            .then(() => loadNotifications())
+            .catch(error => {
+                console.error('Failed to mark notification as read:', error);
+            });
     }
 
-    // Logout with SweetAlert
     document.getElementById('logoutBtn').addEventListener('click', function(e) {
         e.preventDefault();
         Swal.fire({
@@ -189,7 +184,6 @@
         });
     });
 
-    // Initialize cart and notification badges
     document.addEventListener('DOMContentLoaded', function() {
         fetch('/cart/count', {
                 method: 'GET',
@@ -205,5 +199,6 @@
             });
 
         loadNotifications();
+        setInterval(loadNotifications, 30000); // Poll every 30 seconds
     });
 </script>

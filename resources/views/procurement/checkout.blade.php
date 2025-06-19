@@ -1,14 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- Include SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @include('components.navbar')
 
     <div class="min-h-screen bg-[#F6F3F2] py-10">
         <div class="w-full max-w-[1000px] mx-auto px-4">
-            {{-- Breadcrumb --}}
             <h5 class="text-lg font-bold mb-6">
                 <a href="{{ route('procurement.dashboardproc') }}" class="text-black hover:underline">Dashboard</a>
                 <span class="text-gray-500"> > </span>
@@ -17,7 +15,6 @@
             </h5>
 
             <div class="flex flex-col md:flex-row gap-6">
-                {{-- LEFT: Form --}}
                 <div class="w-full md:w-1/2 bg-white p-6 rounded-xl shadow text-sm">
                     <h2 class="text-lg font-bold mb-4">CONTACT INFORMATION <span
                             class="text-xs font-normal float-right">*Required</span></h2>
@@ -74,7 +71,6 @@
                     </form>
                 </div>
 
-                {{-- RIGHT: Ringkasan Produk --}}
                 <div class="w-full md:w-1/2 bg-white p-6 rounded-xl shadow border border-red-400 text-sm">
                     <h2 class="text-lg font-bold mb-4 text-center">CHECK OUT</h2>
 
@@ -108,8 +104,7 @@
                     <div class="flex flex-col gap-2">
                         <button type="button" id="print-ebilling-btn" onclick="printEBilling()"
                             class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 rounded text-sm"
-                            disabled>Print
-                            E-Billing</button>
+                            disabled>Print E-Billing</button>
                         <button type="button" onclick="cancelCheckout()"
                             class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-1.5 rounded text-sm">Cancel</button>
                     </div>
@@ -120,23 +115,14 @@
 
     <script>
         let checkoutCompleted = false;
+        let lastOrderId = null;
 
         function printEBilling() {
-            if (!checkoutCompleted) {
+            if (!checkoutCompleted || !lastOrderId) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Checkout Required',
                     text: 'Please complete the checkout process before generating e-billing.'
-                });
-                return;
-            }
-
-            const selectedIds = @json(array_column($cartItems, 'id'));
-            if (selectedIds.length === 0) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'No Items',
-                    text: 'No items selected for e-billing.'
                 });
                 return;
             }
@@ -148,14 +134,13 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
-                        selected_ids: selectedIds
+                        order_id: lastOrderId
                     })
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        const url = data.pdf_path;
-                        window.open(url, '_blank');
+                        window.open(data.pdf_path, '_blank');
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
@@ -163,7 +148,7 @@
                             timer: 1500
                         });
                         updateNotificationBadge();
-                        document.getElementById('print-ebilling-btn').disabled = true;
+                        loadNotifications();
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -214,6 +199,68 @@
                 });
         }
 
+        function loadNotifications() {
+            fetch('/notifications', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const notificationList = document.getElementById('notificationList');
+                    notificationList.innerHTML = '';
+                    if (data.notifications.length === 0) {
+                        notificationList.innerHTML =
+                            '<div style="padding: 10px; text-align: center;">No notifications</div>';
+                    } else {
+                        data.notifications.forEach(notification => {
+                            const div = document.createElement('div');
+                            div.style.padding = '10px 15px';
+                            div.style.borderBottom = '1px solid #ddd';
+                            div.style.backgroundColor = notification.read ? '#fff' : '#f9f9f9';
+                            div.innerHTML = `
+                            <div style="font-weight: ${notification.read ? 'normal' : 'bold'}">${notification.message}</div>
+                            <div style="font-size: 12px; color: #666;">${notification.created_at}</div>
+                            ${notification.type === 'e-billing' ? `<a href="/storage/${notification.data.pdf_path}" target="_blank" style="color: #3085d6; text-decoration: none;">View E-Billing</a>` : ''}
+                        `;
+                            div.addEventListener('click', () => markAsRead(notification.id));
+                            notificationList.appendChild(div);
+                        });
+                    }
+                    const badge = document.getElementById('notificationBadge');
+                    badge.textContent = data.unread_count;
+                    badge.style.display = data.unread_count > 0 ? 'inline-block' : 'none';
+                });
+        }
+
+        function updateCartBadge() {
+            fetch('/cart/count', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('cartBadge');
+                    if (badge) {
+                        badge.textContent = data.count;
+                        badge.style.display = data.count > 0 ? 'inline-block' : 'none';
+                    }
+                });
+        }
+
+        function clearCheckoutSession() {
+            fetch('/cart/clear-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            });
+        }
+
         document.getElementById('checkout-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const selectedIds = @json(array_column($cartItems, 'id'));
@@ -247,12 +294,16 @@
                 .then(response => {
                     submitButton.disabled = false;
                     if (!response.ok) {
-                        throw new Error('Network response was not ok: ' + response.status);
+                        throw new Error(
+                            `Network response was not ok: ${response.status} - ${response.statusText}`);
                     }
                     return response.json();
                 })
                 .then(data => {
                     if (data.success) {
+                        checkoutCompleted = true;
+                        lastOrderId = data.order_id;
+                        document.getElementById('print-ebilling-btn').disabled = false;
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
@@ -260,11 +311,12 @@
                             timer: 1500,
                             showConfirmButton: false
                         }).then(() => {
-                            checkoutCompleted = true;
                             updateNotificationBadge();
-                            if (data.redirect) {
-                                window.location.href = data.redirect;
-                            }
+                            loadNotifications();
+                            updateCartBadge();
+                            clearCheckoutSession();
+                            window.location.href = data.redirect ||
+                                '{{ route('procurement.dashboardproc') }}';
                         });
                     } else {
                         Swal.fire({
@@ -279,7 +331,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Failed to complete checkout: ' + error.message
+                        text: `Failed to complete checkout: ${error.message}`
                     });
                 });
         });
