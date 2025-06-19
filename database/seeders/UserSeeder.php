@@ -13,6 +13,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Super Admin',
             'email' => 'superadmin@example.com',
+            'status'=> 'Active',
             'phone_number' => '0800000001',
             'project_kode' => '-',
             'store_name' => '-',
@@ -32,6 +33,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Procurement',
             'email' => 'procurement@example.com',
+            'status'=> 'Active',
             'phone_number' => '0800000002',
             'project_kode' => '-',
             'store_name' => '-',
@@ -49,13 +51,14 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'Product Manager',
+            'name' => 'Project Manager',
             'email' => 'pm@example.com',
+            'status'=> 'Active',
             'phone_number' => '0800000003',
             'project_kode' => '-',
             'store_name' => '-',
             'npwp' => '-',
-            'username' => 'productmanager',
+            'username' => 'projectmanager',
             'password' => Hash::make('password123'),
             'nib' => '-',
             'comp_profile' => '-',
@@ -64,12 +67,13 @@ class UserSeeder extends Seeder
             'struktur_organisasi' => '-',
             'daftar_pengalaman' => '-',
             'profile_picture' => '-',
-            'role' => 'product_manager',
+            'role' => 'project_manager',
         ]);
 
         User::create([
             'name' => 'Vendor',
             'email' => 'vendor@example.com',
+            'status'=> 'Active',
             'phone_number' => '0800000007',
             'project_kode' => '-',
             'store_name' => 'PT Cempaka Putih',

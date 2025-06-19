@@ -26,7 +26,7 @@ class AuthController extends Controller
                 return redirect('/dashboard/procurement');
             case 'vendor':
                 return redirect('/dashboard/vendor');
-            case 'product_manager':
+            case 'project_manager':
                 return redirect('/dashboard/productmanager');
             default:
                 Auth::logout();

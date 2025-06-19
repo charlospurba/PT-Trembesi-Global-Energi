@@ -9,6 +9,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserManagementController;
 
 // 🏠 Default route tetap dashboard walaupun belum login
 Route::get('/', [ProductController::class, 'dashboard'])->name('dashboard');
@@ -87,9 +88,13 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/vendor/view', 'vendor.view')->name('vendor.view');
 
     //Superadmin
-    Route::view('/dashboard/superadmin', 'superadmin.dashboardadm')->name('superadmin.dashboard');
+    Route::get('/dashboard/superadmin', [UserManagementController::class, 'dashboard'])->name('superadmin.dashboard');
     Route::view('/dashboard/superadmin/add_users', 'superadmin.add_users')->name('superadmin.add_users');
     Route::view('/dashboard/superadmin/request', 'superadmin.request')->name('superadmin.request');
+
+     Route::get('/superadmin/users/create', [UserManagementController::class, 'create'])->name('superadmin.users.create');
+    Route::post('/superadmin/users/store', [UserManagementController::class, 'store'])->name('superadmin.users.store');
+
 });
 
 // Profile

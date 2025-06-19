@@ -15,7 +15,8 @@ return new class extends Migration {
                 $table->string('username')->unique();
                 $table->string('password');
                 $table->string('role')->default('vendor');
-
+                
+                $table->string('status')->nullable();
                 $table->string('name'); // tambahkan
                 $table->string('email')->unique(); // tambahkan
                 $table->string('phone_number')->nullable(); // tambahkan

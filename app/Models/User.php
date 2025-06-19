@@ -18,22 +18,23 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-    'name',
-    'email',
-    'phone_number',
-    'project_kode',
-    'store_name',
-    'npwp',
-    'username',
-    'password',
-    'nib',
-    'comp_profile',
-    'izin_perusahaan',
-    'sppkp',
-    'struktur_organisasi',
-    'daftar_pengalaman',
-    'profile_picture',
-    'role', // <--- Tambahkan ini
+        'name',
+        'email',
+        'status',
+        'phone_number',
+        'project_kode',
+        'store_name',
+        'npwp',
+        'username',
+        'password',
+        'nib',
+        'comp_profile',
+        'izin_perusahaan',
+        'sppkp',
+        'struktur_organisasi',
+        'daftar_pengalaman',
+        'profile_picture',
+        'role', // <--- Tambahkan ini
     ];
 
     /**
