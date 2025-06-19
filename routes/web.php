@@ -33,8 +33,6 @@ Route::get('/register-detail', function () {
 
 // ✅ Setelah login, redirect berdasarkan role ke halaman dashboard masing-masing
 Route::middleware(['auth'])->group(function () {
-    // 🛍️ Vendor
-    Route::get('/dashboard/vendor', [VendorHomeController::class, 'index'])->name('vendor.dashboardvendor');
 
     // Superadmin & Product Manager
     Route::view('/dashboard/superadmin', 'dashboard.superadmin')->name('dashboard.superadmin');
@@ -63,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/procurement/checkout', [CartController::class, 'submitCheckout'])->name('procurement.checkout.submit');
 
     // Vendor product routes
+    Route::get('/dashboard/vendor', [VendorHomeController::class, 'index'])->name('vendor.dashboardvendor');
     Route::get('/myproducts', [VendorProductController::class, 'index'])->name('vendor.myproducts');
     Route::get('/add_product', [VendorProductController::class, 'create'])->name('vendor.add_product');
     Route::post('/add_product', [VendorProductController::class, 'store'])->name('vendor.add_product.store');

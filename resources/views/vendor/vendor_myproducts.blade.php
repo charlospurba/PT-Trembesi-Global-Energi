@@ -17,18 +17,27 @@
                 </div>
             @endif
 
-            <div class="bg-white p-6 rounded shadow">
-                <div class="mb-4">
-                    <select id="sortSelect"
-                        class="w-full max-w-md border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 ml-10">
-                        <option value="">All Product</option>
-                        <option value="Material">Material</option>
-                        <option value="Equipment">Equipment</option>
-                        <option value="Electrical Tools">Electrical Tools</option>
-                        <option value="Consumables">Consumables</option>
-                        <option value="Personal Protective Equipment">Personal Protective Equipment</option>
-                    </select>
+<div class="bg-white p-6 rounded shadow">
+                <!-- Header section with filter on the right -->
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Product List</h3>
+                        <p class="text-sm text-gray-600">Manage and view your products</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <select id="sortSelect"
+                            class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 min-w-48">
+                            <option value="">All Products</option>
+                            <option value="Material">Material</option>
+                            <option value="Equipment">Equipment</option>
+                            <option value="Electrical Tools">Electrical Tools</option>
+                            <option value="Consumables">Consumables</option>
+                            <option value="Personal Protective Equipment">Personal Protective Equipment</option>
+                        </select>
+                    </div>
                 </div>
+
+                <!-- Product Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="productGrid">
                     @forelse ($products as $product)
                         <div class="border rounded-lg p-4 hover:shadow-md transition-shadow product-item"
