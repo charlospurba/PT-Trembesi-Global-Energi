@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Cart;
 use App\Models\Notification;
+use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -155,7 +157,7 @@ class CartController extends Controller
         'message' => 'Product not found'
       ], 404);
     } catch (\Exception $e) {
-      Log::error('Update Cart Error: ' . $e->getMessage());
+      Log::error('Update Cart Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
       return response()->json([
         'success' => false,
         'message' => 'Failed to update cart: ' . $e->getMessage()
@@ -187,7 +189,7 @@ class CartController extends Controller
         'message' => 'Product removed from cart'
       ]);
     } catch (\Exception $e) {
-      Log::error('Remove Cart Error: ' . $e->getMessage());
+      Log::error('Remove Cart Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
       return response()->json([
         'success' => false,
         'message' => 'Failed to remove product: ' . $e->getMessage()
@@ -269,15 +271,7 @@ class CartController extends Controller
   public function submitCheckout(Request $request)
   {
     try {
-      $validated = $request->validate([
-        'full_name' => 'required|string|max:255',
-        'country' => 'required|string|max:255',
-        'postal_code' => 'required|string|max:20',
-        'street_address' => 'required|string|max:500',
-        'state' => 'nullable|string|max:255',
-        'selected_ids' => 'required|array',
-      ]);
-
+      $validated = $this->validateCheckout($request);
       $user = Auth::user();
       $selectedIds = $request->input('selected_ids', []);
 
@@ -291,11 +285,7 @@ class CartController extends Controller
         ], 422);
       }
 
-      $cartItems = Cart::where('user_id', $user->id)
-        ->whereIn('product_id', $selectedIds)
-        ->with('product')
-        ->get();
-
+      $cartItems = $this->fetchCartItems($user->id, $selectedIds);
       if ($cartItems->isEmpty()) {
         Log::warning('No cart items found for selected IDs', ['selected_ids' => $selectedIds]);
         return response()->json([
@@ -313,42 +303,29 @@ class CartController extends Controller
         ], 422);
       }
 
-      $checkoutItems = $cartItems->map(function ($cartItem) {
-        return [
-          'id' => $cartItem->product_id,
-          'name' => $cartItem->product->name,
-          'price' => $cartItem->product->price,
-          'quantity' => $cartItem->quantity,
-          'variant' => $cartItem->variant ?? 'default',
-          'supplier' => $cartItem->product->supplier,
-        ];
-      })->toArray();
+      $totalPrice = $cartItems->sum(function ($item) {
+        return $item->product->price * $item->quantity;
+      });
 
-      Log::info('Checkout items stored in session', ['checkout_items' => $checkoutItems]);
+      $order = $this->createOrder($user->id, $suppliers[0], $totalPrice, $validated);
+      $checkoutItems = $this->createOrderItems($order, $cartItems);
+
       session()->put('checkout_items', $checkoutItems);
+      $this->createOrderNotification($user->id, $suppliers[0], $cartItems, $order->id);
 
-      Notification::create([
-        'user_id' => $user->id,
-        'type' => 'order',
-        'message' => 'New order placed with ' . $suppliers[0] . ' for ' . $cartItems->count() . ' items.',
-        'data' => json_encode([
-          'order_details' => $cartItems->map(function ($item) {
-            return [
-              'product_name' => $item->product->name,
-              'quantity' => $item->quantity,
-              'price' => $item->product->price,
-            ];
-          })->toArray(),
-        ]),
-      ]);
+      $pdfPath = $this->generateEBillingPDF($user, $checkoutItems, $suppliers[0], $totalPrice);
+      $this->createEBillingNotification($user->id, $suppliers[0], $pdfPath, $order->id);
 
       Cart::where('user_id', $user->id)
         ->whereIn('product_id', $selectedIds)
         ->delete();
 
+      session()->forget('checkout_items');
+
       return response()->json([
         'success' => true,
-        'message' => 'Checkout completed successfully!'
+        'message' => 'Checkout completed successfully! E-Billing has been generated.',
+        'redirect' => route('procurement.dashboardproc'),
       ]);
     } catch (\Exception $e) {
       Log::error('Checkout Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
@@ -357,6 +334,133 @@ class CartController extends Controller
         'message' => 'Failed to complete checkout: ' . $e->getMessage()
       ], 500);
     }
+  }
+
+  protected function validateCheckout(Request $request)
+  {
+    return $request->validate([
+      'full_name' => 'required|string|max:255',
+      'country' => 'required|string|max:255',
+      'postal_code' => 'required|string|max:20',
+      'street_address' => 'required|string|max:500',
+      'state' => 'nullable|string|max:255',
+      'selected_ids' => 'required|array',
+    ]);
+  }
+
+  protected function fetchCartItems($userId, array $selectedIds)
+  {
+    return Cart::where('user_id', $userId)
+      ->whereIn('product_id', $selectedIds)
+      ->with('product')
+      ->get();
+  }
+
+  protected function createOrder($userId, $vendor, $totalPrice, array $validated)
+  {
+    return Order::create([
+      'user_id' => $userId,
+      'vendor' => $vendor,
+      'total_price' => $totalPrice,
+      'full_name' => $validated['full_name'],
+      'country' => $validated['country'],
+      'postal_code' => $validated['postal_code'],
+      'street_address' => $validated['street_address'],
+      'state' => $validated['state'],
+    ]);
+  }
+
+  protected function createOrderItems($order, $cartItems)
+  {
+    return $cartItems->map(function ($cartItem) use ($order) {
+      OrderItem::create([
+        'order_id' => $order->id,
+        'product_id' => $cartItem->product_id,
+        'name' => $cartItem->product->name,
+        'price' => $cartItem->product->price,
+        'quantity' => $cartItem->quantity,
+        'variant' => $cartItem->variant ?? 'default',
+      ]);
+
+      return [
+        'id' => $cartItem->product_id,
+        'name' => $cartItem->product->name,
+        'price' => $cartItem->product->price,
+        'quantity' => $cartItem->quantity,
+        'variant' => $cartItem->variant ?? 'default',
+        'supplier' => $cartItem->product->supplier,
+      ];
+    })->toArray();
+  }
+
+  protected function createOrderNotification($userId, $vendor, $cartItems, $orderId)
+  {
+    Notification::create([
+      'user_id' => $userId,
+      'type' => 'order',
+      'message' => 'New order placed with ' . $vendor . ' for ' . $cartItems->count() . ' items.',
+      'data' => json_encode([
+        'order_id' => $orderId,
+        'order_details' => $cartItems->map(function ($item) {
+          return [
+            'product_name' => $item->product->name,
+            'quantity' => $item->quantity,
+            'price' => $item->product->price,
+          ];
+        })->toArray(),
+      ]),
+    ]);
+  }
+
+  protected function generateEBillingPDF($user, array $checkoutItems, $vendor, $totalPrice)
+  {
+    try {
+      $data = [
+        'cartItems' => array_map(function ($item) {
+          return [
+            'name' => $item['name'],
+            'quantity' => $item['quantity'],
+            'price' => $item['price'],
+            'total' => $item['price'] * $item['quantity'],
+          ];
+        }, $checkoutItems),
+        'totalPrice' => $totalPrice,
+        'user' => $user,
+        'vendor' => $vendor,
+        'date' => now()->format('Y-m-d'),
+      ];
+
+      Log::info('Generating E-Billing PDF', ['data' => $data]);
+
+      $pdf = PDF::loadView('procurement.ebilling', $data);
+      $filename = 'e-billing-' . time() . '.pdf';
+      Storage::disk('public')->put($filename, $pdf->output());
+
+      if (!Storage::disk('public')->exists($filename)) {
+        Log::error('E-Billing PDF failed to save', ['filename' => $filename]);
+        throw new \Exception('Failed to save E-Billing PDF');
+      }
+
+      Log::info('E-Billing PDF saved successfully', ['filename' => $filename]);
+
+      return $filename;
+    } catch (\Exception $e) {
+      Log::error('E-Billing PDF Generation Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+      throw $e;
+    }
+  }
+
+  protected function createEBillingNotification($userId, $vendor, $pdfPath, $orderId)
+  {
+    Notification::create([
+      'user_id' => $userId,
+      'type' => 'e-billing',
+      'message' => 'E-Billing generated for order with ' . $vendor,
+      'data' => json_encode([
+        'pdf_path' => $pdfPath,
+        'order_id' => $orderId,
+      ]),
+    ]);
   }
 
   public function generateEBilling(Request $request)

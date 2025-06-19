@@ -154,20 +154,21 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        const url = data.pdf_path;
+                        window.open(url, '_blank');
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: data.message,
+                            text: data.message || 'E-Billing generated successfully!',
                             timer: 1500
                         });
                         updateNotificationBadge();
                         document.getElementById('print-ebilling-btn').disabled = true;
-                        window.open(data.pdf_path, '_blank');
                     } else {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: data.message
+                            text: data.message || 'Failed to generate E-Billing'
                         });
                     }
                 })
@@ -206,8 +207,10 @@
                 .then(response => response.json())
                 .then(data => {
                     const badge = document.getElementById('notificationBadge');
-                    badge.textContent = data.count;
-                    badge.style.display = data.count > 0 ? 'inline-block' : 'none';
+                    if (badge) {
+                        badge.textContent = data.count;
+                        badge.style.display = data.count > 0 ? 'inline-block' : 'none';
+                    }
                 });
         }
 
@@ -222,6 +225,9 @@
                 });
                 return;
             }
+
+            const submitButton = this.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
 
             fetch(this.action, {
                     method: 'POST',
@@ -239,6 +245,7 @@
                     })
                 })
                 .then(response => {
+                    submitButton.disabled = false;
                     if (!response.ok) {
                         throw new Error('Network response was not ok: ' + response.status);
                     }
@@ -250,11 +257,15 @@
                             icon: 'success',
                             title: 'Success',
                             text: data.message || 'Checkout completed successfully!',
-                            timer: 1500
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            checkoutCompleted = true;
+                            updateNotificationBadge();
+                            if (data.redirect) {
+                                window.location.href = data.redirect;
+                            }
                         });
-                        checkoutCompleted = true;
-                        document.getElementById('print-ebilling-btn').disabled = false;
-                        updateNotificationBadge();
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -264,7 +275,7 @@
                     }
                 })
                 .catch(error => {
-                    console.error('Fetch Error:', error);
+                    submitButton.disabled = false;
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
