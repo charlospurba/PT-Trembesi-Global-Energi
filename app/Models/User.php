@@ -22,6 +22,7 @@ class User extends Authenticatable
     'email',
     'phone_number',
     'project_kode',
+    'store_name',
     'npwp',
     'username',
     'password',

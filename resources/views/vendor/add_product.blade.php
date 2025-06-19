@@ -59,9 +59,11 @@
                             <div>
                                 <label class="block font-semibold text-gray-800 mb-1">Supplier <span
                                         class="text-red-500">*</span></label>
-                                <input name="supplier" type="text" placeholder="Ex: PT Supplier"
-                                    class="w-full border border-gray-300 rounded-md px-4 py-2" required />
+                                <input name="supplier" type="text" value="{{ Auth::user()->store_name }}"
+                                    class="w-full border border-gray-300 rounded-md px-4 py-2 bg-gray-100" readonly
+                                    required />
                             </div>
+
                             <div>
                                 <label class="block font-semibold text-gray-800 mb-1">Product Name <span
                                         class="text-red-500">*</span></label>
