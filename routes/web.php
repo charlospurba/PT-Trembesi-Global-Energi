@@ -94,7 +94,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/superadmin/users/create', [UserManagementController::class, 'create'])->name('superadmin.users.create');
     Route::post('/superadmin/users/store', [UserManagementController::class, 'store'])->name('superadmin.users.store');
-
+    Route::view('/superadmin/view-detail', 'superadmin.view_detail');
 });
 
 // Profile

@@ -29,13 +29,20 @@
                                 Active
                             </span>
                         </td>
-                        <td class="px-4 py-2">Jun 15, 2025</td>
-                        <td class="px-4 py-2">
-                            <a href="#"
-                               style="background-color:#2563eb; color:white; padding:4px 12px; border-radius:6px; font-size:12px; font-weight:500; display:inline-block;">
-                                View
+                        <td class="px-4 py-2">Jun 13, 2025</td>
+                            <td class="px-4 py-2">
+                            <a href="/superadmin/view-detail"
+                                style="background-color:#2563eb; color:white; padding:4px 12px; border-radius:6px; font-size:12px; font-weight:500; display:inline-block;">
+                                    View
                             </a>
                         </td>
+                            <!-- Add User Button -->
+                            <a href="{{ route('superadmin.add_users') }}"
+                            class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-medium px-3 py-1 rounded-md">
+                                <i class="fas fa-user-plus text-[12px]"></i> Add User
+                            </a>
+                        </td>
+                       
                     </tr>
                     <tr class="border-t border-gray-200">
                         <td class="px-4 py-2">PT. Janji Maria Menteng Agung</td>
@@ -47,9 +54,9 @@
                         </td>
                         <td class="px-4 py-2">Jun 13, 2025</td>
                         <td class="px-4 py-2">
-                            <a href="#"
-                               style="background-color:#2563eb; color:white; padding:4px 12px; border-radius:6px; font-size:12px; font-weight:500; display:inline-block;">
-                                View
+                            <a href="/superadmin/view-detail"
+                                style="background-color:#2563eb; color:white; padding:4px 12px; border-radius:6px; font-size:12px; font-weight:500; display:inline-block;">
+                                    View
                             </a>
                         </td>
                     </tr>
