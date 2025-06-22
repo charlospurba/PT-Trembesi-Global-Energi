@@ -13,7 +13,6 @@
             <a href="{{ $dashboardLink }}" class="logo">
                 <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Trembesi Logo" class="logo-img">
             </a>
-
         </div>
         <h1 class="text-xl font-bold text-white">Trembesi Shop</h1>
     </div>
@@ -21,7 +20,6 @@
     <div class="profile-dropdown" style="position: relative;">
         <div class="profile-trigger" onclick="toggleDropdown()"
             style="cursor: pointer; display: flex; align-items: center; color: white;">
-
             @auth
                 <span style="margin-right: 8px;">Hello, {{ Auth::user()->name }}</span>
                 @php
@@ -34,16 +32,12 @@
                         style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
             @endauth
-
             @guest
                 <i class="fas fa-user-circle" style="font-size: 24px; margin-right: 8px;"></i>
                 <span>Guest</span>
             @endguest
-
             <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
         </div>
-
-
         <!-- Dropdown Menu -->
         <div id="dropdownMenu" class="dropdown-menu"
             style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; min-width: 150px; z-index: 999;">
@@ -66,7 +60,7 @@
         dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
     }
 
-    window.addEventListener("click", function (e) {
+    window.addEventListener("click", function(e) {
         const trigger = document.querySelector(".profile-trigger");
         const dropdown = document.getElementById("dropdownMenu");
         if (!trigger.contains(e.target)) {
@@ -74,10 +68,8 @@
         }
     });
 
-    // Logout with SweetAlert
-    document.getElementById('logoutBtn').addEventListener('click', function (e) {
+    document.getElementById('logoutBtn').addEventListener('click', function(e) {
         e.preventDefault();
-
         Swal.fire({
             title: 'Are you sure?',
             text: "You will be signed out of your account.",
@@ -93,5 +85,4 @@
             }
         });
     });
-
 </script>

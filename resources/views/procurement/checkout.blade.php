@@ -45,11 +45,16 @@
 
                         <div class="mb-4 grid grid-cols-3 gap-3">
                             <div>
+                                <label class="block mb-1 font-semibold">City *</label>
+                                <input type="text" name="city" class="w-full border border-gray-300 rounded px-3 py-2"
+                                    required />
+                            </div>
+                            <div>
                                 <label class="block mb-1 font-semibold">State/Province</label>
                                 <input type="text" name="state"
                                     class="w-full border border-gray-300 rounded px-3 py-2" />
                             </div>
-                            <div class="col-span-2">
+                            <div>
                                 <label class="block mb-1 font-semibold">Postal code *</label>
                                 <input type="text" name="postal_code"
                                     class="w-full border border-gray-300 rounded px-3 py-2" required />
@@ -127,7 +132,7 @@
                 return;
             }
 
-            fetch('/cart/e-billing', {
+            fetch('/checkout/e-billing', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -251,16 +256,6 @@
                 });
         }
 
-        function clearCheckoutSession() {
-            fetch('/cart/clear-session', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            });
-        }
-
         document.getElementById('checkout-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const selectedIds = @json(array_column($cartItems, 'id'));
@@ -285,6 +280,7 @@
                     body: JSON.stringify({
                         full_name: this.querySelector('input[name="full_name"]').value,
                         country: this.querySelector('input[name="country"]').value,
+                        city: this.querySelector('input[name="city"]').value,
                         state: this.querySelector('input[name="state"]').value,
                         postal_code: this.querySelector('input[name="postal_code"]').value,
                         street_address: this.querySelector('textarea[name="street_address"]').value,
@@ -314,7 +310,6 @@
                             updateNotificationBadge();
                             loadNotifications();
                             updateCartBadge();
-                            clearCheckoutSession();
                             window.location.href = data.redirect ||
                                 '{{ route('procurement.dashboardproc') }}';
                         });

@@ -11,28 +11,29 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-                $table->id();
-                $table->string('username')->unique();
-                $table->string('password');
-                $table->string('role')->default('vendor');
-                
-                $table->string('status')->nullable();
-                $table->string('name'); // tambahkan
-                $table->string('email')->unique(); // tambahkan
-                $table->string('phone_number')->nullable(); // tambahkan
-                $table->string('project_kode')->nullable(); // tambahkan
-                $table->string('store_name')->nullable(); // tambahkan
-                $table->string('npwp')->nullable(); // tambahkan
-                $table->string('nib')->nullable(); // tambahkan
-                $table->string('comp_profile')->nullable(); // tambahkan
-                $table->string('izin_perusahaan')->nullable(); // tambahkan
-                $table->string('sppkp')->nullable(); // tambahkan
-                $table->string('struktur_organisasi')->nullable(); // tambahkan
-                $table->string('daftar_pengalaman')->nullable(); // tambahkan
-                $table->string('profile_picture')->nullable(); // tambahkan
-                $table->timestamp('email_verified_at')->nullable(); // tambahkan
-                $table->rememberToken();
-                $table->timestamps();
+            $table->id();
+            $table->string('username')->unique();
+            $table->string('password');
+            $table->string('role')->default('vendor');
+
+            $table->string('status')->nullable();
+            $table->string('name'); // tambahkan
+            $table->string('email')->unique(); // tambahkan
+            $table->string('phone_number')->nullable(); // tambahkan
+            $table->string('project_kode')->nullable(); // tambahkan
+            $table->string('store_name')->nullable(); // tambahkan
+            $table->string('npwp')->nullable(); // tambahkan
+            $table->string('nib')->nullable(); // tambahkan
+            $table->string('comp_profile')->nullable(); // tambahkan
+            $table->string('izin_perusahaan')->nullable(); // tambahkan
+            $table->string('sppkp')->nullable(); // tambahkan
+            $table->string('struktur_organisasi')->nullable(); // tambahkan
+            $table->string('daftar_pengalaman')->nullable(); // tambahkan
+            $table->string('profile_picture')->nullable(); // tambahkan
+            $table->string('phone')->nullable();
+            $table->timestamp('email_verified_at')->nullable(); // tambahkan
+            $table->rememberToken();
+            $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

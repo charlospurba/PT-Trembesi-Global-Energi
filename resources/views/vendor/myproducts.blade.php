@@ -17,7 +17,7 @@
                 </div>
             @endif
 
-<div class="bg-white p-6 rounded shadow">
+            <div class="bg-white p-6 rounded shadow">
                 <!-- Header section with filter on the right -->
                 <div class="flex justify-between items-center mb-6">
                     <div>
@@ -28,11 +28,11 @@
                         <select id="sortSelect"
                             class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 min-w-48">
                             <option value="">All Products</option>
-                            <option value="Material">Material</option>
-                            <option value="Equipment">Equipment</option>
-                            <option value="Electrical Tools">Electrical Tools</option>
-                            <option value="Consumables">Consumables</option>
-                            <option value="Personal Protective Equipment">Personal Protective Equipment</option>
+                            <option value="material">Material</option>
+                            <option value="equipment">Equipment</option>
+                            <option value="electrical tools">Electrical Tools</option>
+                            <option value="consumables">Consumables</option>
+                            <option value="personal protective equipment">Personal Protective Equipment</option>
                         </select>
                     </div>
                 </div>
@@ -57,7 +57,8 @@
                                     class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">Edit</a>
                                 <button type="button"
                                     class="delete-product bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded"
-                                    data-id="{{ $product->id }}">
+                                    data-id="{{ $product->id }}"
+                                    data-url="{{ route('vendor.destroy_product', $product->id) }}">
                                     Delete
                                 </button>
                             </div>
@@ -76,10 +77,12 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.querySelectorAll('.delete-product').forEach(button => {
             button.addEventListener('click', function() {
                 const productId = this.getAttribute('data-id');
+                const deleteUrl = this.getAttribute('data-url');
                 Swal.fire({
                     title: 'Are you sure?',
                     text: 'Do you really want to delete this product? This process cannot be undone.',
@@ -91,7 +94,7 @@
                     cancelButtonText: 'Cancel',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        fetch(`{{ route('vendor.destroy_product', '') }}/${productId}`, {
+                        fetch(deleteUrl, {
                                 method: 'DELETE',
                                 headers: {
                                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -105,8 +108,8 @@
                                             'success')
                                         .then(() => location.reload());
                                 } else {
-                                    Swal.fire('Error!', 'Failed to delete the product.',
-                                        'error');
+                                    Swal.fire('Error!', data.message ||
+                                        'Failed to delete the product.', 'error');
                                 }
                             })
                             .catch(error => {
@@ -122,7 +125,7 @@
             const sortValue = e.target.value.toLowerCase();
             document.querySelectorAll('.product-item').forEach(item => {
                 const category = item.getAttribute('data-category').toLowerCase();
-                if (sortValue === '' || category.includes(sortValue)) {
+                if (sortValue === '' || category === sortValue) {
                     item.style.display = 'block';
                 } else {
                     item.style.display = 'none';

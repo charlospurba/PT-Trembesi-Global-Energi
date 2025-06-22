@@ -35,6 +35,7 @@ class User extends Authenticatable
         'daftar_pengalaman',
         'profile_picture',
         'role', // <--- Tambahkan ini
+        'phone',
     ];
 
     /**
@@ -58,5 +59,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
     }
 }

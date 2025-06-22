@@ -6,89 +6,68 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 40px;
+            margin: 20px;
         }
 
-        .header {
+        h1 {
             text-align: center;
-            margin-bottom: 20px;
+            color: #333;
         }
 
-        .table {
+        table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
 
-        .table th,
-        .table td {
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
 
-        .table th {
+        th {
             background-color: #f2f2f2;
         }
 
         .total {
-            margin-top: 20px;
             font-weight: bold;
-        }
-
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-        }
-
-        .empty {
-            text-align: center;
-            color: #666;
         }
     </style>
 </head>
 
 <body>
-    <div class="header">
-        <h1>E-Billing</h1>
-        <p>Vendor: {{ $vendor ?? 'N/A' }}</p>
-        <p>Date: {{ $date ?? now()->format('Y-m-d') }}</p>
-        <p>Customer: {{ $user->name ?? 'Guest' }}</p>
-    </div>
-
-    @if (!empty($cartItems))
-        <table class="table">
-            <thead>
+    <h1>E-Billing Receipt</h1>
+    <p><strong>Customer:</strong> {{ $user->name }} ({{ $user->email }})</p>
+    <p><strong>Vendor:</strong> {{ $vendor }}</p>
+    <p><strong>Date:</strong> {{ $date }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($cartItems as $item)
                 <tr>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Total</th>
+                    <td>{{ $item['name'] }}</td>
+                    <td>{{ $item['quantity'] }}</td>
+                    <td>Rp. {{ number_format($item['price'], 0, ',', '.') }}</td>
+                    <td>Rp. {{ number_format($item['total'], 0, ',', '.') }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach ($cartItems as $item)
-                    <tr>
-                        <td>{{ $item['name'] ?? 'N/A' }}</td>
-                        <td>{{ $item['quantity'] ?? 0 }}</td>
-                        <td>Rp. {{ number_format($item['price'] ?? 0, 0, ',', '.') }}</td>
-                        <td>Rp. {{ number_format($item['total'] ?? 0, 0, ',', '.') }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-
-        <div class="total">
-            Total: Rp. {{ number_format($totalPrice ?? 0, 0, ',', '.') }}
-        </div>
-    @else
-        <div class="empty">
-            <p>No items found for this e-billing.</p>
-        </div>
-    @endif
-
-    <div class="footer">
-        <p>Thank you for your purchase!</p>
-    </div>
+            @endforeach
+        </tbody>
+        <tfoot>
+            <tr class="total">
+                <td colspan="3">Total</td>
+                <td>Rp. {{ number_format($totalPrice, 0, ',', '.') }}</td>
+            </tr>
+        </tfoot>
+    </table>
 </body>
 
 </html>
