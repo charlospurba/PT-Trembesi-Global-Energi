@@ -39,15 +39,15 @@ Route::get('/register-detail', function () {
 // ✅ Authenticated Routes
 Route::middleware(['auth'])->group(function () {
     // Superadmin & Product Manager Routes
-    Route::get('/dashboard/superadmin', [UserManagementController::class, 'dashboard'])->name('superadmin.dashboard');
+    Route::get('/dashboard/superadmin', [UserManagementController::class, 'dashboard'])->name('dashboard.superadmin');
     Route::view('/dashboard/superadmin/add_users', 'superadmin.add_users')->name('superadmin.add_users');
     Route::view('/dashboard/superadmin/request', 'superadmin.request')->name('superadmin.request');
-    Route::get('/superadmin/users/create', [UserManagementController::class, 'create'])->name('superadmin.users.create');
+    Route::get('/superadmin/users/add', [UserManagementController::class, 'create'])->name('superadmin.users.create');
     Route::post('/superadmin/users/store', [UserManagementController::class, 'store'])->name('superadmin.users.store');
     Route::view('/superadmin/view-detail', 'superadmin.view_detail')->name('superadmin.view_detail');
 
     Route::view('/dashboard/productmanager', 'productmanager.dashboardpm')->name('dashboard.productmanager');
-    Route::view('/productmanager', 'productmanager.addrequest')->name('productmanager.addrequest');
+    Route::view('/productmanager/addrequest', 'productmanager.addrequest')->name('productmanager.addrequest');
 
     // Procurement Routes
     Route::get('/dashboard/procurement', [ProductController::class, 'dashboard'])->name('procurement.dashboardproc');
@@ -80,7 +80,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/vendor', [VendorHomeController::class, 'index'])->name('vendor.dashboardvendor');
     Route::get('/myproducts', [VendorProductController::class, 'index'])->name('vendor.myproducts');
     Route::get('/add_product', [VendorProductController::class, 'create'])->name('vendor.add_product');
-    Route::post('/add_product', [VendorProductController::class, 'store'])->name('vendor.add_product.store');
+    Route::post('/add_product', [VendorProductController::class, 'store'])->name('vendor.store_product');
     Route::get('/products/{id}/edit', [VendorProductController::class, 'edit'])->name('vendor.edit_product');
     Route::put('/products/{id}', [VendorProductController::class, 'update'])->name('vendor.update_product');
     Route::delete('/products/{id}', [VendorProductController::class, 'destroy'])->name('vendor.destroy_product');

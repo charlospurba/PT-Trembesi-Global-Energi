@@ -22,9 +22,21 @@ class Product extends Model
     'description',
     'address',
     'image_paths',
+    'status',
   ];
 
   protected $casts = [
     'image_paths' => 'array',
+    'price' => 'decimal:2',
   ];
+
+  public function vendor()
+  {
+    return $this->belongsTo(User::class, 'vendor_id');
+  }
+
+  public function orderItems()
+  {
+    return $this->hasMany(OrderItem::class);
+  }
 }

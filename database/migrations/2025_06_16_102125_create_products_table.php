@@ -20,7 +20,8 @@ return new class extends Migration {
             $table->text('description')->nullable();
             $table->string('address')->nullable();
             $table->json('image_paths')->nullable();
-            $table->unsignedBigInteger('vendor_id');
+            $table->foreignId('vendor_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('status')->default('available');
             $table->timestamps();
         });
     }
@@ -30,4 +31,3 @@ return new class extends Migration {
         Schema::dropIfExists('products');
     }
 };
-

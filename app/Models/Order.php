@@ -18,8 +18,8 @@ class Order extends Model
     'postal_code',
     'street_address',
     'state',
+    'city',
     'status',
-    'city', 
   ];
 
   protected $casts = [

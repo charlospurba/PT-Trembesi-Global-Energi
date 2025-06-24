@@ -32,12 +32,12 @@
                                     <div
                                         class="bg-white rounded-xl shadow-md overflow-hidden max-w-[280px] w-full transition-transform hover:scale-105">
                                         <!-- Gambar -->
-                                        <div class="bg-red-600 p-3 flex justify-center items-center h-32">
+                                        {{-- <div class="bg-red-600 p-3 flex justify-center items-center h-32">
                                             <img src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0
                         ? asset('storage/' . $product->image_paths[0] . '?' . time())
                         : 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}"
                                                 class="w-full h-full object-contain rounded-md" />
-                                        </div>
+                                        </div> --}}
 
                                         <!-- Konten -->
                                         <div class="px-4 py-3 space-y-1.5 text-xs leading-relaxed">

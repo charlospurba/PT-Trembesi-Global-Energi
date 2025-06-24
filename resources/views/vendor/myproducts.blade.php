@@ -18,7 +18,6 @@
             @endif
 
             <div class="bg-white p-6 rounded shadow">
-                <!-- Header section with filter on the right -->
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h3 class="text-lg font-semibold text-gray-800">Product List</h3>
@@ -37,12 +36,21 @@
                     </div>
                 </div>
 
-                <!-- Product Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="productGrid">
                     @forelse ($products as $product)
+                        @php
+                            // Debug invalid image_paths
+                            if (!empty($product->image_paths) && !is_array($product->image_paths)) {
+                                \Illuminate\Support\Facades\Log::warning('Invalid image_paths for product', [
+                                    'product_id' => $product->id,
+                                    'image_paths' => $product->image_paths,
+                                    'type' => gettype($product->image_paths),
+                                ]);
+                            }
+                        @endphp
                         <div class="border rounded-lg p-4 hover:shadow-md transition-shadow product-item"
                             data-name="{{ $product->name }}" data-category="{{ $product->category }}">
-                            @if ($product->image_paths && is_array($product->image_paths) && count($product->image_paths) > 0)
+                            @if (!empty($product->image_paths) && is_array($product->image_paths) && !empty($product->image_paths[0]))
                                 <img src="{{ asset('storage/' . $product->image_paths[0]) }}" alt="{{ $product->name }}"
                                     class="w-24 h-24 object-cover rounded mx-auto mb-4" />
                             @else

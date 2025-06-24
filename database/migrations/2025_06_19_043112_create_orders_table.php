@@ -17,8 +17,8 @@ return new class extends Migration {
             $table->string('postal_code');
             $table->string('street_address');
             $table->string('state')->nullable();
-            $table->string('city')->nullable(); // Added
-            $table->string('status')->default('Awaiting Shipment'); // Added
+            $table->string('city')->nullable();
+            $table->string('status')->default('Awaiting Shipment');
             $table->timestamps();
         });
     }
