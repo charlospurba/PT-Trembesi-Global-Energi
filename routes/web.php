@@ -39,7 +39,7 @@ Route::get('/register-detail', function () {
 // ✅ Authenticated Routes
 Route::middleware(['auth'])->group(function () {
     // Superadmin & Product Manager Routes
-    Route::get('/dashboard/superadmin', [UserManagementController::class, 'dashboard'])->name('dashboard.superadmin');
+    Route::get('/dashboard/superadmin', [UserManagementController::class, 'dashboard'])->name('superadmin.dashboard');
     Route::view('/dashboard/superadmin/add_users', 'superadmin.add_users')->name('superadmin.add_users');
     Route::view('/dashboard/superadmin/request', 'superadmin.request')->name('superadmin.request');
     Route::get('/superadmin/users/create', [UserManagementController::class, 'create'])->name('superadmin.users.create');
