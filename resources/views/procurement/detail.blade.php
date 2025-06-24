@@ -89,13 +89,15 @@
 
         <!-- VENDOR INFO (BOTTOM FULL WIDTH) -->
         <div class="mt-10 border-t pt-6">
-            <p class="text-sm font-semibold">Store {{ $product->supplier ?? 'Store Name' }}</p>
-            <p class="text-xs text-gray-600">{{ $product->address ?? '-' }}</p>
+            <a href="{{ route('store.show', ['store' => urlencode($product->supplier ?? 'Store Name')]) }}" 
+            class="text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200">
+                Store {{ $product->supplier ?? 'Store Name' }}
+            </a>
             <div class="mt-2">
-                <span class="text-yellow-500">★</span> <span class="text-sm">5 Ratings</span>
+                <span class="text-yellow-500">★</span> 
+                <span class="text-sm">5 Ratings</span>
             </div>
         </div>
-    </div>
 
     <script>
         function validateQuantity(input) {

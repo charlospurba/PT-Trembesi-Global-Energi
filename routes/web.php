@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfileVendorController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserManagementController;
 
 // 🏠 Default Routes
@@ -96,4 +97,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/profile', [ProfileController::class, 'edit'])->name('components.profile');
     Route::get('/dashboard/profilevendor', [ProfileVendorController::class, 'edit'])->name('components.profilevendor');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('/store/{store}', [StoreController::class, 'show'])->name('store.show');
 });
