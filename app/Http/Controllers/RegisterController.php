@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -19,18 +19,18 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'                  => 'required|string|max:255',
-            'email'                 => 'required|string|email|max:255|unique:users',
-            'phone_number'          => 'required|string|max:20',
-            'npwp'                  => 'required|string|max:30',
-            'username'              => 'required|string|max:50|unique:users',
-            'password'              => 'required|string|min:8|confirmed',
-            'nib'                   => 'required|string|max:50',
-            'comp_profile'          => 'required|file|mimes:pdf,doc,docx',
-            'izin_perusahaan'       => 'required|file|mimes:pdf,doc,docx',
-            'sppkp'                 => 'required|file|mimes:pdf,doc,docx',
-            'struktur_organisasi'   => 'required|file|mimes:pdf,doc,docx',
-            'daftar_pengalaman'     => 'required|file|mimes:pdf,doc,docx',
+            'store_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'phone_number' => 'required|string|max:20',
+            'npwp' => 'required|string|max:30',
+            'username' => 'required|string|max:50|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'nib' => 'required|string|max:50',
+            'comp_profile' => 'required|file|mimes:pdf,doc,docx',
+            'izin_perusahaan' => 'required|file|mimes:pdf,doc,docx',
+            'sppkp' => 'required|file|mimes:pdf,doc,docx',
+            'struktur_organisasi' => 'required|file|mimes:pdf,doc,docx',
+            'daftar_pengalaman' => 'required|file|mimes:pdf,doc,docx',
         ]);
 
         if ($validator->fails()) {
@@ -39,34 +39,35 @@ class RegisterController extends Controller
                 ->withInput();
         }
 
-        // Upload dokumen
-        $comp_profile = $request->file('comp_profile')->store('vendor_docs');
-        $izin_perusahaan = $request->file('izin_perusahaan')->store('vendor_docs');
-        $sppkp = $request->file('sppkp')->store('vendor_docs');
-        $struktur_organisasi = $request->file('struktur_organisasi')->store('vendor_docs');
-        $daftar_pengalaman = $request->file('daftar_pengalaman')->store('vendor_docs');
+        // Upload dokumen ke disk 'public'
+        $comp_profile = $request->file('comp_profile')->store('vendor_docs', 'public');
+        $izin_perusahaan = $request->file('izin_perusahaan')->store('vendor_docs', 'public');
+        $sppkp = $request->file('sppkp')->store('vendor_docs', 'public');
+        $struktur_organisasi = $request->file('struktur_organisasi')->store('vendor_docs', 'public');
+        $daftar_pengalaman = $request->file('daftar_pengalaman')->store('vendor_docs', 'public');
 
-        // Buat user
         $user = User::create([
-            'name'                  => $request->name,
-            'email'                 => $request->email,
-            'phone_number'          => $request->phone_number,
-            'npwp'                  => $request->npwp,
-            'username'              => $request->username,
-            'password'              => Hash::make($request->password),
-            'nib'                   => $request->nib,
-            'comp_profile'          => $comp_profile,
-            'izin_perusahaan'       => $izin_perusahaan,
-            'sppkp'                 => $sppkp,
-            'struktur_organisasi'   => $struktur_organisasi,
-            'daftar_pengalaman'     => $daftar_pengalaman,
-            'role'                  => 'vendor',
+            'store_name' => $request->store_name,
+            'name' => $request->store_name, //sekaligus isi kolom name
+            'email' => $request->email,
+            'phone_number' => $request->phone_number,
+            'npwp' => $request->npwp,
+            'username' => $request->username,
+            'password' => Hash::make($request->password),
+            'nib' => $request->nib,
+            'comp_profile' => $comp_profile,
+            'izin_perusahaan' => $izin_perusahaan,
+            'sppkp' => $sppkp,
+            'struktur_organisasi' => $struktur_organisasi,
+            'daftar_pengalaman' => $daftar_pengalaman,
+            'role' => 'vendor',
+            'status' => 'pending',
         ]);
+
 
         // Optional: Langsung login setelah register
         auth()->login($user);
 
-        return redirect('/dashboard/vendor')->with('success', 'Registrasi berhasil sebagai vendor');
+        return redirect()->route('login')->with('success', 'Registrasi berhasil! Mohon tunggu persetujuan dari admin.');
     }
 }
-  

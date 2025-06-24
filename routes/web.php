@@ -8,12 +8,13 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfileVendorController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\VendorApprovalController;
 
 // 🏠 Default Routes
 Route::get('/', [ProductController::class, 'dashboard'])->name('dashboard');
@@ -32,21 +33,35 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Registration Routes
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register.form');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
-Route::get('/register/detail', [RegisterController::class, 'showDetailForm'])->name('auth.register_detail');
-Route::post('/register/detail', [RegisterController::class, 'submitDetailForm'])->name('auth.register_detail_submit');
+
+// Gunakan ini sebagai route form detail (jika ingin split view)
 Route::get('/register-detail', function () {
     return view('auth.register_form_detail');
 })->name('register.step2');
 
+// Jika form step 1 dan 2 digabung (seperti yang kamu kirim sebelumnya)
+Route::post('/register-detail', [RegisterController::class, 'register'])->name('auth.register_detail_submit');
+
 // ✅ Authenticated Routes
 Route::middleware(['auth'])->group(function () {
     // Superadmin & Product Manager Routes
+    // Superadmin Dashboard
     Route::get('/dashboard/superadmin', [UserManagementController::class, 'dashboard'])->name('superadmin.dashboard');
+    Route::get('/dashboard/superadmin/request', [VendorApprovalController::class, 'index'])->name('superadmin.request');
     Route::view('/dashboard/superadmin/add_users', 'superadmin.add_users')->name('superadmin.add_users');
-    Route::view('/dashboard/superadmin/request', 'superadmin.request')->name('superadmin.request');
+
+    // Manajemen User Superadmin
     Route::get('/superadmin/users/add', [UserManagementController::class, 'create'])->name('superadmin.users.create');
     Route::post('/superadmin/users/store', [UserManagementController::class, 'store'])->name('superadmin.users.store');
     Route::view('/superadmin/view-detail', 'superadmin.view_detail')->name('superadmin.view_detail');
+
+    // Approval Vendor
+    Route::prefix('superadmin')->middleware('auth')->group(function () {
+        Route::get('/vendor-requests', [VendorApprovalController::class, 'index'])->name('superadmin.vendor.requests');
+        Route::get('/vendor-requests/{id}', [VendorApprovalController::class, 'show'])->name('superadmin.vendor.detail');
+        Route::post('/vendor-requests/{id}/accept', [VendorApprovalController::class, 'accept'])->name('superadmin.vendor.accept');
+        Route::post('/vendor-requests/{id}/reject', [VendorApprovalController::class, 'reject'])->name('superadmin.vendor.reject');
+    });
 
     Route::view('/dashboard/productmanager', 'productmanager.dashboardpm')->name('dashboard.productmanager');
     Route::view('/productmanager/addrequest', 'productmanager.addrequest')->name('productmanager.addrequest');
