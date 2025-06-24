@@ -41,7 +41,7 @@
         <!-- Dropdown Menu -->
         <div id="dropdownMenu" class="dropdown-menu"
             style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; min-width: 150px; z-index: 999;">
-            <a href="/dashboard/profile" class="dropdown-item"
+            <a href="/dashboard/profilevendor" class="dropdown-item"
                 style="display: block; padding: 10px 15px; text-decoration: none; color: black;">My Profile</a>
             <form id="logoutForm" method="POST" action="/logout" style="margin: 0;">
                 @csrf

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfileVendorController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserManagementController;
 
@@ -93,5 +94,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Profile Routes
     Route::get('/dashboard/profile', [ProfileController::class, 'edit'])->name('components.profile');
+    Route::get('/dashboard/profilevendor', [ProfileVendorController::class, 'edit'])->name('components.profilevendor');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
