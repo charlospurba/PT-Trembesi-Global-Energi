@@ -18,20 +18,13 @@
             @endif
 
             <div class="p-6">
-                <!-- Title + Card -->
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4 md:mb-0">User Management</h2>
+                <!-- Title -->
+                <h2 class="text-lg font-bold text-gray-800 mb-4">User Management</h2>
 
-                    <a href="{{ route('superadmin.add_users') }}"
-                        class="flex items-center gap-2 bg-[#2962FF] hover:bg-blue-700 text-white font-semibold text-sm px-5 py-2 rounded-md shadow">
-                        <i class="fas fa-plus"></i> Add User
-                    </a>
-                </div>
-
-                <!-- Summary Cards -->
-                <div class="flex flex-wrap gap-4 mb-6">
-                    <div
-                        class="bg-white rounded-xl shadow flex items-center px-4 py-3 border-t-4 border-[#FF3D00] w-full sm:w-auto min-w-[180px]">
+                <!-- Summary Cards + Add User -->
+                <div class="flex flex-wrap items-start gap-4 mb-6">
+                    <!-- Total User -->
+                    <div class="bg-white rounded-xl shadow flex items-center px-4 py-3 border-t-4 border-[#FF3D00] w-full sm:w-auto min-w-[180px]">
                         <div class="text-[#FF3D00] text-3xl mr-4">
                             <i class="fas fa-users"></i>
                         </div>
@@ -41,8 +34,8 @@
                         </div>
                     </div>
 
-                    <div
-                        class="bg-white rounded-xl shadow flex items-center px-4 py-3 border-t-4 border-green-500 w-full sm:w-auto min-w-[180px]">
+                    <!-- Procurement -->
+                    <div class="bg-white rounded-xl shadow flex items-center px-4 py-3 border-t-4 border-green-500 w-full sm:w-auto min-w-[180px]">
                         <div class="text-green-500 text-3xl mr-4">
                             <i class="fas fa-shopping-cart"></i>
                         </div>
@@ -52,8 +45,8 @@
                         </div>
                     </div>
 
-                    <div
-                        class="bg-white rounded-xl shadow flex items-center px-4 py-3 border-t-4 border-yellow-400 w-full sm:w-auto min-w-[180px]">
+                    <!-- Project Manager -->
+                    <div class="bg-white rounded-xl shadow flex items-center px-4 py-3 border-t-4 border-yellow-400 w-full sm:w-auto min-w-[180px]">
                         <div class="text-yellow-400 text-3xl mr-4">
                             <i class="fas fa-store"></i>
                         </div>
@@ -63,16 +56,24 @@
                         </div>
                     </div>
 
-                    <div
-                        class="bg-white rounded-xl shadow flex items-center px-4 py-3 border-t-4 border-yellow-400 w-full sm:w-auto min-w-[180px]">
-                        <div class="text-yellow-400 text-3xl mr-4">
-                            <i class="fas fa-store"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Vendor</p>
-                            <p class="text-xl font-bold text-gray-800">{{ $totalVendor }}</p>
-                        </div>
-                    </div>
+                  <!-- Vendor -->
+<div class="bg-white rounded-xl shadow flex items-center px-4 py-3 border-t-4 border-[#2962FF] w-full sm:w-auto min-w-[180px]">
+    <div class="text-[#2962FF] text-3xl mr-4">
+        <i class="fas fa-user-tag"></i>
+    </div>
+    <div>
+        <p class="text-sm text-gray-600">Vendor</p>
+        <p class="text-xl font-bold text-gray-800">{{ $totalVendor }}</p>
+    </div>
+</div>
+
+
+
+                    <!-- Tombol Add User -->
+                    <a href="{{ route('superadmin.add_users') }}"
+                        class="ml-auto self-start flex items-center gap-2 bg-[#2962FF] hover:bg-blue-700 text-white font-semibold text-sm px-5 py-2 rounded-md shadow">
+                        <i class="fas fa-plus"></i> Add User
+                    </a>
                 </div>
 
                 <!-- User Table -->
@@ -105,15 +106,23 @@
                                         </td>
                                         <td class="py-3">{{ $user->created_at->format('d M Y') }}</td>
                                         <td class="py-3">
-                                            <a href="#" class="text-blue-600 hover:underline">Edit</a>
-                                            |
-                                            <form action="#" method="POST" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:underline"
-                                                    onclick="return confirm('Yakin ingin hapus user ini?')">Delete</button>
-                                            </form>
-                                        </td>
+    <div class="flex justify-center gap-3">
+        <!-- Edit Icon -->
+        <a href="#" class="text-blue-600 hover:text-blue-800" title="Edit">
+            <i class="fas fa-pen"></i>
+        </a>
+
+        <!-- Delete Icon -->
+        <form action="#" method="POST" onsubmit="return confirm('Yakin ingin hapus user ini?')" class="inline">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="text-red-600 hover:text-red-800" title="Delete">
+                <i class="fas fa-trash"></i>
+            </button>
+        </form>
+    </div>
+</td>
+
                                     </tr>
                                 @empty
                                     <tr>
@@ -130,6 +139,5 @@
 @endsection
 
 @push('scripts')
-    <!-- Include SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endpush

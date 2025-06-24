@@ -8,7 +8,7 @@
         @include('components.sideadmin')
 
         <!-- Main Content -->
-        <div class="flex-1 bg-[#f2f2f2]">
+        <div class="flex-1 bg-[#f2f2f2] h-screen overflow-y-auto">
             <div class="p-6">
                 <div class="bg-white rounded-xl shadow-md overflow-hidden">
 

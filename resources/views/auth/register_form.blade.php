@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,42 +10,30 @@
 
 <body class="bg-red-600 text-white font-[Roboto] min-h-screen">
   <div class="max-w-7xl mx-auto mt-12 px-4 flex flex-col md:flex-row gap-10 items-start">
+
     <!-- Left: Langkah-langkah -->
     <section aria-label="Steps" class="md:w-3/5 text-white">
       <h2 class="text-3xl font-bold mb-10 leading-snug">4 Easy Steps to Start Selling on Trembesi:</h2>
 
       <div class="space-y-8">
-        <div class="flex items-start gap-4">
-          <img src="{{ asset('assets/images/data.png') }}" alt="Step 1" class="w-14 h-14" />
-          <div>
-            <p class="font-bold">1. Create an Account</p>
-            <p>Fill in your personal information on this page.</p>
+        @php
+          $steps = [
+            ['img' => 'data.png', 'title' => '1. Create an Account', 'desc' => 'Fill in your personal information on this page.'],
+            ['img' => 'email.png', 'title' => '2. Confirm Your Email', 'desc' => 'Check your email inbox and confirm your registration.'],
+            ['img' => 'account.png', 'title' => '3. Complete Business Information', 'desc' => 'Owner’s ID (KTP) and Store or Company Address.'],
+            ['img' => 'product.png', 'title' => '4. Upload Your Products', 'desc' => 'Add product photos and provide detailed product descriptions.']
+          ];
+        @endphp
+
+        @foreach ($steps as $step)
+          <div class="flex items-start gap-4">
+            <img src="{{ asset('assets/images/' . $step['img']) }}" class="w-14 h-14" />
+            <div>
+              <p class="font-bold">{{ $step['title'] }}</p>
+              <p>{!! nl2br($step['desc']) !!}</p>
+            </div>
           </div>
-        </div>
-        <div class="flex items-start gap-4">
-          <img src="{{ asset('assets/images/email.png') }}" alt="Step 2" class="w-14 h-14" />
-          <div>
-            <p class="font-bold">2. Confirm Your Email</p>
-            <p>Check your email inbox and confirm your registration.</p>
-          </div>
-        </div>
-        <div class="flex items-start gap-4">
-          <img src="{{ asset('assets/images/account.png') }}" alt="Step 3" class="w-14 h-14" />
-          <div>
-            <p class="font-bold">3. Complete Business Information</p>
-            <ul class="list-disc ml-5 mt-1">
-              <li>Owner’s ID (KTP)</li>
-              <li>Store or Company Address</li>
-            </ul>
-          </div>
-        </div>
-        <div class="flex items-start gap-4">
-          <img src="{{ asset('assets/images/product.png') }}" alt="Step 4" class="w-14 h-14" />
-          <div>
-            <p class="font-bold">4. Upload Your Products</p>
-            <p>Add product photos and provide detailed product descriptions.</p>
-          </div>
-        </div>
+        @endforeach
       </div>
     </section>
 
@@ -59,45 +46,88 @@
         </div>
       </div>
 
-      <form method="GET" action="{{ url('/register-detail') }}" class="flex flex-col gap-4">
+      <!-- Step 1: Basic Info -->
+      <form id="step1-form" class="flex flex-col gap-4">
         <div>
-          <label for="storeName" class="text-sm font-medium text-gray-700">Store Name</label>
-          <input type="text" id="storeName" name="storeName" autocomplete="organization"
-            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+          <label class="text-sm font-medium text-gray-700">Store Name</label>
+          <input type="text" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
         </div>
         <div>
-          <label for="email" class="text-sm font-medium text-gray-700">Email Address</label>
-          <input type="email" id="email" name="email" autocomplete="email"
-            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+          <label class="text-sm font-medium text-gray-700">Email Address</label>
+          <input type="email" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
         </div>
         <div>
-          <label for="phone" class="text-sm font-medium text-gray-700">Phone Number</label>
-          <input type="tel" id="phone" name="phone" autocomplete="tel"
-            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+          <label class="text-sm font-medium text-gray-700">Phone Number</label>
+          <input type="tel" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
         </div>
         <div>
-          <label for="npwp" class="text-sm font-medium text-gray-700">Nomor NPWP</label>
-          <input type="text" id="npwp" name="npwp"
-            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+          <label class="text-sm font-medium text-gray-700">Nomor NPWP</label>
+          <input type="text" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
         </div>
         <div>
-          <label for="username" class="text-sm font-medium text-gray-700">Username</label>
-          <input type="text" id="username" name="username" autocomplete="username"
-            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+          <label class="text-sm font-medium text-gray-700">Username</label>
+          <input type="text" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
         </div>
         <div>
-          <label for="password" class="text-sm font-medium text-gray-700">Password</label>
-          <input type="password" id="password" name="password" autocomplete="new-password"
-            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+          <label class="text-sm font-medium text-gray-700">Password</label>
+          <input type="password" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
+        </div>
+        <button type="button" onclick="showStep2()"
+          class="mt-4 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition">
+          Next
+        </button>
+      </form>
+
+      <!-- Step 2: Business Details -->
+      <form id="step2-form" method="POST" action="{{ route('auth.register_detail_submit') }}"
+        enctype="multipart/form-data" class="hidden space-y-4 mt-6">
+        @csrf
+
+        <div>
+          <label class="text-sm font-medium text-gray-700">NIB</label>
+          <input type="text" name="nib" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
         </div>
 
-        <a href="{{ route('register.step2') }}"
-   class="mt-4 block text-center bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition duration-300">
-   Next
-</a>
+        @php
+          $fields = [
+            ['id' => 'company_profile', 'label' => 'Company Profile'],
+            ['id' => 'business_license', 'label' => 'Izin Perusahaan'],
+            ['id' => 'tax_document', 'label' => 'Surat Pengukuhan PKP'],
+            ['id' => 'organization_structure', 'label' => 'Struktur Organisasi'],
+            ['id' => 'company_experience', 'label' => 'Daftar Pengalaman Perusahaan']
+          ];
+        @endphp
+
+        @foreach ($fields as $field)
+          <div>
+            <label for="{{ $field['id'] }}" class="text-sm font-medium text-gray-700">{{ $field['label'] }}</label>
+            <div class="relative mt-1 flex rounded-lg border border-gray-300 overflow-hidden">
+              <input type="file" id="{{ $field['id'] }}" name="{{ $field['id'] }}"
+                class="hidden" onchange="document.getElementById('{{ $field['id'] }}_label').textContent = this.files[0]?.name || 'Choose a file...';" />
+              <div id="{{ $field['id'] }}_label"
+                class="flex-1 px-4 py-2 text-sm text-gray-500 bg-white truncate">Choose a file...</div>
+              <label for="{{ $field['id'] }}"
+                class="cursor-pointer bg-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-300 transition">Upload</label>
+            </div>
+          </div>
+        @endforeach
+
+        <div class="pt-2">
+          <button type="button"
+  onclick="window.location.href='{{ route('vendor.dashboardvendor') }}'"
+  class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+  Sign Up
+</button>
+        </div>
       </form>
     </section>
   </div>
-</body>
 
+  <script>
+    function showStep2() {
+      document.getElementById('step1-form').classList.add('hidden');
+      document.getElementById('step2-form').classList.remove('hidden');
+    }
+  </script>
+</body>
 </html>

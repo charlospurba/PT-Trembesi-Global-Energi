@@ -36,11 +36,6 @@
                                     View
                             </a>
                         </td>
-                            <!-- Add User Button -->
-                            <a href="{{ route('superadmin.add_users') }}"
-                            class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-medium px-3 py-1 rounded-md">
-                                <i class="fas fa-user-plus text-[12px]"></i> Add User
-                            </a>
                         </td>
                        
                     </tr>
