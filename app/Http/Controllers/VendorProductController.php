@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class VendorProductController extends Controller
 {
@@ -24,7 +25,17 @@ class VendorProductController extends Controller
   public function store(Request $request)
   {
     try {
-      Log::info('Starting product creation', ['user_id' => Auth::id()]);
+      Log::info('Starting product creation', [
+        'user_id' => Auth::id(),
+        'files_count' => $request->hasFile('images') ? count($request->file('images')) : 0,
+        'files_details' => $request->hasFile('images') ? collect($request->file('images'))->map(function ($file) {
+          return [
+            'name' => $file->getClientOriginalName(),
+            'size' => $file->getSize(),
+            'mime' => $file->getMimeType(),
+          ];
+        })->toArray() : [],
+      ]);
 
       $validated = $request->validate([
         'name' => 'required|string|max:255',
@@ -42,15 +53,33 @@ class VendorProductController extends Controller
 
       $imagePaths = [];
       if ($request->hasFile('images')) {
-        foreach ($request->file('images') as $image) {
+        foreach ($request->file('images') as $index => $image) {
           if ($image->isValid()) {
             $path = $image->store('products', 'public');
             $imagePaths[] = $path;
-            Log::info('Image uploaded', ['path' => $path]);
+            Log::info('Image uploaded', [
+              'index' => $index,
+              'path' => $path,
+              'filename' => $image->getClientOriginalName(),
+              'size' => $image->getSize(),
+              'mime' => $image->getMimeType(),
+            ]);
           } else {
-            Log::warning('Invalid image file detected', ['file' => $image->getClientOriginalName()]);
+            Log::warning('Invalid image file', [
+              'index' => $index,
+              'filename' => $image->getClientOriginalName(),
+              'error' => $image->getErrorMessage(),
+              'size' => $image->getSize(),
+              'mime' => $image->getMimeType(),
+            ]);
           }
         }
+      }
+
+      if (empty($imagePaths) && $request->hasFile('images')) {
+        Log::warning('No valid images were saved', [
+          'files_submitted' => count($request->file('images')),
+        ]);
       }
 
       $product = Product::create([
@@ -69,11 +98,23 @@ class VendorProductController extends Controller
         'status' => 'available',
       ]);
 
-      Log::info('Product created', ['product_id' => $product->id, 'vendor_id' => Auth::id(), 'image_paths' => $product->image_paths]);
+      Log::info('Product created', [
+        'product_id' => $product->id,
+        'vendor_id' => Auth::id(),
+        'image_paths' => $product->image_paths,
+      ]);
 
       return redirect()->route('vendor.myproducts')->with('success', 'Product added successfully!');
+    } catch (ValidationException $e) {
+      Log::error('Validation error during product creation', [
+        'errors' => $e->errors(),
+        'input' => $request->all(),
+      ]);
+      return back()->withErrors($e->errors())->withInput();
     } catch (\Exception $e) {
-      Log::error('Product creation error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+      Log::error('Product creation error: ' . $e->getMessage(), [
+        'trace' => $e->getTraceAsString(),
+      ]);
       return back()->withErrors(['error' => 'Failed to add product: ' . $e->getMessage()]);
     }
   }
@@ -87,6 +128,19 @@ class VendorProductController extends Controller
   public function update(Request $request, $id)
   {
     try {
+      Log::info('Starting product update', [
+        'product_id' => $id,
+        'user_id' => Auth::id(),
+        'files_count' => $request->hasFile('images') ? count($request->file('images')) : 0,
+        'files_details' => $request->hasFile('images') ? collect($request->file('images'))->map(function ($file) {
+          return [
+            'name' => $file->getClientOriginalName(),
+            'size' => $file->getSize(),
+            'mime' => $file->getMimeType(),
+          ];
+        })->toArray() : [],
+      ]);
+
       $product = Product::where('id', $id)->where('vendor_id', Auth::id())->firstOrFail();
 
       $validated = $request->validate([
@@ -101,26 +155,63 @@ class VendorProductController extends Controller
         'unit' => 'required|string|max:50',
         'address' => 'nullable|string|max:500',
         'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'existing_images.*' => 'nullable|string',
+        'remove_image_indices' => 'nullable|string',
       ]);
 
-      $imagePaths = $product->image_paths ?? [];
+      $imagePaths = [];
+      $existingImages = $request->input('existing_images', []);
+      $removeIndices = $request->input('remove_image_indices') ? array_map('intval', explode(',', $request->input('remove_image_indices'))) : [];
+
+      // If new images are uploaded, replace all old images
       if ($request->hasFile('images')) {
-        // Delete old images
-        if (!empty($imagePaths)) {
-          foreach ($imagePaths as $oldImage) {
+        // Delete all old images
+        if ($product->image_paths && is_array($product->image_paths)) {
+          foreach ($product->image_paths as $oldImage) {
             Storage::disk('public')->delete($oldImage);
+            Log::info('Old image deleted', ['path' => $oldImage]);
           }
         }
-        $imagePaths = [];
-        foreach ($request->file('images') as $image) {
+        // Upload new images
+        foreach ($request->file('images') as $index => $image) {
           if ($image->isValid()) {
             $path = $image->store('products', 'public');
             $imagePaths[] = $path;
-            Log::info('Image uploaded', ['path' => $path]);
+            Log::info('New image uploaded', [
+              'index' => $index,
+              'path' => $path,
+              'filename' => $image->getClientOriginalName(),
+              'size' => $image->getSize(),
+              'mime' => $image->getMimeType(),
+            ]);
           } else {
-            Log::warning('Invalid image file detected', ['file' => $image->getClientOriginalName()]);
+            Log::warning('Invalid image file', [
+              'index' => $index,
+              'filename' => $image->getClientOriginalName(),
+              'error' => $image->getErrorMessage(),
+              'size' => $image->getSize(),
+              'mime' => $image->getMimeType(),
+            ]);
           }
         }
+      } else {
+        // No new images; retain non-removed existing images
+        if ($product->image_paths && is_array($product->image_paths)) {
+          foreach ($product->image_paths as $index => $path) {
+            if (!in_array($index, $removeIndices) && in_array($path, $existingImages)) {
+              $imagePaths[] = $path;
+            } else {
+              Storage::disk('public')->delete($path);
+              Log::info('Removed image deleted', ['path' => $path]);
+            }
+          }
+        }
+      }
+
+      if (empty($imagePaths) && $request->hasFile('images')) {
+        Log::warning('No valid images were saved', [
+          'files_submitted' => count($request->file('images')),
+        ]);
       }
 
       $product->update([
@@ -137,11 +228,23 @@ class VendorProductController extends Controller
         'image_paths' => !empty($imagePaths) ? $imagePaths : null,
       ]);
 
-      Log::info('Product updated', ['product_id' => $id, 'vendor_id' => Auth::id(), 'image_paths' => $product->image_paths]);
+      Log::info('Product updated', [
+        'product_id' => $id,
+        'vendor_id' => Auth::id(),
+        'image_paths' => $product->image_paths,
+      ]);
 
       return redirect()->route('vendor.myproducts')->with('success', 'Product updated successfully!');
+    } catch (ValidationException $e) {
+      Log::error('Validation error during product update', [
+        'errors' => $e->errors(),
+        'input' => $request->all(),
+      ]);
+      return back()->withErrors($e->errors())->withInput();
     } catch (\Exception $e) {
-      Log::error('Product update error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+      Log::error('Product update error: ' . $e->getMessage(), [
+        'trace' => $e->getTraceAsString(),
+      ]);
       return back()->withErrors(['error' => 'Failed to update product: ' . $e->getMessage()]);
     }
   }
@@ -158,7 +261,9 @@ class VendorProductController extends Controller
       $product->delete();
       return response()->json(['success' => true, 'message' => 'Product deleted successfully!']);
     } catch (\Exception $e) {
-      Log::error('Product deletion error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+      Log::error('Product deletion error: ' . $e->getMessage(), [
+        'trace' => $e->getTraceAsString(),
+      ]);
       return response()->json(['success' => false, 'message' => 'Failed to delete product: ' . $e->getMessage()], 500);
     }
   }

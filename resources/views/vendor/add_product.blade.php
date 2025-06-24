@@ -7,8 +7,8 @@
         @include('components.sidevendor')
         <main class="flex-1 p-6 space-y-6">
             <div class="bg-red-500 text-white px-6 py-4 rounded-md shadow">
-                <h2 class="text-xl font-bold">Add New Product</h2>
-                <p class="text-sm">Fill in the product details to publish</p>
+                <h2 class="text-xl font-bold">Add Product</h2>
+                <p class="text-sm">Fill in the product details below</p>
             </div>
 
             @if (session('success'))
@@ -42,18 +42,20 @@
                                     class="text-red-500">*</span></label>
                             <select name="category" required
                                 class="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-red-500 focus:border-red-500">
-                                <option value="" {{ old('category') ? '' : 'selected' }}>Select Category</option>
+                                <option value="" {{ old('category') == '' ? 'selected' : '' }}>Select Category
+                                </option>
                                 <option value="material" {{ old('category') == 'material' ? 'selected' : '' }}>Material
                                 </option>
                                 <option value="equipment" {{ old('category') == 'equipment' ? 'selected' : '' }}>Equipment
                                 </option>
                                 <option value="electrical tools"
-                                    {{ old('category') == 'electrical tools' ? 'selected' : '' }}>Electrical Tools</option>
+                                    {{ old('category') == 'electrical tools' ? 'selected' : '' }}>
+                                    Electrical Tools</option>
                                 <option value="consumables" {{ old('category') == 'consumables' ? 'selected' : '' }}>
                                     Consumables</option>
                                 <option value="personal protective equipment"
-                                    {{ old('category') == 'personal protective equipment' ? 'selected' : '' }}>Personal
-                                    Protective Equipment</option>
+                                    {{ old('category') == 'personal protective equipment' ? 'selected' : '' }}>
+                                    Personal Protective Equipment</option>
                             </select>
                             @error('category')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -72,8 +74,7 @@
                             <div>
                                 <label class="block font-semibold text-gray-800 mb-1">Supplier <span
                                         class="text-red-500">*</span></label>
-                                <input name="supplier" type="text"
-                                    value="{{ old('supplier', Auth::user()->store_name) }}"
+                                <input name="supplier" type="text" value="{{ old('supplier', Auth::user()->name) }}"
                                     class="w-full border border-gray-300 rounded-md px-4 py-2 bg-gray-100 focus:ring-red-500 focus:border-red-500"
                                     readonly required />
                                 @error('supplier')
@@ -188,10 +189,13 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                             </svg>
                             <p>Drop images here or click to upload</p>
-                            <p class="text-sm text-gray-400">Supports: JPG, PNG, GIF (Max 5MB each)</p>
+                            <p class="text-sm text-gray-400">Supports: JPG, PNG, GIF (Max 2MB each)</p>
                             <input id="images" name="images[]" type="file" class="hidden" accept="image/*"
                                 multiple />
                         </label>
+                        @error('images.*')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                         <div id="image-preview" class="mt-4 hidden">
                             <div id="preview-container" class="flex flex-wrap gap-2"></div>
                         </div>
@@ -199,10 +203,11 @@
                 </div>
 
                 <div class="flex justify-end gap-4">
-                    <button type="reset"
-                        class="bg-gray-200 hover:bg-gray-300 text-red-600 font-semibold px-6 py-2 rounded-md">Reset</button>
+                    <a href="{{ route('vendor.myproducts') }}"
+                        class="bg-gray-200 hover:bg-gray-300 text-red-600 font-semibold px-6 py-2 rounded-md">Cancel</a>
                     <button type="submit"
-                        class="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-2 rounded-md">Save</button>
+                        class="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-2 rounded-md">Add
+                        Product</button>
                 </div>
             </form>
         </main>
@@ -211,32 +216,41 @@
     <footer class="bg-white text-center p-4 text-sm text-gray-500">
         © 2025 Trembesi Shop
     </footer>
-@endsection
 
-@push('scripts')
-    <script>
-        document.getElementById('images').addEventListener('change', function(event) {
-            const files = event.target.files;
-            const previewContainer = document.getElementById('preview-container');
-            previewContainer.innerHTML = '';
-            if (files.length > 0) {
-                Array.from(files).forEach(file => {
-                    if (file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.alt = 'Image Preview';
-                            img.className = 'w-32 h-32 object-cover rounded border';
-                            previewContainer.appendChild(img);
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-                document.getElementById('image-preview').classList.remove('hidden');
-            } else {
-                document.getElementById('image-preview').classList.add('hidden');
-            }
-        });
-    </script>
-@endpush
+    @push('scripts')
+        <script>
+            document.getElementById('images').addEventListener('change', function(event) {
+                const files = event.target.files;
+                const previewContainer = document.getElementById('preview-container');
+                previewContainer.innerHTML = '';
+                if (files.length > 0) {
+                    Array.from(files).forEach(file => {
+                        if (file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                const img = document.createElement('img');
+                                img.src = e.target.result;
+                                img.alt = 'Image Preview';
+                                img.className = 'w-32 h-32 object-cover rounded border';
+                                previewContainer.appendChild(img);
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                    document.getElementById('image-preview').classList.remove('hidden');
+                } else {
+                    document.getElementById('image-preview').classList.add('hidden');
+                }
+            });
+
+            document.querySelector('form').addEventListener('submit', function() {
+                const files = document.getElementById('images').files;
+                console.log('Files selected for submission:', files.length, Array.from(files).map(f => ({
+                    name: f.name,
+                    size: f.size,
+                    type: f.type
+                })));
+            });
+        </script>
+    @endpush
+@endsection
