@@ -4,25 +4,21 @@
     @include('components.navadmin')
 
     <div class="flex h-screen overflow-hidden bg-white">
-        <!-- Sidebar -->
         @include('components.sideadmin')
 
-        <!-- Main Content -->
         <div class="flex-1 bg-[#f2f2f2]">
-
             @if (session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded-md mb-4">
-                    <strong class="font-semibold">Berhasil:</strong>
+                    <strong class="font-semibold">Success:</strong>
                     <span class="block mt-1">{{ session('success') }}</span>
                 </div>
             @endif
 
             <div class="p-6">
-                <!-- Title -->
                 <h2 class="text-lg font-bold text-gray-800 mb-4">User Management</h2>
 
-                <!-- Summary Cards + Add User -->
                 <div class="flex flex-wrap items-start gap-4 mb-6">
+                    <!-- Cards (same as before) -->
                     <!-- Total User -->
                     <div class="bg-white rounded-xl shadow flex items-center px-4 py-3 border-t-4 border-[#FF3D00] w-full sm:w-auto min-w-[180px]">
                         <div class="text-[#FF3D00] text-3xl mr-4">
@@ -56,20 +52,18 @@
                         </div>
                     </div>
 
-                  <!-- Vendor -->
-<div class="bg-white rounded-xl shadow flex items-center px-4 py-3 border-t-4 border-[#2962FF] w-full sm:w-auto min-w-[180px]">
-    <div class="text-[#2962FF] text-3xl mr-4">
-        <i class="fas fa-user-tag"></i>
-    </div>
-    <div>
-        <p class="text-sm text-gray-600">Vendor</p>
-        <p class="text-xl font-bold text-gray-800">{{ $totalVendor }}</p>
-    </div>
-</div>
+                    <!-- Vendor -->
+                    <div class="bg-white rounded-xl shadow flex items-center px-4 py-3 border-t-4 border-[#2962FF] w-full sm:w-auto min-w-[180px]">
+                        <div class="text-[#2962FF] text-3xl mr-4">
+                            <i class="fas fa-user-tag"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Vendor</p>
+                            <p class="text-xl font-bold text-gray-800">{{ $totalVendor }}</p>
+                        </div>
+                    </div>
 
-
-
-                    <!-- Tombol Add User -->
+                    <!-- Add User Button -->
                     <a href="{{ route('superadmin.add_users') }}"
                         class="ml-auto self-start flex items-center gap-2 bg-[#2962FF] hover:bg-blue-700 text-white font-semibold text-sm px-5 py-2 rounded-md shadow">
                         <i class="fas fa-plus"></i> Add User
@@ -106,27 +100,26 @@
                                         </td>
                                         <td class="py-3">{{ $user->created_at->format('d M Y') }}</td>
                                         <td class="py-3">
-    <div class="flex justify-center gap-3">
-        <!-- Edit Icon -->
-        <a href="#" class="text-blue-600 hover:text-blue-800" title="Edit">
-            <i class="fas fa-pen"></i>
-        </a>
-
-        <!-- Delete Icon -->
-        <form action="#" method="POST" onsubmit="return confirm('Yakin ingin hapus user ini?')" class="inline">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="text-red-600 hover:text-red-800" title="Delete">
-                <i class="fas fa-trash"></i>
-            </button>
-        </form>
-    </div>
-</td>
-
+                                            <div class="flex justify-center gap-3">
+                                                <!-- Edit Icon -->
+                                                <a href="{{ route('superadmin.users.edit', ['id' => $user->id]) }}"
+                                                    class="text-blue-600 hover:text-blue-800">
+                                                    <i class="fas fa-pen"></i>
+                                                </a>
+                                                <!-- Delete Icon with SweetAlert2 -->
+                                                <button type="button"
+                                                    class="text-red-600 hover:text-red-800 delete-button"
+                                                    data-id="{{ $user->id }}"
+                                                    data-name="{{ $user->name }}"
+                                                    data-url="{{ route('superadmin.users.destroy', $user->id) }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="py-4 text-gray-500 italic">Belum ada data user.</td>
+                                        <td colspan="6" class="py-4 text-gray-500 italic">No users found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -140,4 +133,52 @@
 
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const buttons = document.querySelectorAll('.delete-button');
+
+            buttons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const userName = this.dataset.name;
+                    const url = this.dataset.url;
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Are you sure?',
+                        html: `Do you really want to delete <strong>${userName}</strong>?<br>This process cannot be undone.`,
+                        showCancelButton: true,
+                        confirmButtonColor: '#ff0000',
+                        cancelButtonColor: '#0066ff',
+                        confirmButtonText: 'Delete',
+                        cancelButtonText: 'Cancel',
+                        reverseButtons: true,
+                        focusCancel: true,
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = url;
+
+                            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                            const csrfInput = document.createElement('input');
+                            csrfInput.type = 'hidden';
+                            csrfInput.name = '_token';
+                            csrfInput.value = csrfToken;
+                            form.appendChild(csrfInput);
+
+                            const methodInput = document.createElement('input');
+                            methodInput.type = 'hidden';
+                            methodInput.name = '_method';
+                            methodInput.value = 'DELETE';
+                            form.appendChild(methodInput);
+
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 @endpush

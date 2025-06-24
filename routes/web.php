@@ -54,7 +54,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/superadmin/users/add', [UserManagementController::class, 'create'])->name('superadmin.users.create');
     Route::post('/superadmin/users/store', [UserManagementController::class, 'store'])->name('superadmin.users.store');
     Route::view('/superadmin/view-detail', 'superadmin.view_detail')->name('superadmin.view_detail');
-
+    Route::view('/superadmin/users/{id}/edit', 'superadmin.edit')->name('superadmin.users.edit');
+    Route::delete('/superadmin/users/{id}', [SuperAdminController::class, 'destroy'])->name('superadmin.users.destroy');
+    
     // Approval Vendor
     Route::prefix('superadmin')->middleware('auth')->group(function () {
         Route::get('/vendor-requests', [VendorApprovalController::class, 'index'])->name('superadmin.vendor.requests');
