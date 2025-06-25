@@ -9,9 +9,9 @@
         <main class="flex-1 p-6 space-y-6">
             <!-- Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white p-4 rounded shadow text-center border-t-4 border-red-500">
+                 <div class="bg-white p-4 rounded shadow text-center border-t-4 border-red-500">
                     <p class="text-gray-500">Number of Products</p>
-                    <p class="text-2xl font-bold">125</p>
+                    <p class="text-2xl font-bold">{{ $productCount }}</p>
                 </div>
                 <div class="bg-white p-4 rounded shadow text-center border-t-4 border-green-500">
                     <p class="text-gray-500">Orders In</p>

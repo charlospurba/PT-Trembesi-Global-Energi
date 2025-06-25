@@ -13,20 +13,31 @@
                 <!-- Tabs & Search -->
                 <div class="flex flex-wrap items-center mb-4 gap-3">
                     <a href="{{ route('vendor.orders') }}"
-                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">All</a>
-                    <a href="?status=Awaiting Shipment"
-                        class="bg-gray-200 hover:bg-red-100 text-gray-800 px-4 py-2 rounded transition">Awaiting Shipment</a>
-                    <a href="?status=Shipped"
-                        class="bg-gray-200 hover:bg-red-100 text-gray-800 px-4 py-2 rounded transition">Shipped</a>
-                    <a href="?status=Completed"
-                        class="bg-gray-200 hover:bg-red-100 text-gray-800 px-4 py-2 rounded transition">Completed</a>
-                    <a href="?status=Cancelled"
-                        class="bg-gray-200 hover:bg-red-100 text-gray-800 px-4 py-2 rounded transition">Cancelled</a>
+                        class="px-4 py-2 rounded transition {{ !request('status') ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-red-100 text-gray-800' }}">
+                        All ({{ $orderCounts['all'] ?? 0 }})
+                    </a>
+                    <a href="{{ route('vendor.orders', ['status' => 'Awaiting Shipment']) }}"
+                        class="px-4 py-2 rounded transition {{ request('status') === 'Awaiting Shipment' ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-red-100 text-gray-800' }}">
+                        Awaiting Shipment ({{ $orderCounts['awaiting_shipment'] ?? 0 }})
+                    </a>
+                    <a href="{{ route('vendor.orders', ['status' => 'Shipped']) }}"
+                        class="px-4 py-2 rounded transition {{ request('status') === 'Shipped' ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-red-100 text-gray-800' }}">
+                        Shipped ({{ $orderCounts['shipped'] ?? 0 }})
+                    </a>
+                    <a href="{{ route('vendor.orders', ['status' => 'Completed']) }}"
+                        class="px-4 py-2 rounded transition {{ request('status') === 'Completed' ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-red-100 text-gray-800' }}">
+                        Completed ({{ $orderCounts['completed'] ?? 0 }})
+                    </a>
+                    <a href="{{ route('vendor.orders', ['status' => 'Cancelled']) }}"
+                        class="px-4 py-2 rounded transition {{ request('status') === 'Cancelled' ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-red-100 text-gray-800' }}">
+                        Cancelled ({{ $orderCounts['cancelled'] ?? 0 }})
+                    </a>
 
                     <!-- Search Box -->
                     <div class="ml-auto relative w-64">
-                        <input type="text" placeholder="Search..." id="searchInput"
-                            class="w-full border border-gray-300 rounded pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-400">
+                        <input type="text" placeholder="Search orders..." id="searchInput"
+                            class="w-full border border-gray-300 rounded pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-400"
+                            value="{{ request('search') }}">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -36,6 +47,27 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Current Filter Info -->
+                @if(request('status') || request('search'))
+                    <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-blue-700">
+                                @if(request('status'))
+                                    Showing orders with status: <strong>{{ request('status') }}</strong>
+                                @endif
+                                @if(request('search'))
+                                    @if(request('status')) | @endif
+                                    Search: <strong>"{{ request('search') }}"</strong>
+                                @endif
+                                - Total: {{ $orders->count() }} orders
+                            </div>
+                            <a href="{{ route('vendor.orders') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                Clear Filters
+                            </a>
+                        </div>
+                    </div>
+                @endif
 
                 <!-- Table -->
                 <div class="overflow-x-auto border-t border-gray-300">
@@ -50,51 +82,106 @@
                         </thead>
                         <tbody class="text-gray-700" id="orderTable">
                             @forelse ($orders as $order)
-                                <tr class="border-t border-gray-200" data-order-id="{{ $order['id'] }}">
+                                <tr class="border-t border-gray-200 hover:bg-gray-50 transition-colors" data-order-id="{{ $order['id'] }}">
                                     <td class="p-3">
-                                        <span
-                                            class="px-3 py-1 rounded-full text-xs font-medium 
-                                        {{ (($order['status'] === 'Awaiting Shipment'
-                                                    ? 'bg-yellow-100 text-yellow-700'
-                                                    : $order['status'] === 'Shipped')
-                                                ? 'bg-blue-100 text-blue-700'
-                                                : $order['status'] === 'Completed')
-                                            ? 'bg-green-100 text-green-700'
-                                            : 'bg-red-100 text-red-700' }}">
+                                        <span class="px-3 py-1 rounded-full text-xs font-medium 
+                                            @switch($order['status'])
+                                                @case('Awaiting Shipment')
+                                                    bg-yellow-100 text-yellow-700
+                                                    @break
+                                                @case('Shipped')
+                                                    bg-blue-100 text-blue-700
+                                                    @break
+                                                @case('Completed')
+                                                    bg-green-100 text-green-700
+                                                    @break
+                                                @case('Cancelled')
+                                                    bg-red-100 text-red-700
+                                                    @break
+                                                @default
+                                                    bg-gray-100 text-gray-700
+                                            @endswitch">
                                             {{ $order['status'] }}
                                         </span>
                                     </td>
                                     <td class="p-3">
-                                        {{ $order['user_name'] }}<br>
-                                        <small class="text-gray-500">{{ $order['user_email'] }}</small><br>
-                                        <small class="text-gray-500">Order Date: {{ $order['order_date'] }}</small>
+                                        <div class="font-medium text-gray-900">{{ $order['user_name'] }}</div>
+                                        <div class="text-sm text-gray-500">{{ $order['user_email'] }}</div>
+                                        <div class="text-sm text-gray-500">Order Date: {{ $order['order_date'] }}</div>
+                                        @if(isset($order['total_amount']))
+                                            <div class="text-sm font-medium text-gray-700">Total: Rp {{ number_format($order['total_amount'], 0, ',', '.') }}</div>
+                                        @endif
                                     </td>
-                                    <td class="p-3 text-sm leading-6">{{ $order['shipping_address'] }}<br>Telepon:
-                                        {{ $order['phone'] }}</td>
+                                    <td class="p-3 text-sm leading-6">
+                                        <div class="text-gray-900">{{ $order['shipping_address'] }}</div>
+                                        <div class="text-gray-500">Telepon: {{ $order['phone'] }}</div>
+                                    </td>
                                     <td class="p-3">
                                         <a href="{{ route('vendor.order_detail', $order['id']) }}"
-                                            class="bg-blue-500 text-white px-4 py-1.5 rounded text-sm hover:bg-blue-600 transition">View</a>
+                                            class="bg-blue-500 text-white px-4 py-1.5 rounded text-sm hover:bg-blue-600 transition">
+                                            View
+                                        </a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="p-3 text-center text-gray-500">No orders found.</td>
+                                    <td colspan="4" class="p-8 text-center text-gray-500">
+                                        <div class="flex flex-col items-center">
+                                            <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                            <div class="text-lg font-medium">No orders found</div>
+                                            @if(request('status') || request('search'))
+                                                <div class="text-sm text-gray-400 mt-1">Try adjusting your filters</div>
+                                            @else
+                                                <div class="text-sm text-gray-400 mt-1">Orders will appear here when customers place them</div>
+                                            @endif
+                                        </div>
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Pagination (if applicable) -->
+                @if(method_exists($orders, 'links'))
+                    <div class="mt-4">
+                        {{ $orders->appends(request()->query())->links() }}
+                    </div>
+                @endif
             </div>
         </main>
     </div>
 
     <script>
+        // Real-time search functionality
         document.getElementById('searchInput').addEventListener('input', function() {
             const searchValue = this.value.toLowerCase();
-            document.querySelectorAll('#orderTable tr').forEach(row => {
+            const rows = document.querySelectorAll('#orderTable tr[data-order-id]');
+            
+            rows.forEach(row => {
                 const orderText = row.textContent.toLowerCase();
                 row.style.display = orderText.includes(searchValue) ? '' : 'none';
             });
+        });
+
+        // Auto-submit search after user stops typing
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const searchValue = this.value;
+                const currentUrl = new URL(window.location);
+                
+                if (searchValue) {
+                    currentUrl.searchParams.set('search', searchValue);
+                } else {
+                    currentUrl.searchParams.delete('search');
+                }
+                
+                window.history.replaceState({}, '', currentUrl);
+            }, 500);
         });
     </script>
 @endsection

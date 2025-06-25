@@ -75,46 +75,60 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.getElementById('update-status-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const form = this;
-            fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('#update-status-form input[name="_token"]').value
-                    },
-                    body: JSON.stringify({
-                        status: form.querySelector('select[name="status"]').value
-                    })
+<script>
+    document.getElementById('update-status-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const form = this;
+        const submitButton = form.querySelector('button[type="submit"]');
+        
+        // Disable button during request
+        submitButton.disabled = true;
+        submitButton.textContent = 'Updating...';
+        
+        fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('#update-status-form input[name="_token"]').value
+                },
+                body: JSON.stringify({
+                    status: form.querySelector('select[name="status"]').value
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: data.message,
-                            timer: 1500
-                        }).then(() => {
-                            window.location.reload();
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message
-                        });
-                    }
-                })
-                .catch(error => {
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        // Redirect to orders page
+                        window.location.href = "{{ route('vendor.orders') }}";
+                    });
+                } else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Failed to update status: ' + error.message
+                        text: data.message
                     });
+                    // Re-enable button on error
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Update Status';
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to update status: ' + error.message
                 });
-        });
-    </script>
+                // Re-enable button on error
+                submitButton.disabled = false;
+                submitButton.textContent = 'Update Status';
+            });
+    });
+</script>
 @endsection
