@@ -15,16 +15,22 @@
                 </div>
                 <div class="bg-white p-4 rounded shadow text-center border-t-4 border-green-500">
                     <p class="text-gray-500">Orders In</p>
-                    <p class="text-2xl font-bold">18</p>
+                    <p class="text-2xl font-bold">{{ $stats['orders_in'] ?? 0 }}</p>
+                    <p class="text-xs text-gray-400 mt-1">Awaiting Shipment</p>
                 </div>
+                
                 <div class="bg-white p-4 rounded shadow text-center border-t-4 border-yellow-400">
                     <p class="text-gray-500">Orders Processed</p>
-                    <p class="text-2xl font-bold">20</p>
+                    <p class="text-2xl font-bold">{{ $stats['orders_processed'] ?? 0 }}</p>
+                    <p class="text-xs text-gray-400 mt-1">Shipped + Completed</p>
                 </div>
+                
                 <div class="bg-white p-4 rounded shadow text-center border-t-4 border-red-500">
                     <p class="text-gray-500">Total Sales</p>
-                    <p class="text-2xl font-bold">50</p>
+                    <p class="text-2xl font-bold">Rp {{ number_format($stats['total_sales'] ?? 0, 0, ',', '.') }}</p>
+                    <p class="text-xs text-gray-400 mt-1">From completed orders</p>
                 </div>
+
             </div>
 
             <!-- Grafik Penjualan -->
