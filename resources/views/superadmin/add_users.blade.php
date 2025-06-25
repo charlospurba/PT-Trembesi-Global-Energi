@@ -58,8 +58,10 @@
                             <select name="role"
                                 class="w-full border rounded px-3 py-2 hover:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
                                 <option value="">-- Select Role --</option>
-                                <option value="project_manager" {{ old('role') === 'project_manager' ? 'selected' : '' }}>project_manager</option>
-                                <option value="procurement" {{ old('role') === 'procurement' ? 'selected' : '' }}>procurement</option>
+                                <option value="project_manager" {{ old('role') === 'project_manager' ? 'selected' : '' }}>
+                                    project_manager</option>
+                                <option value="procurement" {{ old('role') === 'procurement' ? 'selected' : '' }}>procurement
+                                </option>
                             </select>
                         </div>
 

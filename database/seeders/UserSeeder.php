@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Super Admin',
             'email' => 'superadmin@example.com',
-            'status'=> 'Active',
+            'status' => 'active',
             'phone_number' => '0800000001',
             'project_kode' => '-',
             'store_name' => '-',
@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Procurement',
             'email' => 'procurement@example.com',
-            'status'=> 'Active',
+            'status' => 'active',
             'phone_number' => '0800000002',
             'project_kode' => '-',
             'store_name' => '-',
@@ -53,7 +53,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Project Manager',
             'email' => 'pm@example.com',
-            'status'=> 'Active',
+            'status' => 'active',
             'phone_number' => '0800000003',
             'project_kode' => '-',
             'store_name' => '-',
@@ -73,7 +73,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Vendor',
             'email' => 'vendor@example.com',
-            'status'=> 'Active',
+            'status' => 'active',
             'phone_number' => '0800000007',
             'project_kode' => '-',
             'store_name' => 'PT Cempaka Putih',
@@ -91,4 +91,3 @@ class UserSeeder extends Seeder
         ]);
     }
 }
-

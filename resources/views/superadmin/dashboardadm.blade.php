@@ -102,7 +102,7 @@
                                         <td class="py-3">
                                             <div class="flex justify-center gap-3">
                                                 <!-- Edit Icon -->
-                                                <a href="{{ route('superadmin.users.edit', ['id' => $user->id]) }}"
+                                                <a href="{{ route('superadmin.edit', ['id' => $user->id]) }}"
                                                     class="text-blue-600 hover:text-blue-800">
                                                     <i class="fas fa-pen"></i>
                                                 </a>

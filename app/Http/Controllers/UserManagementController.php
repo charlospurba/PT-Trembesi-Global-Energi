@@ -43,12 +43,50 @@ class UserManagementController extends Controller
     // ✅ Tambahkan fungsi dashboard
     public function dashboard()
     {
-        $totalUsers = User::count();
-        $totalProcurement = User::where('role', 'procurement')->count();
-        $totalManager = User::where('role', 'project_manager')->count();
-        $totalVendor = User::where('role', 'vendor')->count();
-        $users = User::latest()->get();
+        // Untuk tabel: status = active OR approved
+        $users = User::whereIn('status', ['active', 'inactive', 'approved'])->latest()->get();
 
-        return view('superadmin.dashboardadm', compact('totalUsers', 'totalProcurement', 'totalManager', 'totalVendor', 'users'));
+        // Untuk count: hanya status = active
+        $totalUsers = User::where('status', 'active')->count();
+        $totalProcurement = User::where('status', 'active')->where('role', 'procurement')->count();
+        $totalManager = User::where('status', 'active')->where('role', 'project_manager')->count();
+        $totalVendor = User::where('status', 'active')->where('role', 'vendor')->count();
+
+        return view('superadmin.dashboardadm', compact(
+            'totalUsers',
+            'totalProcurement',
+            'totalManager',
+            'totalVendor',
+            'users'
+        ));
     }
+
+    public function edit($id)
+    {
+        $user = User::findOrFail($id);
+        return view('superadmin.edit', compact('user'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'status' => 'required|in:active,inactive',
+        ]);
+
+        $user->status = $request->status;
+        $user->save();
+
+        return redirect()->route('superadmin.dashboard')->with('success', 'User status berhasil diperbarui.');
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('superadmin.dashboard')->with('success', 'User berhasil dihapus.');
+    }
+
 }
