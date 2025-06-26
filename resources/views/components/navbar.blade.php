@@ -84,7 +84,6 @@
     </div>
 </nav>
 
-
 <script>
     function toggleProfileDropdown() {
         const dropdown = document.getElementById("profileDropdown");

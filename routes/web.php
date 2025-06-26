@@ -82,6 +82,10 @@ Route::middleware(['auth'])->group(function () {
         return view('procurement.notes');
     })->name('procurement.notes');
 
+    Route::get('/procurement/detailnote', function () {
+        return view('procurement.detailnote');
+    })->name('procurement.detailnote');
+
     // Cart Routes
     Route::get('/cart', [CartController::class, 'showCart'])->name('procurement.cart');
     Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('cart.add');
