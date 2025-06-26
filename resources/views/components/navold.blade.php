@@ -1,38 +1,45 @@
 <!-- Navbar Component -->
 <nav class="navbar bg-red-600 p-2 px-5 w-full shadow-md z-50">
-    <div class="nav-container">
-        <div class="logo-section">
+    <div class="nav-container" style="display: flex; align-items: center; justify-content: space-between;">
+        <div class="logo-section" style="margin-right: 10px;">
             <a href="/" class="logo">
                 <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Trembesi Logo" class="logo-img">
             </a>
         </div>
 
-        <!-- Search Form -->
-        <form id="searchForm" action="/search" method="GET"
-            style="flex-grow: 1; max-width: 600px; min-width: 300px; margin-right: 10px;">
-            <div
-                style="display: flex; width: 100%; border-radius: 999px; overflow: hidden; background-color: transparent; border: 1px solid white; align-items: center; height: 45px;">
-                <div style="padding: 0 15px; color: white; display: flex; align-items: center;">
-                    <i class="fas fa-search" style="font-size: 20px;"></i>
+        <!-- Search Form + Notes Icon -->
+        <div style="display: flex; align-items: center; flex-grow: 1; max-width: 600px; min-width: 300px; margin-right: 10px;">
+            <form id="searchForm" action="/search" method="GET" style="flex-grow: 1;">
+                <div
+                    style="display: flex; width: 100%; border-radius: 999px; overflow: hidden; background-color: transparent; border: 1px solid white; align-items: center; height: 45px;">
+                    <div style="padding: 0 15px; color: white; display: flex; align-items: center;">
+                        <i class="fas fa-search" style="font-size: 20px;"></i>
+                    </div>
+                    <input type="search" name="query" placeholder="Cari produk atau vendor" aria-label="Search"
+                        style="flex-grow: 1; border: none; outline: none; height: 100%; font-size: 16px; padding: 0 10px; color: white; background-color: transparent;">
+                    <button type="submit"
+                        style="padding: 0 20px; height: 100%; background-color: white; color: black; border: none; font-weight: bold; font-size: 16px; cursor: pointer; border-top-right-radius: 999px; border-bottom-right-radius: 999px;">Search</button>
                 </div>
-                <input type="search" name="query" placeholder="Cari produk atau vendor" aria-label="Search"
-                    style="flex-grow: 1; border: none; outline: none; height: 100%; font-size: 16px; padding: 0 10px; color: white; background-color: transparent;">
-                <button type="submit"
-                    style="padding: 0 20px; height: 100%; background-color: white; color: black; border: none; font-weight: bold; font-size: 16px; cursor: pointer; border-top-right-radius: 999px; border-bottom-right-radius: 999px;">Search</button>
-            </div>
-        </form>
+            </form>
 
-        <div class="nav-right">
-            <a href="/signin" class="nav-icon">
+            <!-- Notes Icon -->
+            <a href="/signin" class="nav-icon" style="color: white;">
+                <i class="fas fa-sticky-note" style="font-size: 22px;"></i>
+            </a>
+        </div>
+
+        <!-- Right Section -->
+        <div class="nav-right" style="display: flex; align-items: center; gap: 15px;">
+            <a href="/signin" class="nav-icon" style="color: white;">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="badge cart-badge" id="cartBadge" style="display: none;">0</span>
             </a>
-            <a href="/signin" class="nav-icon">
+            <a href="/signin" class="nav-icon" style="color: white;">
                 <i class="fas fa-bell"></i>
                 <span class="badge notification-badge" id="notificationBadge" style="display: none;">0</span>
             </a>
-            <a href="/signin" class="nav-button login">Sign In</a>
-            <a href="/signup" class="nav-button register">Sign Up</a>
+            <a href="/signin" class="nav-button login" style="border: 1px solid white; padding: 5px 15px; color: white; border-radius: 5px;">Sign In</a>
+            <a href="/signup" class="nav-button register" style="border: 1px solid white; padding: 5px 15px; color: white; border-radius: 5px;">Sign Up</a>
         </div>
     </div>
 </nav>

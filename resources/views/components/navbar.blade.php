@@ -1,3 +1,4 @@
+<!-- Navbar Component -->
 <nav class="navbar bg-red-600 p-2 px-5 w-full shadow-md z-50">
     <div class="nav-container">
         <div class="logo-section">
@@ -29,6 +30,12 @@
             </div>
         </form>
 
+        <a href="{{ route('procurement.notes') }}"
+            class="flex items-center justify-center ml-3"
+            style="width: 45px; height: 45px; border-radius: 9999px; background-color: white; color: #e11d48; transition: background-color 0.3s;">
+            <i class="fas fa-sticky-note" style="font-size: 18px;"></i>
+        </a>
+
         <div class="nav-right">
             <a href="/cart" class="nav-icon">
                 <i class="fas fa-shopping-cart"></i>
@@ -41,8 +48,7 @@
                 </a>
                 <div id="notificationDropdown" class="dropdown-menu"
                     style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; min-width: 250px; z-index: 999;">
-                    <div id="notificationList" style="max-height: 300px; overflow-y: auto;">
-                    </div>
+                    <div id="notificationList" style="max-height: 300px; overflow-y: auto;"></div>
                 </div>
             </div>
             <div class="profile-dropdown" style="position: relative;">

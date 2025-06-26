@@ -77,6 +77,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/personal', [ProductController::class, 'personalProducts'])->name('procurement.personal');
     Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.detail');
 
+    // Notes Route
+    Route::get('/procurement/notes', function () {
+        return view('procurement.notes');
+    })->name('procurement.notes');
+
     // Cart Routes
     Route::get('/cart', [CartController::class, 'showCart'])->name('procurement.cart');
     Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('cart.add');
