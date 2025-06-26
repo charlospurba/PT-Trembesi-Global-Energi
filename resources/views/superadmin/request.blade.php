@@ -45,7 +45,7 @@
                 <table class="w-full text-sm text-left border border-gray-300">
                     <thead class="bg-red-600 text-white uppercase text-xs font-semibold">
                         <tr>
-                            <th class="px-4 py-2">Username</th>
+                            <th class="px-4 py-2">Store Name</th>
                             <th class="px-4 py-2">Email</th>
                             <th class="px-4 py-2">Status</th>
                             <th class="px-4 py-2">Register</th>
