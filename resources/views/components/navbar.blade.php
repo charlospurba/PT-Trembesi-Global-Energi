@@ -1,7 +1,9 @@
 <!-- Navbar Component -->
 <nav class="navbar bg-red-600 p-2 px-5 w-full shadow-md z-50">
-    <div class="nav-container">
-        <div class="logo-section">
+    <div class="flex items-center justify-between w-full">
+
+        <!-- Logo -->
+        <div class="mr-4">
             @php
                 $role = Auth::check() ? Auth::user()->role : null;
                 $dashboardLink = match ($role) {
@@ -11,83 +13,77 @@
                     default => route('dashboard'),
                 };
             @endphp
-            <a href="{{ $dashboardLink }}" class="logo">
-                <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Trembesi Logo" class="logo-img">
+            <a href="{{ $dashboardLink }}">
+                <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Trembesi Logo" class="h-10">
             </a>
         </div>
 
-        <form id="searchForm" action="/search" method="GET"
-            style="flex-grow: 1; max-width: 600px; min-width: 300px; margin-right: 10px;">
-            <div
-                style="display: flex; width: 100%; border-radius: 999px; overflow: hidden; background-color: transparent; border: 1px solid white; align-items: center; height: 45px;">
-                <div style="padding: 0 15px; color: white; display: flex; align-items: center;">
-                    <i class="fas fa-search" style="font-size: 20px;"></i>
+        <!-- Search Form -->
+        <form id="searchForm" action="/search" method="GET" class="flex-grow max-w-xl mx-4">
+            <div class="flex items-center h-11 border border-white rounded-full overflow-hidden">
+                <div class="px-4 text-white">
+                    <i class="fas fa-search text-lg"></i>
                 </div>
-                <input type="search" name="query" placeholder="Cari produk atau vendor" aria-label="Search"
-                    style="flex-grow: 1; border: none; outline: none; height: 100%; font-size: 16px; padding: 0 10px; color: white; background-color: transparent;">
-                <button type="submit"
-                    style="padding: 0 20px; height: 100%; background-color: white; color: black; border: none; font-weight: bold; font-size: 16px; cursor: pointer; border-top-right-radius: 999px; border-bottom-right-radius: 999px;">Search</button>
+                <input type="search" name="query" placeholder="Cari produk atau vendor"
+                    class="flex-grow bg-transparent text-white placeholder-white text-sm focus:outline-none px-2">
+                <button type="submit" class="bg-white text-black font-semibold px-5 h-full text-sm">Search</button>
             </div>
         </form>
 
-        <a href="{{ route('procurement.notes') }}"
-            class="flex items-center justify-center ml-3"
-            style="width: 45px; height: 45px; border-radius: 9999px; background-color: white; color: #e11d48; transition: background-color 0.3s;">
-            <i class="fas fa-sticky-note" style="font-size: 18px;"></i>
-        </a>
-
-        <div class="nav-right">
-            <a href="/cart" class="nav-icon">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="badge cart-badge" id="cartBadge" style="display: none;">0</span>
+        <!-- Icons + Auth Buttons (Right Aligned) -->
+        <div class="flex items-center gap-3">
+            <!-- Notes -->
+            <a href="{{ route('procurement.notes') }}" class="relative w-9 h-9 flex items-center justify-center text-white hover:text-white/80 transition">
+                <i class="fas fa-sticky-note text-base"></i>
             </a>
-            <div class="notification-dropdown" style="position: relative; display: inline-block;">
-                <a href="#" class="nav-icon" onclick="toggleNotificationDropdown(event)">
-                    <i class="fas fa-bell"></i>
-                    <span class="badge notification-badge" id="notificationBadge" style="display: none;">0</span>
-                </a>
-                <div id="notificationDropdown" class="dropdown-menu"
-                    style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; min-width: 250px; z-index: 999;">
-                    <div id="notificationList" style="max-height: 300px; overflow-y: auto;"></div>
-                </div>
-            </div>
-            <div class="profile-dropdown" style="position: relative;">
-                <div class="profile-trigger" onclick="toggleProfileDropdown()"
-                    style="cursor: pointer; display: flex; align-items: center; color: white;">
-                    @auth
+
+            <!-- Cart -->
+            <a href="/cart" class="relative w-9 h-9 flex items-center justify-center text-white hover:text-white/80 transition">
+                <i class="fas fa-shopping-cart text-base"></i>
+                <span id="cartBadge" class="absolute -top-1 -right-1 bg-white text-red-600 text-xs px-1.5 rounded-full hidden">0</span>
+            </a>
+
+            <!-- Notification -->
+            <a href="#" onclick="toggleNotificationDropdown(event)" class="relative w-9 h-9 flex items-center justify-center text-white hover:text-white/80 transition">
+                <i class="fas fa-bell text-base"></i>
+                <span id="notificationBadge" class="absolute -top-1 -right-1 bg-white text-red-600 text-xs px-1.5 rounded-full hidden">0</span>
+            </a>
+
+            <!-- Sign In / Sign Up -->
+            @guest
+                <a href="/signin"
+                    class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign In</a>
+                <a href="/signup"
+                    class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign Up</a>
+            @endguest
+
+            <!-- Profile (Jika Sudah Login) -->
+            @auth
+                <div class="relative">
+                    <div onclick="toggleProfileDropdown()" class="flex items-center gap-2 text-white cursor-pointer hover:opacity-90">
                         @php
                             $profilePicture = Auth::user()->profile_picture
                                 ? asset('storage/profile_picture/' . Auth::user()->profile_picture)
                                 : asset('assets/images/default-profile.png');
                         @endphp
-                        <div style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden; margin-right: 8px;">
-                            <img src="{{ $profilePicture }}" alt="Profile Picture"
-                                style="width: 100%; height: 100%; object-fit: cover;">
-                        </div>
-                        <span>{{ Auth::user()->name }}</span>
-                    @endauth
-                    @guest
-                        <i class="fas fa-user-circle" style="font-size: 24px; margin-right: 8px;"></i>
-                        <span>Guest</span>
-                    @endguest
-                    <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
+                        <img src="{{ $profilePicture }}" alt="Profile" class="w-9 h-9 rounded-full object-cover border-2 border-white shadow">
+                        <span class="font-medium max-w-[120px] truncate">{{ Auth::user()->name }}</span>
+                        <i class="fas fa-caret-down text-sm"></i>
+                    </div>
+
+                    <div id="profileDropdown" class="absolute top-full right-0 mt-2 w-40 bg-white text-black rounded-md shadow-md hidden z-50">
+                        <a href="/dashboard/profile" class="block px-4 py-2 hover:bg-gray-100 text-sm">My Profile</a>
+                        <form id="logoutForm" method="POST" action="/logout">
+                            @csrf
+                            <button type="button" id="logoutBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">Logout</button>
+                        </form>
+                    </div>
                 </div>
-                <div id="profileDropdown" class="dropdown-menu"
-                    style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px10px rgba(0,0,0,0.1); display: none; min-width: 150px; z-index: 999;">
-                    <a href="/dashboard/profile" class="dropdown-item"
-                        style="display: block; padding: 10px 15px; text-decoration: none; color: black;">My Profile</a>
-                    <form id="logoutForm" method="POST" action="/logout" style="margin: 0;">
-                        @csrf
-                        <button type="button" id="logoutBtn" class="dropdown-item"
-                            style="width: 100%; text-align: left; background: none; border: none; padding: 10px 15px; cursor: pointer;">
-                            Logout
-                        </button>
-                    </form>
-                </div>
-            </div>
+            @endauth
         </div>
     </div>
 </nav>
+
 
 <script>
     function toggleProfileDropdown() {

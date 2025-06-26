@@ -1,45 +1,55 @@
 <!-- Navbar Component -->
 <nav class="navbar bg-red-600 p-2 px-5 w-full shadow-md z-50">
-    <div class="nav-container" style="display: flex; align-items: center; justify-content: space-between;">
-        <div class="logo-section" style="margin-right: 10px;">
-            <a href="/" class="logo">
-                <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Trembesi Logo" class="logo-img">
+    <div class="flex items-center justify-between w-full">
+
+        <!-- Logo -->
+        <div class="mr-2">
+            <a href="/" class="block">
+                <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Trembesi Logo" class="h-10">
             </a>
         </div>
 
-        <!-- Search Form + Notes Icon -->
-        <div style="display: flex; align-items: center; flex-grow: 1; max-width: 600px; min-width: 300px; margin-right: 10px;">
-            <form id="searchForm" action="/search" method="GET" style="flex-grow: 1;">
-                <div
-                    style="display: flex; width: 100%; border-radius: 999px; overflow: hidden; background-color: transparent; border: 1px solid white; align-items: center; height: 45px;">
-                    <div style="padding: 0 15px; color: white; display: flex; align-items: center;">
-                        <i class="fas fa-search" style="font-size: 20px;"></i>
+        <!-- Search Form -->
+        <div class="flex-grow max-w-2xl mx-4">
+            <form id="searchForm" action="/search" method="GET">
+                <div class="flex items-center h-10 border border-white rounded-full overflow-hidden">
+                    <div class="px-3 text-white">
+                        <i class="fas fa-search text-base"></i>
                     </div>
-                    <input type="search" name="query" placeholder="Cari produk atau vendor" aria-label="Search"
-                        style="flex-grow: 1; border: none; outline: none; height: 100%; font-size: 16px; padding: 0 10px; color: white; background-color: transparent;">
+                    <input type="search" name="query" placeholder="Cari produk atau vendor"
+                        class="flex-grow bg-transparent text-white placeholder-white text-sm focus:outline-none px-2">
                     <button type="submit"
-                        style="padding: 0 20px; height: 100%; background-color: white; color: black; border: none; font-weight: bold; font-size: 16px; cursor: pointer; border-top-right-radius: 999px; border-bottom-right-radius: 999px;">Search</button>
+                        class="bg-white text-black font-semibold px-4 h-full text-sm">Search</button>
                 </div>
             </form>
-
-            <!-- Notes Icon -->
-            <a href="/signin" class="nav-icon" style="color: white;">
-                <i class="fas fa-sticky-note" style="font-size: 22px;"></i>
-            </a>
         </div>
 
-        <!-- Right Section -->
-        <div class="nav-right" style="display: flex; align-items: center; gap: 15px;">
-            <a href="/signin" class="nav-icon" style="color: white;">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="badge cart-badge" id="cartBadge" style="display: none;">0</span>
+        <!-- Icons + Auth Buttons (Right Aligned) -->
+        <div class="flex items-center gap-2">
+            <!-- Notes -->
+            <a href="/signin" class="relative w-9 h-9 flex items-center justify-center text-white hover:text-white/80 transition">
+                <i class="fas fa-sticky-note text-base"></i>
             </a>
-            <a href="/signin" class="nav-icon" style="color: white;">
-                <i class="fas fa-bell"></i>
-                <span class="badge notification-badge" id="notificationBadge" style="display: none;">0</span>
+
+            <!-- Cart -->
+            <a href="/signin" class="relative w-9 h-9 flex items-center justify-center text-white hover:text-white/80 transition">
+                <i class="fas fa-shopping-cart text-base"></i>
+                <span id="cartBadge" class="absolute -top-1 -right-1 bg-white text-red-600 text-xs px-1.5 rounded-full hidden">0</span>
             </a>
-            <a href="/signin" class="nav-button login" style="border: 1px solid white; padding: 5px 15px; color: white; border-radius: 5px;">Sign In</a>
-            <a href="/signup" class="nav-button register" style="border: 1px solid white; padding: 5px 15px; color: white; border-radius: 5px;">Sign Up</a>
+
+            <!-- Notification -->
+            <a href="/signin" class="relative w-9 h-9 flex items-center justify-center text-white hover:text-white/80 transition">
+                <i class="fas fa-bell text-base"></i>
+                <span id="notificationBadge" class="absolute -top-1 -right-1 bg-white text-red-600 text-xs px-1.5 rounded-full hidden">0</span>
+            </a>
+
+            <!-- Auth Buttons -->
+            <a href="/signin"
+                class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign
+                In</a>
+            <a href="/signup"
+                class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign
+                Up</a>
         </div>
     </div>
 </nav>
