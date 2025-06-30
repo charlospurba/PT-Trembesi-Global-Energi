@@ -115,6 +115,8 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/products/{id}', [VendorProductController::class, 'update'])->name('vendor.update_product');
     Route::delete('/products/{id}', [VendorProductController::class, 'destroy'])->name('vendor.destroy_product');
     Route::get('/products/{id}/detail', [VendorProductController::class, 'show'])->name('vendor.product_detail');
+    Route::post('/vendor/products/upload', [VendorProductController::class, 'uploadBulk'])->name('vendor.upload_bulk_products');
+    Route::post('/vendor/products/bulk-upload-images', [VendorProductController::class, 'uploadBulkWithImages'])->name('vendor.upload_bulk_with_images');
 
     // Vendor Order Routes
     Route::get('/orders', [OrderController::class, 'index'])->name('vendor.orders');

@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Imports\ProductsImport;
+use App\Imports\ProductBulkWithImagesImport;
+use ZipArchive;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -118,6 +122,42 @@ class VendorProductController extends Controller
       return back()->withErrors(['error' => 'Failed to add product: ' . $e->getMessage()]);
     }
   }
+
+  public function uploadBulkWithImages(Request $request)
+  {
+    $request->validate([
+      'excel_file' => 'required|mimes:xlsx,xls',
+      'zip_file' => 'required|mimes:zip',
+    ]);
+
+    try {
+      // Ambil path asli dari file zip
+      $zipFile = $request->file('zip_file');
+      $realZipPath = $zipFile->getRealPath(); // ✅ lebih andal
+      $extractPath = storage_path('app/temp_unzipped/' . uniqid());
+
+      mkdir($extractPath, 0755, true);
+
+      $zip = new ZipArchive;
+      if ($zip->open($realZipPath) === true) {
+        $zip->extractTo($extractPath);
+        $zip->close();
+      } else {
+        return back()->withErrors(['zip_file' => 'ZIP tidak bisa dibuka.']);
+      }
+
+      // Import Excel
+      Excel::import(new ProductBulkWithImagesImport($extractPath), $request->file('excel_file'));
+
+      \File::deleteDirectory($extractPath);
+
+      return back()->with('success', 'Produk berhasil diunggah secara massal!');
+    } catch (\Exception $e) {
+      \Log::error('Upload bulk gagal', ['msg' => $e->getMessage()]);
+      return back()->withErrors(['excel_file' => 'Gagal unggah: ' . $e->getMessage()]);
+    }
+  }
+
 
   public function edit($id)
   {
