@@ -10,29 +10,29 @@ class StoreController extends Controller
 {
     public function show($storeName)
     {
-        // Get store/supplier information by name
-        // Since you're using supplier names directly, we'll work with that
         $storeName = urldecode($storeName);
-        
-        // Get all products from this store/supplier
+
+        // Ambil semua produk dari supplier tertentu
         $products = Product::where('supplier', $storeName)->paginate(12);
-        
-        // Calculate store statistics
         $totalProducts = Product::where('supplier', $storeName)->count();
-        
-        // Create a mock store object since we don't have a dedicated stores table
+
+        // Cari user/vendor berdasarkan nama (supplier)
+        $vendor = User::where('name', $storeName)->first();
+
+        // Buat objek store (mock) + tambahkan vendor info
         $store = (object) [
             'name' => $storeName,
-            'profile_picture' => null,
-            'email' => null,
-            'phone_number' => null,
-            'created_at' => null
+            'profile_picture' => $vendor?->profile_picture,
+            'email' => $vendor?->email,
+            'phone_number' => $vendor?->phone_number,
+            'created_at' => $vendor?->created_at,
+            'vendor' => $vendor, // <- agar bisa akses di Blade sebagai $store->vendor
         ];
-        
-        // You can add more statistics like average rating, total sales, etc.
-        $averageRating = 5; // Placeholder - calculate from actual ratings
-        $totalReviews = 15; // Placeholder - count from actual reviews
-        
+
+        // Statistik rating (placeholder)
+        $averageRating = 5;
+        $totalReviews = 15;
+
         return view('store.show', compact('store', 'products', 'totalProducts', 'averageRating', 'totalReviews'));
     }
 }
