@@ -7,99 +7,182 @@
     <!-- Include Navbar Component -->
     @include('components.navbar')
 
-    <div class="min-h-screen bg-gray-100 pb-20">
-        <div class="container mx-auto px-4 py-6">
-            {{-- Breadcrumb Navigation --}}
-            <h5 class="text-lg font-bold mb-6">
-                <a href="{{ route('procurement.dashboardproc') }}" class="text-black hover:underline">Dashboard</a>
-                <span class="text-red-500"> > Cart</span>
-            </h5>
+    <div class="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-rose-50 pb-20">
+        <div class="container mx-auto px-4 py-8">
+            {{-- Clean Breadcrumb Navigation --}}
+            <div class="mb-8">
+                <nav class="flex items-center space-x-3 text-sm bg-gray-100 px-4 py-3 rounded-lg border">
+                    <span class="text-gray-600">♦</span>
+                    <a href="{{ route('procurement.dashboardproc') }}" 
+                       class="text-gray-600 hover:text-red-600 transition-colors duration-200 font-medium">
+                        Home
+                    </a>
+                    <span class="text-gray-400">></span>
+                    <span class="text-red-600 font-medium">
+                        Cart
+                    </span>
+                </nav>
+                <div class="mt-6">
+                    <h1 class="text-4xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+                        🛒 Shopping Cart
+                    </h1>
+                    <p class="text-gray-600 mt-2 text-lg">Review your selected items before checkout</p>
+                </div>
+            </div>
 
             @php
                 $groupedItems = collect($cartItems)->groupBy('supplier');
             @endphp
 
             @foreach ($groupedItems as $supplier => $items)
-                <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
-                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center">
-                        <input type="checkbox" class="mr-3 w-4 h-4 text-blue-600 rounded select-supplier"
-                            data-supplier="{{ $supplier }}">
-                        <img src="/images/store-icon.png" width="20" class="mr-2">
-                        <strong class="text-gray-800">{{ $supplier }}</strong>
-                    </div>
-
-                    @foreach ($items as $item)
-                        <div class="p-4 border-b border-gray-100 flex items-center justify-between"
-                            data-item-id="{{ $item['id'] }}">
-                            <div class="flex items-center flex-1">
-                                <input type="checkbox" class="mr-4 w-4 h-4 text-blue-600 rounded item-checkbox"
-                                    data-id="{{ $item['id'] }}" data-supplier="{{ $supplier }}">
-                                <img src="{{ $item['image'] ? asset('storage/' . $item['image']) : '/images/pipa-besi.png' }}"
-                                    width="60" height="60"
-                                    class="mr-4 rounded-md border border-gray-200 object-cover">
-                                <div class="flex-1">
-                                    <div class="font-semibold text-gray-800 mb-1">{{ $item['name'] }}</div>
-                                    <div class="text-gray-600 mb-2">
-                                        Rp. {{ number_format($item['price'], 0, ',', '.') }}
-                                        <span class="bg-red-500 text-white text-xs px-2 py-1 rounded ml-2">bid</span>
-                                    </div>
-                                    <div class="text-sm text-gray-500">
-                                        Varian:
-                                        <select class="ml-1 text-xs border border-gray-300 rounded px-2 py-1"
-                                            onchange="updateVariant({{ $item['id'] }}, this.value)">
-                                            <option selected>{{ $item['variant'] }}</option>
-                                            <!-- Add more variant options as needed -->
-                                        </select>
-                                    </div>
+                <div class="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 mb-8 overflow-hidden border-2 border-red-100 hover:border-red-200">
+                    {{-- Enhanced Supplier Header --}}
+                    <div class="bg-gradient-to-r from-red-500 via-red-600 to-pink-600 px-8 py-6 border-b border-red-200 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-r from-red-400/20 to-pink-400/20"></div>
+                        <div class="relative flex items-center">
+                            <div class="mr-6">
+                                <div class="relative">
+                                    <input type="checkbox" class="w-6 h-6 text-red-600 rounded-xl border-3 border-white bg-white/30 backdrop-blur-sm focus:ring-3 focus:ring-white/50 select-supplier shadow-lg"
+                                        data-supplier="{{ $supplier }}">
+                                    <div class="absolute inset-0 rounded-xl bg-white/10 pointer-events-none"></div>
                                 </div>
                             </div>
                             <div class="flex items-center">
-                                <div class="flex items-center mr-4">
-                                    <span class="text-sm text-gray-600 mr-2">QTY</span>
-                                    <button
-                                        class="w-8 h-8 border border-gray-300 rounded-l-md flex items-center justify-center hover:bg-gray-50 qty-btn"
-                                        onclick="updateCartQuantity({{ $item['id'] }}, -1)">−</button>
-                                    <input type="text"
-                                        class="w-12 h-8 border-t border-b border-gray-300 text-center text-sm"
-                                        value="{{ $item['quantity'] }}" id="quantity-{{ $item['id'] }}"
-                                        onchange="updateCartQuantity({{ $item['id'] }}, this.value)">
-                                    <button
-                                        class="w-8 h-8 border border-gray-300 rounded-r-md flex items-center justify-center hover:bg-gray-50 qty-btn"
-                                        onclick="updateCartQuantity({{ $item['id'] }}, 1)">+</button>
-                                </div>
-                                <button class="text-red-500 hover:text-red-700 text-lg"
-                                    onclick="removeFromCart({{ $item['id'] }})">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                                            clip-rule="evenodd"></path>
+                                <div class="bg-white/20 backdrop-blur-sm p-3 rounded-2xl mr-4 shadow-lg">
+                                    <svg class="w-6 h-6 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                     </svg>
-                                </button>
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-bold text-xl drop-shadow-sm">🏪 {{ $supplier }}</h3>
+                                    <p class="text-red-100 text-sm font-medium">{{ count($items) }} item(s) available</p>
+                                </div>
                             </div>
                         </div>
-                    @endforeach
+                    </div>
+
+                    {{-- Enhanced Items List --}}
+                    <div class="divide-y divide-red-100">
+                        @foreach ($items as $item)
+                            <div class="p-8 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 transition-all duration-300 border-l-4 border-transparent hover:border-red-300"
+                                data-item-id="{{ $item['id'] }}">
+                                <div class="flex items-center space-x-6">
+                                    {{-- Enhanced Checkbox --}}
+                                    <div class="flex-shrink-0">
+                                        <div class="relative">
+                                            <input type="checkbox" class="w-6 h-6 text-red-600 rounded-lg border-2 border-red-300 focus:ring-3 focus:ring-red-500/30 item-checkbox shadow-md"
+                                                data-id="{{ $item['id'] }}" data-supplier="{{ $supplier }}">
+                                            <div class="absolute inset-0 rounded-lg bg-red-50 opacity-0 hover:opacity-100 transition-opacity pointer-events-none"></div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Enhanced Product Image --}}
+                                    <div class="flex-shrink-0">
+                                        <div class="relative group">
+                                            <div class="absolute inset-0 bg-gradient-to-r from-red-400 to-pink-400 rounded-2xl blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                                            <img src="{{ $item['image'] ? asset('storage/' . $item['image']) : '/images/pipa-besi.png' }}"
+                                                class="relative w-24 h-24 rounded-2xl border-3 border-red-200 object-cover group-hover:scale-105 transition-transform duration-300 shadow-lg">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-red-900/20 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Enhanced Product Details --}}
+                                    <div class="flex-1 min-w-0">
+                                        <div class="mb-4">
+                                            <h4 class="text-xl font-bold text-gray-800 mb-3 leading-tight">{{ $item['name'] }}</h4>
+                                            <div class="flex items-center space-x-4">
+                                                <div class="text-2xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+                                                    Rp. {{ number_format($item['price'], 0, ',', '.') }}
+                                                </div>
+                                                <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg hover:shadow-xl transition-shadow">
+                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                                    </svg>
+                                                    BID ITEM
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center text-sm text-gray-700">
+                                            <span class="mr-3 font-semibold text-red-600">🏷️ Variant:</span>
+                                            <select class="border-2 border-red-300 rounded-xl px-4 py-2 text-sm focus:ring-3 focus:ring-red-500/30 focus:border-red-500 bg-white shadow-md hover:shadow-lg transition-all"
+                                                onchange="updateVariant({{ $item['id'] }}, this.value)">
+                                                <option selected>{{ $item['variant'] }}</option>
+                                                <!-- Add more variant options as needed -->
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {{-- Enhanced Quantity Controls & Actions --}}
+                                    <div class="flex items-center space-x-6">
+                                        {{-- Enhanced Quantity Controls --}}
+                                        <div class="flex items-center bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl p-2 border-2 border-red-200 shadow-md">
+                                            <span class="text-sm font-bold text-red-600 px-3">QTY</span>
+                                            <div class="flex items-center ml-3">
+                                                <button class="w-10 h-10 rounded-xl border-2 border-red-300 bg-white hover:bg-red-50 hover:border-red-400 hover:text-red-600 flex items-center justify-center transition-all duration-200 qty-btn shadow-md hover:shadow-lg transform hover:scale-105"
+                                                    onclick="updateCartQuantity({{ $item['id'] }}, -1)">
+                                                    <svg class="w-5 h-5 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4"/>
+                                                    </svg>
+                                                </button>
+                                                <input type="text"
+                                                    class="w-16 h-10 border-t-2 border-b-2 border-red-300 text-center text-sm font-bold bg-white focus:bg-red-50 focus:outline-none focus:border-red-500 transition-all"
+                                                    value="{{ $item['quantity'] }}" id="quantity-{{ $item['id'] }}"
+                                                    onchange="updateCartQuantity({{ $item['id'] }}, this.value)">
+                                                <button class="w-10 h-10 rounded-xl border-2 border-red-300 bg-white hover:bg-red-50 hover:border-red-400 hover:text-red-600 flex items-center justify-center transition-all duration-200 qty-btn shadow-md hover:shadow-lg transform hover:scale-105"
+                                                    onclick="updateCartQuantity({{ $item['id'] }}, 1)">
+                                                    <svg class="w-5 h-5 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {{-- Enhanced Delete Button --}}
+                                        <button class="p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all duration-200 group shadow-md hover:shadow-lg transform hover:scale-105"
+                                            onclick="removeFromCart({{ $item['id'] }})">
+                                            <svg class="w-6 h-6 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             @endforeach
 
-            {{-- Sticky Bottom Summary --}}
-            <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 shadow-lg z-10">
-                <div class="container mx-auto flex justify-between items-center">
-                    <div class="flex items-center">
-                        <input type="checkbox" class="mr-3 w-5 h-5 text-blue-600 rounded" id="select-all">
-                        <strong class="text-gray-800">Select All</strong>
-                    </div>
-                    <div class="flex items-center">
-                        <strong class="text-gray-800 mr-4" id="total-text">
-                            Total (<span id="total-item-count">{{ count($cartItems) }}</span> Products):
-                            <span class="text-red-500" id="total-price">
-                                Rp. {{ number_format($totalPrice, 0, ',', '.') }}
-                            </span>
-                        </strong>
-                        <button
-                            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
-                            onclick="proceedToCheckout()">
-                            Check Out
-                        </button>
+            {{-- Enhanced Sticky Bottom Summary --}}
+            <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t-2 border-red-200 px-6 py-6 shadow-2xl z-10">
+                <div class="container mx-auto">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-6">
+                            <div class="flex items-center">
+                                <div class="relative">
+                                    <input type="checkbox" class="w-6 h-6 text-red-600 rounded-lg border-2 border-red-300 focus:ring-3 focus:ring-red-500/30 mr-4 shadow-md" id="select-all">
+                                    <div class="absolute inset-0 rounded-lg bg-red-50 opacity-0 hover:opacity-100 transition-opacity pointer-events-none"></div>
+                                </div>
+                                <span class="font-bold text-gray-800 text-lg">🛍️ Select All Items</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-8">
+                            <div class="text-right">
+                                <div class="text-sm text-gray-600 font-medium" id="total-text">
+                                    Total (<span id="total-item-count" class="font-bold text-red-600">{{ count($cartItems) }}</span> Products)
+                                </div>
+                                <div class="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent" id="total-price">
+                                    Rp. {{ number_format($totalPrice, 0, ',', '.') }}
+                                </div>
+                            </div>
+                            <button class="bg-gradient-to-r from-red-500 via-red-600 to-pink-600 hover:from-red-600 hover:via-red-700 hover:to-pink-700 text-white font-bold py-4 px-10 rounded-2xl transition-all duration-200 transform hover:scale-105 hover:shadow-2xl flex items-center space-x-3 shadow-xl"
+                                onclick="proceedToCheckout()">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"/>
+                                </svg>
+                                <span class="text-lg">🚀 Proceed to Checkout</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -115,7 +198,8 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Cart item not found'
+                    text: 'Cart item not found',
+                    confirmButtonColor: '#dc2626'
                 });
                 return;
             }
@@ -131,7 +215,8 @@
                 Swal.fire({
                     icon: 'warning',
                     title: 'Invalid Quantity',
-                    text: 'Quantity must be a positive number'
+                    text: 'Quantity must be a positive number',
+                    confirmButtonColor: '#dc2626'
                 });
                 return;
             }
@@ -158,7 +243,8 @@
                             title: 'Success',
                             text: data.message,
                             timer: 1500,
-                            showConfirmButton: false
+                            showConfirmButton: false,
+                            confirmButtonColor: '#dc2626'
                         });
 
                         if (quantity <= 0) {
@@ -169,7 +255,8 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: data.message || 'Failed to update cart'
+                            text: data.message || 'Failed to update cart',
+                            confirmButtonColor: '#dc2626'
                         });
                     }
                 })
@@ -178,7 +265,8 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Failed to update cart: ' + error.message
+                        text: 'Failed to update cart: ' + error.message,
+                        confirmButtonColor: '#dc2626'
                     });
                 });
         }
@@ -189,8 +277,8 @@
                 text: 'Do you want to remove this item from cart?',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
                 confirmButtonText: 'Yes, remove it!'
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -213,13 +301,15 @@
                                     title: 'Removed',
                                     text: data.message,
                                     timer: 1500,
-                                    showConfirmButton: false
+                                    showConfirmButton: false,
+                                    confirmButtonColor: '#dc2626'
                                 });
                             } else {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error',
-                                    text: data.message || 'Failed to remove product'
+                                    text: data.message || 'Failed to remove product',
+                                    confirmButtonColor: '#dc2626'
                                 });
                             }
                         })
@@ -227,7 +317,8 @@
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
-                                text: 'Failed to remove product: ' + error.message
+                                text: 'Failed to remove product: ' + error.message,
+                                confirmButtonColor: '#dc2626'
                             });
                         });
                 }
@@ -251,7 +342,7 @@
                 const quantityInput = item.querySelector('input[id^="quantity-"]');
                 const quantity = parseInt(quantityInput.value) || 0;
 
-                const priceElement = item.querySelector('.text-gray-600');
+                const priceElement = item.querySelector('.text-2xl');
                 const priceText = priceElement ? priceElement.textContent.match(/Rp\.\s*([\d\.]+)/) : null;
                 const price = priceText ? parseFloat(priceText[1].replace(/\./g, '')) : 0;
 
@@ -276,7 +367,8 @@
                 Swal.fire({
                     icon: 'warning',
                     title: 'No Items Selected',
-                    text: 'Please select at least one item to proceed to checkout.'
+                    text: 'Please select at least one item to proceed to checkout.',
+                    confirmButtonColor: '#dc2626'
                 });
                 return;
             }
@@ -289,7 +381,8 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Multiple Vendors',
-                    text: 'Please select items from only one vendor for checkout.'
+                    text: 'Please select items from only one vendor for checkout.',
+                    confirmButtonColor: '#dc2626'
                 });
                 return;
             }
@@ -355,7 +448,8 @@
                             Swal.fire({
                                 icon: 'warning',
                                 title: 'Single Vendor Only',
-                                text: 'You can only select items from one vendor at a time.'
+                                text: 'You can only select items from one vendor at a time.',
+                                confirmButtonColor: '#dc2626'
                             });
                             return;
                         }
@@ -382,7 +476,8 @@
                         Swal.fire({
                             icon: 'warning',
                             title: 'Single Vendor Only',
-                            text: 'You can only select items from one vendor at a time.'
+                            text: 'You can only select items from one vendor at a time.',
+                            confirmButtonColor: '#dc2626'
                         });
                         return;
                     }
