@@ -268,7 +268,7 @@ class CheckoutController extends Controller
 
       Log::info('Generating E-Billing PDF', ['data' => $data]);
 
-      $pdf = PDF::loadView('procurement.ebilling', $data);
+      $pdf = PDF::loadView('procurement.ebilling_pdf', $data);
       $filename = 'e-billing-' . time() . '.pdf';
       Storage::disk('public')->put($filename, $pdf->output());
 
@@ -344,4 +344,34 @@ class CheckoutController extends Controller
       ], 500);
     }
   }
+
+  public function viewEBilling($notificationId)
+  {
+    $user = Auth::user();
+
+    $notification = Notification::where('id', $notificationId)
+      ->where('user_id', $user->id)
+      ->where('type', 'e-billing')
+      ->firstOrFail();
+
+    $data = json_decode($notification->data, true);
+    $pdfPath = $data['pdf_path'] ?? null;
+    $orderId = $data['order_id'] ?? null;
+
+    if (!$pdfPath || !Storage::disk('public')->exists($pdfPath)) {
+      abort(404, 'E-Billing PDF not found.');
+    }
+
+    // Ambil order dan item-nya
+    $order = Order::findOrFail($orderId);
+    $orderItems = OrderItem::where('order_id', $orderId)->get();
+    
+    return view('procurement.ebilling', [
+      'pdfUrl' => Storage::url($pdfPath),
+      'order' => $order,
+      'orderItems' => $orderItems,
+    ]);
+
+  }
+
 }

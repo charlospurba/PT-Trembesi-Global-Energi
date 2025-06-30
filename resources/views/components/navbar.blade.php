@@ -163,7 +163,7 @@
                         div.innerHTML = `
                     <div style="font-weight: ${notification.read ? 'normal' : 'bold'}">${notification.message}</div>
                     <div style="font-size: 12px; color: #666;">${notification.created_at}</div>
-                    ${notification.type === 'e-billing' ? `<a href="/storage/${notification.data.pdf_path}" target="_blank" style="color: #3085d6; text-decoration: none;">View E-Billing</a>` : ''}
+                   ${notification.type === 'e-billing' ? `<a href="/e-billing/view/${notification.id}" style="color: #3085d6; text-decoration: none;">View E-Billing</a>` : ''}
                 `;
 
                         // Event klik - tandai sebagai dibaca

@@ -97,6 +97,7 @@ Route::middleware(['auth'])->group(function () {
     // Checkout Routes
     Route::match(['get', 'post'], '/procurement/checkout', [CheckoutController::class, 'checkout'])->name('procurement.checkout');
     Route::post('/procurement/checkout/submit', [CheckoutController::class, 'submitCheckout'])->name('procurement.checkout.submit');
+    Route::get('/e-billing/view/{notification}', [CheckoutController::class, 'viewEBilling'])->name('ebilling.view');
     Route::post('/checkout/e-billing', [CheckoutController::class, 'generateEBilling'])->name('checkout.e-billing');
 
     // Notification Routes
