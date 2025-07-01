@@ -9,10 +9,13 @@
         <div class="bg-white rounded-lg shadow-md p-6 mb-8">
             <div class="flex items-center space-x-6">
                 <!-- Store Logo/Avatar -->
-                <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center">
-                    <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                    </svg>
+                @php
+                    $profilePicture = $store->profile_picture
+                        ? asset('storage/profile_picture/' . $store->profile_picture)
+                        : asset('assets/images/default-profile.png');
+                @endphp
+                <div class="w-24 h-24 bg-gray-200 rounded-full overflow-hidden border-2 border-white shadow-md">
+                    <img src="{{ $profilePicture }}" alt="Profile" class="w-full h-full object-cover rounded-full">
                 </div>
 
                 <!-- Store Info -->
@@ -33,31 +36,30 @@
         <!-- Store Products -->
         <div class="mb-6">
             <h2 class="text-2xl font-bold text-gray-900 mb-4">Products from {{ $store->name }}</h2>
-            
+
             @if($products->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     @foreach($products as $product)
                         <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                             <!-- Product Image -->
                             <div class="aspect-square bg-gray-200">
-                                @if($product->image)
-                                    <img src="{{ asset('storage/products/' . $product->image) }}" 
-                                         alt="{{ $product->name }}" 
-                                         class="w-full h-full object-cover">
+                                @if (!empty($product->image_paths) && is_array($product->image_paths) && !empty($product->image_paths[0]))
+                                    <img src="{{ asset('storage/' . $product->image_paths[0]) }}" alt="{{ $product->name }}"
+                                        class="w-full h-full object-cover">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center">
                                         <span class="text-gray-400">No Image</span>
                                     </div>
                                 @endif
                             </div>
-                            
+
                             <!-- Product Info -->
                             <div class="p-4">
                                 <h3 class="font-semibold text-gray-900 mb-2 line-clamp-2">{{ $product->name }}</h3>
                                 <p class="text-gray-600 text-sm mb-2 line-clamp-2">{{ $product->description }}</p>
                                 <div class="flex items-center justify-between">
                                     <span class="text-lg font-bold text-red-600">
-                                        ${{ number_format($product->price, 2) }}
+                                        Rp{{ number_format($product->price, 2) }}
                                     </span>
                                     @if($product->id)
                                         <span class="text-gray-500 text-sm">ID: {{ $product->id }}</span>

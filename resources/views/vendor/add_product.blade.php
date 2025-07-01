@@ -48,13 +48,11 @@
                                 </option>
                                 <option value="equipment" {{ old('category') == 'equipment' ? 'selected' : '' }}>Equipment
                                 </option>
-                                <option value="electrical tools"
-                                    {{ old('category') == 'electrical tools' ? 'selected' : '' }}>
+                                <option value="electrical tools" {{ old('category') == 'electrical tools' ? 'selected' : '' }}>
                                     Electrical Tools</option>
                                 <option value="consumables" {{ old('category') == 'consumables' ? 'selected' : '' }}>
                                     Consumables</option>
-                                <option value="personal protective equipment"
-                                    {{ old('category') == 'personal protective equipment' ? 'selected' : '' }}>
+                                <option value="personal protective equipment" {{ old('category') == 'personal protective equipment' ? 'selected' : '' }}>
                                     Personal Protective Equipment</option>
                             </select>
                             @error('category')
@@ -115,8 +113,7 @@
                             <div>
                                 <label class="block font-semibold text-gray-800 mb-1">Unit <span
                                         class="text-red-500">*</span></label>
-                                <input name="unit" type="text" value="{{ old('unit') }}"
-                                    placeholder="Ex: kg, meter"
+                                <input name="unit" type="text" value="{{ old('unit') }}" placeholder="Ex: kg, meter"
                                     class="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-red-500 focus:border-red-500"
                                     required />
                                 @error('unit')
@@ -139,8 +136,8 @@
                             <div>
                                 <label class="block font-semibold text-gray-800 mb-1">Price (Rp) <span
                                         class="text-red-500">*</span></label>
-                                <input name="price" type="number" value="{{ old('price') }}" min="0"
-                                    step="0.01" placeholder="Price"
+                                <input name="price" type="number" value="{{ old('price') }}" min="0" step="0.01"
+                                    placeholder="Price"
                                     class="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-red-500 focus:border-red-500"
                                     required />
                                 @error('price')
@@ -168,7 +165,8 @@
                         <div>
                             <label class="block font-semibold text-gray-800 mb-1">Address</label>
                             <textarea name="address" placeholder="Address..."
-                                class="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-red-500 focus:border-red-500" rows="4">{{ old('address') }}</textarea>
+                                class="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-red-500 focus:border-red-500"
+                                rows="4">{{ old('address') }}</textarea>
                             @error('address')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
@@ -210,6 +208,49 @@
                         Product</button>
                 </div>
             </form>
+
+            <div class="border rounded-md mt-10 bg-white">
+                <div class="bg-gray-100 px-4 py-2 flex items-center gap-2 border-b">
+                    <span class="text-red-600 text-xl">📂</span>
+                    <h3 class="font-semibold text-lg">Upload Produk Massal via Excel + ZIP Gambar</h3>
+                </div>
+                <div class="p-4">
+                    <div class="text-right mb-4">
+                        <a href="{{ asset('templates/template-produk.xlsx') }}"
+                            class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold text-sm"
+                            download>
+                            Download Template Excel
+                        </a>
+                    </div>
+
+                    <form action="{{ route('vendor.upload_bulk_with_images') }}" method="POST" enctype="multipart/form-data"
+                        class="space-y-4">
+                        @csrf
+                        <div>
+                            <label class="font-semibold block mb-1">Excel File</label>
+                            <input type="file" name="excel_file" accept=".xlsx,.xls" required
+                                class="w-full border px-4 py-2 rounded" />
+                            <p class="text-xs text-gray-500 italic mt-2">
+                                * Fill in all required columns in the Excel file and make sure the image file names match
+                                the names listed in the Zip file.
+                            </p>
+                        </div>
+                        <div>
+                            <label class="font-semibold block mb-1">ZIP Image File</label>
+                            <input type="file" name="zip_file" accept=".zip" required
+                                class="w-full border px-4 py-2 rounded" />
+                            <p class="text-xs text-gray-500 italic mt-2">
+                                * Compress all product images into a ZIP file. Each image file name must match the name
+                                specified in the Excel sheet.
+                            </p>
+                        </div>
+                        <button type="submit"
+                            class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded font-semibold">
+                            Upload Products
+                        </button>
+                    </form>
+                </div>
+            </div>
         </main>
     </div>
 

@@ -97,12 +97,14 @@ Route::middleware(['auth'])->group(function () {
     // Checkout Routes
     Route::match(['get', 'post'], '/procurement/checkout', [CheckoutController::class, 'checkout'])->name('procurement.checkout');
     Route::post('/procurement/checkout/submit', [CheckoutController::class, 'submitCheckout'])->name('procurement.checkout.submit');
+    Route::get('/e-billing/view/{notification}', [CheckoutController::class, 'viewEBilling'])->name('ebilling.view');
     Route::post('/checkout/e-billing', [CheckoutController::class, 'generateEBilling'])->name('checkout.e-billing');
 
     // Notification Routes
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
     Route::get('/notifications/count', [NotificationController::class, 'count'])->name('notifications.count');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read_all');
 
     // Vendor Routes
     Route::get('/dashboard/vendor', [VendorHomeController::class, 'index'])->name('vendor.dashboardvendor');
@@ -113,6 +115,8 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/products/{id}', [VendorProductController::class, 'update'])->name('vendor.update_product');
     Route::delete('/products/{id}', [VendorProductController::class, 'destroy'])->name('vendor.destroy_product');
     Route::get('/products/{id}/detail', [VendorProductController::class, 'show'])->name('vendor.product_detail');
+    Route::post('/vendor/products/upload', [VendorProductController::class, 'uploadBulk'])->name('vendor.upload_bulk_products');
+    Route::post('/vendor/products/bulk-upload-images', [VendorProductController::class, 'uploadBulkWithImages'])->name('vendor.upload_bulk_with_images');
 
     // Vendor Order Routes
     Route::get('/orders', [OrderController::class, 'index'])->name('vendor.orders');

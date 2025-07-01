@@ -44,38 +44,50 @@
             </a>
 
             <!-- Notification -->
-            <a href="#" onclick="toggleNotificationDropdown(event)" class="relative w-9 h-9 flex items-center justify-center text-white hover:text-white/80 transition">
-                <i class="fas fa-bell text-base"></i>
-                <span id="notificationBadge" class="absolute -top-1 -right-1 bg-white text-red-600 text-xs px-1.5 rounded-full hidden">0</span>
-            </a>
+            <div class="notification-dropdown" style="position: relative; display: inline-block;">
+                <a href="#" class="nav-icon" onclick="toggleNotificationDropdown(event)">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge notification-badge" id="notificationBadge" style="display: none;">0</span>
+                </a>
+                <div id="notificationDropdown" class="dropdown-menu"
+                    style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; min-width: 250px; z-index: 999;">
+                    <div id="notificationList" style="max-height: 300px; overflow-y: auto;"></div>
+                </div>
+            </div>
 
             <!-- Sign In / Sign Up -->
             @guest
                 <a href="/signin"
-                    class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign In</a>
+                    class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign
+                    In</a>
                 <a href="/signup"
-                    class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign Up</a>
+                    class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign
+                    Up</a>
             @endguest
 
             <!-- Profile (Jika Sudah Login) -->
             @auth
                 <div class="relative">
-                    <div onclick="toggleProfileDropdown()" class="flex items-center gap-2 text-white cursor-pointer hover:opacity-90">
+                    <div onclick="toggleProfileDropdown()"
+                        class="flex items-center gap-2 text-white cursor-pointer hover:opacity-90">
                         @php
                             $profilePicture = Auth::user()->profile_picture
                                 ? asset('storage/profile_picture/' . Auth::user()->profile_picture)
                                 : asset('assets/images/default-profile.png');
                         @endphp
-                        <img src="{{ $profilePicture }}" alt="Profile" class="w-9 h-9 rounded-full object-cover border-2 border-white shadow">
+                        <img src="{{ $profilePicture }}" alt="Profile"
+                            class="w-9 h-9 rounded-full object-cover border-2 border-white shadow">
                         <span class="font-medium max-w-[120px] truncate">{{ Auth::user()->name }}</span>
                         <i class="fas fa-caret-down text-sm"></i>
                     </div>
 
-                    <div id="profileDropdown" class="absolute top-full right-0 mt-2 w-40 bg-white text-black rounded-md shadow-md hidden z-50">
+                    <div id="profileDropdown"
+                        class="absolute top-full right-0 mt-2 w-40 bg-white text-black rounded-md shadow-md hidden z-50">
                         <a href="/dashboard/profile" class="block px-4 py-2 hover:bg-gray-100 text-sm">My Profile</a>
                         <form id="logoutForm" method="POST" action="/logout">
                             @csrf
-                            <button type="button" id="logoutBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">Logout</button>
+                            <button type="button" id="logoutBtn"
+                                class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">Logout</button>
                         </form>
                     </div>
                 </div>
@@ -91,17 +103,31 @@
         document.getElementById("notificationDropdown").style.display = "none";
     }
 
-    function toggleNotificationDropdown(event) {
-        event.preventDefault();
-        const dropdown = document.getElementById("notificationDropdown");
-        dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
-        document.getElementById("profileDropdown").style.display = "none";
-        if (dropdown.style.display === "block") {
-            loadNotifications();
-        }
-    }
+   function toggleNotificationDropdown(event) {
+    event.preventDefault();
+    const dropdown = document.getElementById("notificationDropdown");
+    const isVisible = dropdown.style.display === "block";
 
-    window.addEventListener("click", function(e) {
+    dropdown.style.display = isVisible ? "none" : "block";
+    document.getElementById("profileDropdown").style.display = "none";
+
+    // Jika baru dibuka (bukan ditutup)
+    if (!isVisible) {
+        // Tandai semua sebagai sudah dibaca di backend
+        fetch('/notifications/read-all', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            }
+        }).then(() => {
+            loadNotifications(); // refresh tampilan list & badge
+        });
+    }
+}
+
+
+    window.addEventListener("click", function (e) {
         const profileTrigger = document.querySelector(".profile-trigger");
         const profileDropdown = document.getElementById("profileDropdown");
         const notificationTrigger = document.querySelector(".notification-dropdown .nav-icon");
@@ -114,13 +140,13 @@
         }
     });
 
-    function loadNotifications() {
+    function loadNotifications(updateBadge = true) {
         fetch('/notifications', {
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 const notificationList = document.getElementById('notificationList');
@@ -135,39 +161,57 @@
                         div.style.borderBottom = '1px solid #ddd';
                         div.style.backgroundColor = notification.read ? '#fff' : '#f9f9f9';
                         div.innerHTML = `
-                            <div style="font-weight: ${notification.read ? 'normal' : 'bold'}">${notification.message}</div>
-                            <div style="font-size: 12px; color: #666;">${notification.created_at}</div>
-                            ${notification.type === 'e-billing' ? `<a href="/storage/${notification.data.pdf_path}" target="_blank" style="color: #3085d6; text-decoration: none;">View E-Billing</a>` : ''}
-                        `;
-                        div.addEventListener('click', () => markAsRead(notification.id));
+                    <div style="font-weight: ${notification.read ? 'normal' : 'bold'}">${notification.message}</div>
+                    <div style="font-size: 12px; color: #666;">${notification.created_at}</div>
+                   ${notification.type === 'e-billing' ? `<a href="/e-billing/view/${notification.id}" style="color: #3085d6; text-decoration: none;">View E-Billing</a>` : ''}
+                `;
+
+                        // Event klik - tandai sebagai dibaca
+                        div.addEventListener('click', () => markAsRead(notification.id, div));
                         notificationList.appendChild(div);
                     });
                 }
-                const badge = document.getElementById('notificationBadge');
-                badge.textContent = data.unread_count;
-                badge.style.display = data.unread_count > 0 ? 'inline-block' : 'none';
+
+                // Update badge jika diizinkan
+                if (updateBadge) {
+                    const badge = document.getElementById('notificationBadge');
+                    badge.textContent = data.unread_count;
+                    badge.style.display = data.unread_count > 0 ? 'inline-block' : 'none';
+                }
             })
             .catch(error => {
                 console.error('Failed to load notifications:', error);
             });
     }
 
-    function markAsRead(notificationId) {
+    function markAsRead(notificationId, element) {
         fetch(`/notifications/${notificationId}/read`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
             .then(response => response.json())
-            .then(() => loadNotifications())
+            .then(() => {
+                // Ubah style bold menjadi normal saat sudah dibaca
+                element.style.backgroundColor = '#fff';
+                const message = element.querySelector('div:first-child');
+                if (message) message.style.fontWeight = 'normal';
+
+                // Kurangi badge count
+                const badge = document.getElementById('notificationBadge');
+                const currentCount = parseInt(badge.textContent);
+                const newCount = currentCount - 1;
+                badge.textContent = newCount;
+                badge.style.display = newCount > 0 ? 'inline-block' : 'none';
+            })
             .catch(error => {
                 console.error('Failed to mark notification as read:', error);
             });
     }
 
-    document.getElementById('logoutBtn').addEventListener('click', function(e) {
+    document.getElementById('logoutBtn').addEventListener('click', function (e) {
         e.preventDefault();
         Swal.fire({
             title: 'Are you sure?',
@@ -185,13 +229,13 @@
         });
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         fetch('/cart/count', {
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 const badge = document.getElementById('cartBadge');
