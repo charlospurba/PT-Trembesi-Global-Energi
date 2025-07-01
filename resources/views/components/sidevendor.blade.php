@@ -71,8 +71,8 @@
             <div class="w-1 h-4 bg-yellow-200 group-hover:bg-white rounded-full transition-all duration-300"></div>
         </a>
     </nav>
-    
-    </aside>
+
+</aside>
 
 
 
