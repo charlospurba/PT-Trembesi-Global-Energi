@@ -5,120 +5,189 @@
     <div class="flex h-screen overflow-hidden bg-white">
         @include('components.sideadmin')
 
-        <div class="flex-1 bg-[#f2f2f2]">
+        <div class="flex-1 bg-gray-50 overflow-y-auto">
             @if (session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded-md mb-4">
-                    <strong class="font-semibold">Success:</strong>
-                    <span class="block mt-1">{{ session('success') }}</span>
+                <div class="mx-6 mt-4 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        <span class="font-medium">{{ session('success') }}</span>
+                    </div>
                 </div>
             @endif
 
             <div class="p-6">
-                <h2 class="text-lg font-bold text-gray-800 mb-4">User Management</h2>
-
-                <div class="flex flex-wrap items-start gap-4 mb-6">
-                    <!-- Cards (same as before) -->
-                    <!-- Total User -->
-                    <div class="bg-white rounded-xl shadow flex items-center px-4 py-3 border-t-4 border-[#FF3D00] w-full sm:w-auto min-w-[180px]">
-                        <div class="text-[#FF3D00] text-3xl mr-4">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Total User</p>
-                            <p class="text-xl font-bold text-gray-800">{{ $totalUsers }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Procurement -->
-                    <div class="bg-white rounded-xl shadow flex items-center px-4 py-3 border-t-4 border-green-500 w-full sm:w-auto min-w-[180px]">
-                        <div class="text-green-500 text-3xl mr-4">
-                            <i class="fas fa-shopping-cart"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Procurement</p>
-                            <p class="text-xl font-bold text-gray-800">{{ $totalProcurement }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Project Manager -->
-                    <div class="bg-white rounded-xl shadow flex items-center px-4 py-3 border-t-4 border-yellow-400 w-full sm:w-auto min-w-[180px]">
-                        <div class="text-yellow-400 text-3xl mr-4">
-                            <i class="fas fa-store"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Project Manager</p>
-                            <p class="text-xl font-bold text-gray-800">{{ $totalManager }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Vendor -->
-                    <div class="bg-white rounded-xl shadow flex items-center px-4 py-3 border-t-4 border-[#2962FF] w-full sm:w-auto min-w-[180px]">
-                        <div class="text-[#2962FF] text-3xl mr-4">
-                            <i class="fas fa-user-tag"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Vendor</p>
-                            <p class="text-xl font-bold text-gray-800">{{ $totalVendor }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Add User Button -->
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">User Management</h2>
                     <a href="{{ route('superadmin.add_users') }}"
-                        class="ml-auto self-start flex items-center gap-2 bg-[#2962FF] hover:bg-blue-700 text-white font-semibold text-sm px-5 py-2 rounded-md shadow">
-                        <i class="fas fa-plus"></i> Add User
+                        class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-4 py-2 rounded-lg shadow-sm transition-colors">
+                        <i class="fas fa-plus text-xs"></i>
+                        <span>Add User</span>
                     </a>
                 </div>
 
-                <!-- User Table -->
-                <div class="bg-white rounded-xl shadow p-4">
-                    <h3 class="text-md font-semibold mb-3">User List</h3>
-                    <div class="border-2 border-blue-600 rounded-md overflow-hidden">
-                        <table class="w-full text-sm text-center">
-                            <thead class="bg-white text-red-600 font-semibold">
+                <!-- Statistics Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <!-- Total Users Card -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-users text-red-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Total Users</p>
+                                <p class="text-2xl font-bold text-gray-900">{{ $totalUsers }}</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 h-1 bg-gray-100 rounded-full">
+                            <div class="h-1 bg-red-500 rounded-full" style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Procurement Card -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-shopping-cart text-green-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Procurement</p>
+                                <p class="text-2xl font-bold text-gray-900">{{ $totalProcurement }}</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 h-1 bg-gray-100 rounded-full">
+                            <div class="h-1 bg-green-500 rounded-full" style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Project Manager Card -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-yellow-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-project-diagram text-yellow-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Project Manager</p>
+                                <p class="text-2xl font-bold text-gray-900">{{ $totalManager }}</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 h-1 bg-gray-100 rounded-full">
+                            <div class="h-1 bg-yellow-500 rounded-full" style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Vendor Card -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-user-tag text-blue-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Vendor</p>
+                                <p class="text-2xl font-bold text-gray-900">{{ $totalVendor }}</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 h-1 bg-gray-100 rounded-full">
+                            <div class="h-1 bg-blue-500 rounded-full" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">User List</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="py-2 border-b">User</th>
-                                    <th class="py-2 border-b">Email</th>
-                                    <th class="py-2 border-b">Role</th>
-                                    <th class="py-2 border-b">Status</th>
-                                    <th class="py-2 border-b">Created</th>
-                                    <th class="py-2 border-b">Action</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse ($users as $user)
-                                    <tr class="text-gray-700">
-                                        <td class="py-3">{{ $user->name }}</td>
-                                        <td class="py-3">{{ $user->email }}</td>
-                                        <td class="py-3 capitalize">{{ $user->role }}</td>
-                                        <td class="py-3">
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="flex-shrink-0 w-8 h-8">
+                                                    <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                                        <span class="text-xs font-medium text-gray-700">
+                                                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="ml-3">
+                                                    <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $user->email }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full capitalize">
+                                                {{ $user->role }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
                                             @if ($user->status === 'active')
-                                                <span class="text-green-600 font-semibold">Active</span>
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <svg class="w-1.5 h-1.5 mr-1 fill-current" viewBox="0 0 8 8">
+                                                        <circle cx="4" cy="4" r="3"/>
+                                                    </svg>
+                                                    Active
+                                                </span>
                                             @else
-                                                <span class="text-gray-500">Inactive</span>
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                    <svg class="w-1.5 h-1.5 mr-1 fill-current" viewBox="0 0 8 8">
+                                                        <circle cx="4" cy="4" r="3"/>
+                                                    </svg>
+                                                    Inactive
+                                                </span>
                                             @endif
                                         </td>
-                                        <td class="py-3">{{ $user->created_at->format('d M Y') }}</td>
-                                        <td class="py-3">
-                                            <div class="flex justify-center gap-3">
-                                                <!-- Edit Icon -->
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                            {{ $user->created_at->format('M j, Y') }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                                            <div class="flex items-center justify-center space-x-2">
+                                                <!-- Edit Button -->
                                                 <a href="{{ route('superadmin.edit', ['id' => $user->id]) }}"
-                                                    class="text-blue-600 hover:text-blue-800">
-                                                    <i class="fas fa-pen"></i>
+                                                    class="inline-flex items-center p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
+                                                    title="Edit User">
+                                                    <i class="fas fa-edit text-sm"></i>
                                                 </a>
-                                                <!-- Delete Icon with SweetAlert2 -->
+                                                <!-- Delete Button -->
                                                 <button type="button"
-                                                    class="text-red-600 hover:text-red-800 delete-button"
+                                                    class="inline-flex items-center p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors delete-button"
                                                     data-id="{{ $user->id }}"
                                                     data-name="{{ $user->name }}"
-                                                    data-url="{{ route('superadmin.users.destroy', $user->id) }}">
-                                                    <i class="fas fa-trash"></i>
+                                                    data-url="{{ route('superadmin.users.destroy', $user->id) }}"
+                                                    title="Delete User">
+                                                    <i class="fas fa-trash text-sm"></i>
                                                 </button>
                                             </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="py-4 text-gray-500 italic">No users found.</td>
+                                        <td colspan="6" class="px-6 py-12 text-center">
+                                            <div class="flex flex-col items-center">
+                                                <i class="fas fa-users text-4xl text-gray-300 mb-2"></i>
+                                                <p class="text-gray-500 text-sm">No users found</p>
+                                            </div>
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -134,37 +203,57 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const buttons = document.querySelectorAll('.delete-button');
+            const deleteButtons = document.querySelectorAll('.delete-button');
 
-            buttons.forEach(button => {
+            deleteButtons.forEach(button => {
                 button.addEventListener('click', function () {
                     const userName = this.dataset.name;
                     const url = this.dataset.url;
 
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Are you sure?',
-                        html: `Do you really want to delete <strong>${userName}</strong>?<br>This process cannot be undone.`,
+                        icon: 'warning',
+                        title: 'Confirm Deletion',
+                        html: `Are you sure you want to delete user <strong>${userName}</strong>?<br><small class="text-gray-500">This action cannot be undone.</small>`,
                         showCancelButton: true,
-                        confirmButtonColor: '#ff0000',
-                        cancelButtonColor: '#0066ff',
-                        confirmButtonText: 'Delete',
-                        cancelButtonText: 'Cancel',
+                        confirmButtonColor: '#dc2626',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: '<i class="fas fa-trash mr-1"></i> Delete',
+                        cancelButtonText: '<i class="fas fa-times mr-1"></i> Cancel',
                         reverseButtons: true,
                         focusCancel: true,
+                        customClass: {
+                            popup: 'rounded-lg',
+                            confirmButton: 'font-medium px-4 py-2 rounded-md',
+                            cancelButton: 'font-medium px-4 py-2 rounded-md'
+                        }
                     }).then((result) => {
                         if (result.isConfirmed) {
+                            // Show loading state
+                            Swal.fire({
+                                title: 'Deleting...',
+                                text: 'Please wait while we delete the user.',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                showConfirmButton: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+
+                            // Create and submit form
                             const form = document.createElement('form');
                             form.method = 'POST';
                             form.action = url;
+                            form.style.display = 'none';
 
-                            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-                            const csrfInput = document.createElement('input');
-                            csrfInput.type = 'hidden';
-                            csrfInput.name = '_token';
-                            csrfInput.value = csrfToken;
-                            form.appendChild(csrfInput);
+                            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                            if (csrfToken) {
+                                const csrfInput = document.createElement('input');
+                                csrfInput.type = 'hidden';
+                                csrfInput.name = '_token';
+                                csrfInput.value = csrfToken;
+                                form.appendChild(csrfInput);
+                            }
 
                             const methodInput = document.createElement('input');
                             methodInput.type = 'hidden';
