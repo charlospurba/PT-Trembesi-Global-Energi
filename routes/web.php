@@ -77,6 +77,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/electrical', [ProductController::class, 'electricalProducts'])->name('procurement.electrical');
     Route::get('/personal', [ProductController::class, 'personalProducts'])->name('procurement.personal');
     Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.detail');
+    Route::get('/search', [ProductController::class, 'search'])->name('search.products');
 
     // Notes Route
     Route::get('/procurement/notes', function () {

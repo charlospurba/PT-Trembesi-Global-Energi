@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -110,6 +111,17 @@ class ProductController extends Controller
 
   public function dashboard(Request $request)
   {
+    $query = $request->query('query');
+
+    if ($query) {
+      $searchResults = Product::where('name', 'like', "%$query%")
+        ->orWhere('supplier', 'like', "%$query%")
+        ->orWhere('address', 'like', "%$query%")
+        ->get();
+
+      return view('dashboard', compact('searchResults', 'query'));
+    }
+
     $randomMaterials = Product::where('category', 'material')->inRandomOrder()->limit(6)->get();
     $randomEquipments = Product::where('category', 'equipment')->inRandomOrder()->limit(6)->get();
     $randomElectricals = Product::where('category', 'electrical tools')->inRandomOrder()->limit(6)->get();
@@ -124,15 +136,23 @@ class ProductController extends Controller
       'randomPPEs'
     );
 
-    if (auth()->check()) {
-      if (auth()->user()->role === 'procurement') {
-        return view('procurement.dashboardproc', $data);
-      } else {
-        return view('dashboard', $data);
-      }
-    } else {
-      return view('dashboard', $data);
+    if (auth()->check() && auth()->user()->role === 'procurement') {
+      return view('procurement.dashboardproc', $data);
     }
+
+    return view('dashboard', $data);
+  }
+
+  public function search(Request $request)
+  {
+    $query = strtolower($request->input('query')); // ubah ke huruf kecil semua
+
+    $results = Product::where(DB::raw('LOWER(name)'), 'like', "%$query%")
+      ->orWhere(DB::raw('LOWER(supplier)'), 'like', "%$query%")
+      ->orWhere(DB::raw('LOWER(address)'), 'like', "%$query%")
+      ->get();
+
+    return view('search-result', compact('query', 'results'));
   }
 
   public function show($id)

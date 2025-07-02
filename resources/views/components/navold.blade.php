@@ -11,12 +11,12 @@
 
         <!-- Search Form -->
         <div class="flex-grow max-w-2xl mx-4">
-            <form id="searchForm" action="/search" method="GET">
+            <form id="searchForm" action="{{ route('search.products') }}" method="GET">
                 <div class="flex items-center h-10 border border-white rounded-full overflow-hidden">
                     <div class="px-3 text-white">
                         <i class="fas fa-search text-base"></i>
                     </div>
-                    <input type="search" name="query" placeholder="Cari produk atau vendor"
+                    <input type="search" name="query" placeholder="Search for products or vendors"
                         class="flex-grow bg-transparent text-white placeholder-white text-sm focus:outline-none px-2">
                     <button type="submit"
                         class="bg-white text-black font-semibold px-4 h-full text-sm">Search</button>
