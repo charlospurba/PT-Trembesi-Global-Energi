@@ -64,7 +64,7 @@
 
                                             <!-- Stok -->
                                             <div class="text-[11px] text-red-600 font-medium">
-                                                Stok: {{ $product->quantity }}
+                                                Stock: {{ $product->quantity }}
                                             </div>
                                         </div>
                                     </div>
@@ -119,7 +119,7 @@
 
                                             <!-- Stok -->
                                             <div class="text-[11px] text-red-600 font-medium">
-                                                Stok: {{ $product->quantity }}
+                                                Stock: {{ $product->quantity }}
                                             </div>
                                         </div>
                                     </div>
@@ -174,7 +174,7 @@
 
                                             <!-- Stok -->
                                             <div class="text-[11px] text-red-600 font-medium">
-                                                Stok: {{ $product->quantity }}
+                                                Stock: {{ $product->quantity }}
                                             </div>
                                         </div>
                                     </div>
@@ -229,7 +229,7 @@
 
                                             <!-- Stok -->
                                             <div class="text-[11px] text-red-600 font-medium">
-                                                Stok: {{ $product->quantity }}
+                                                Stock: {{ $product->quantity }}
                                             </div>
                                         </div>
                                     </div>
@@ -284,7 +284,7 @@
 
                                             <!-- Stok -->
                                             <div class="text-[11px] text-red-600 font-medium">
-                                                Stok: {{ $product->quantity }}
+                                                Stock: {{ $product->quantity }}
                                             </div>
                                         </div>
                                     </div>

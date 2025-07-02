@@ -38,8 +38,8 @@
             <!-- Material Collection -->
             <div class="collection">
                 <div class="collection-header flex justify-between items-center mb-3">
-                    <h3 class="text-base font-semibold">Koleksi Material</h3>
-                    <a href="{{ route('procurement.material') }}" class="text-sm text-red-600 hover:underline">Lihat Semua
+                    <h3 class="text-base font-semibold">Material Collection</h3>
+                    <a href="{{ route('procurement.material') }}" class="text-sm text-red-600 hover:underline">See all
                         ></a>
                 </div>
 
@@ -81,13 +81,13 @@
 
                                             <!-- Stok -->
                                             <div class="text-[11px] text-red-600 font-medium">
-                                                Stok: {{ $product->quantity }}
+                                                Stock: {{ $product->quantity }}
                                             </div>
                                         </div>
                                     </div>
                                 </a>
                     @empty
-                        <p class="text-center text-gray-500 text-sm">Tidak ada produk Material tersedia.</p>
+                        <p class="text-center text-gray-500 text-sm">There are no Material products available.</p>
                     @endforelse
                 </div>
             </div>
@@ -95,8 +95,8 @@
             <!-- Equipment Collection -->
             <div class="collection">
                 <div class="collection-header">
-                    <h3>Koleksi Equipment</h3>
-                    <a href="{{ route('procurement.equipment') }}" class="view-all">Lihat Semua ></a>
+                    <h3>Equipment Collection</h3>
+                    <a href="{{ route('procurement.equipment') }}" class="view-all">See all ></a>
                 </div>
                 <div class="products-grid">
                     @forelse($randomEquipments as $product)
@@ -136,13 +136,13 @@
 
                                             <!-- Stok -->
                                             <div class="text-[11px] text-red-600 font-medium">
-                                                Stok: {{ $product->quantity }}
+                                                Stock: {{ $product->quantity }}
                                             </div>
                                         </div>
                                     </div>
                                 </a>
                     @empty
-                        <p class="text-center text-gray-500">Tidak ada produk Equipment tersedia.</p>
+                        <p class="text-center text-gray-500">There are no Equipment products available.</p>
                     @endforelse
                 </div>
             </div>
@@ -150,8 +150,8 @@
             <!-- Electrical Collection -->
             <div class="collection">
                 <div class="collection-header">
-                    <h3>Koleksi Electrical</h3>
-                    <a href="{{ route('procurement.electrical') }}" class="view-all">Lihat Semua ></a>
+                    <h3>Electrical Collection</h3>
+                    <a href="{{ route('procurement.electrical') }}" class="view-all">See all ></a>
                 </div>
                 <div class="products-grid">
                     @forelse($randomElectricals as $product)
@@ -191,13 +191,13 @@
 
                                             <!-- Stok -->
                                             <div class="text-[11px] text-red-600 font-medium">
-                                                Stok: {{ $product->quantity }}
+                                                Stock: {{ $product->quantity }}
                                             </div>
                                         </div>
                                     </div>
                                 </a>
                     @empty
-                        <p class="text-center text-gray-500">Tidak ada produk Electrical tersedia.</p>
+                        <p class="text-center text-gray-500">There are no Electrical products available.</p>
                     @endforelse
                 </div>
             </div>
@@ -205,8 +205,8 @@
             <!-- Consumables Collection -->
             <div class="collection">
                 <div class="collection-header">
-                    <h3>Koleksi Consumables</h3>
-                    <a href="{{ route('procurement.consumables') }}" class="view-all">Lihat Semua ></a>
+                    <h3>Consumables Collection</h3>
+                    <a href="{{ route('procurement.consumables') }}" class="view-all">See all ></a>
                 </div>
                 <div class="products-grid">
                     @forelse($randomConsumables as $product)
@@ -246,13 +246,13 @@
 
                                             <!-- Stok -->
                                             <div class="text-[11px] text-red-600 font-medium">
-                                                Stok: {{ $product->quantity }}
+                                                Stock: {{ $product->quantity }}
                                             </div>
                                         </div>
                                     </div>
                                 </a>
                     @empty
-                        <p class="text-center text-gray-500">Tidak ada produk Consumables tersedia.</p>
+                        <p class="text-center text-gray-500">There are no Consumables products available.</p>
                     @endforelse
                 </div>
             </div>
@@ -260,8 +260,8 @@
             <!-- PPE Collection -->
             <div class="collection">
                 <div class="collection-header">
-                    <h3>Koleksi Personal Protective Equipment</h3>
-                    <a href="{{ route('procurement.personal') }}" class="view-all">Lihat Semua ></a>
+                    <h3>Personal Protective Equipment Collection</h3>
+                    <a href="{{ route('procurement.personal') }}" class="view-all">See all ></a>
                 </div>
                 <div class="products-grid">
                     @forelse($randomPPEs as $product)
@@ -301,13 +301,13 @@
 
                                             <!-- Stok -->
                                             <div class="text-[11px] text-red-600 font-medium">
-                                                Stok: {{ $product->quantity }}
+                                                Stock: {{ $product->quantity }}
                                             </div>
                                         </div>
                                     </div>
                                 </a>
                     @empty
-                        <p class="text-center text-gray-500">Tidak ada produk PPE tersedia.</p>
+                        <p class="text-center text-gray-500">There are no Personal Protective Equipment products available</p>
                     @endforelse
                 </div>
             </div>
