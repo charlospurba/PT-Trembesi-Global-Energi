@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Cart;
+use App\Models\Bid;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -224,5 +226,77 @@ class CartController extends Controller
     $user = Auth::user();
     $count = Cart::where('user_id', $user->id)->count();
     return response()->json(['count' => $count]);
+  }
+
+  public function submitBid(Request $request, $productId)
+  {
+    try {
+      $user = Auth::user();
+      if (!$user) {
+        return response()->json([
+          'success' => false,
+          'message' => 'You must be logged in to submit a bid'
+        ], 401);
+      }
+
+      $product = Product::findOrFail($productId);
+      $bidPrice = (float) $request->input('bid_price');
+
+      if ($bidPrice <= 0) {
+        return response()->json([
+          'success' => false,
+          'message' => 'Bid price must be a positive number'
+        ], 422);
+      }
+
+      // Check bid count limit
+      $bidCount = Bid::where('user_id', $user->id)
+        ->where('product_id', $productId)
+        ->count();
+
+      if ($bidCount >= 3) {
+        return response()->json([
+          'success' => false,
+          'message' => 'You have reached the maximum of 3 bids for this product'
+        ], 422);
+      }
+
+      $bid = Bid::create([
+        'user_id' => $user->id,
+        'product_id' => $productId,
+        'vendor_id' => $product->vendor_id,
+        'bid_price' => $bidPrice,
+        'status' => 'Pending',
+      ]);
+
+      // Notify vendor
+      Notification::create([
+        'user_id' => $product->vendor_id,
+        'type' => 'bid_submitted',
+        'message' => 'A new bid has been submitted for ' . $product->name . ' with price Rp ' . number_format($bidPrice, 0, ',', '.') . '.',
+        'data' => json_encode([
+          'bid_id' => $bid->id,
+          'product_id' => $productId,
+          'bid_price' => $bidPrice,
+        ]),
+      ]);
+
+      return response()->json([
+        'success' => true,
+        'message' => 'Bid submitted successfully!'
+      ]);
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+      Log::error('Submit Bid Error - Product not found: ' . $productId);
+      return response()->json([
+        'success' => false,
+        'message' => 'Product not found'
+      ], 404);
+    } catch (\Exception $e) {
+      Log::error('Submit Bid Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+      return response()->json([
+        'success' => false,
+        'message' => 'Failed to submit bid: ' . $e->getMessage()
+      ], 500);
+    }
   }
 }

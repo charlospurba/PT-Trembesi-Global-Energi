@@ -6,7 +6,6 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\NotificationController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ProfileController;
@@ -15,6 +14,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\VendorApprovalController;
+use Illuminate\Support\Facades\Route;
 
 // 🏠 Default Routes
 Route::get('/', [ProductController::class, 'dashboard'])->name('dashboard');
@@ -58,13 +58,14 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/superadmin/users/{id}', [UserManagementController::class, 'destroy'])->name('superadmin.users.destroy');
 
     // Approval Vendor
-    Route::prefix('superadmin')->middleware('auth')->group(function () {
+    Route::prefix('superadmin')->group(function () {
         Route::get('/vendor-requests', [VendorApprovalController::class, 'index'])->name('superadmin.vendor.requests');
         Route::get('/vendor-requests/{id}', [VendorApprovalController::class, 'show'])->name('superadmin.vendor.detail');
         Route::post('/vendor-requests/{id}/accept', [VendorApprovalController::class, 'accept'])->name('superadmin.vendor.accept');
         Route::post('/vendor-requests/{id}/reject', [VendorApprovalController::class, 'reject'])->name('superadmin.vendor.reject');
     });
 
+    // Product Manager Routes
     Route::view('/dashboard/productmanager', 'productmanager.dashboardpm')->name('dashboard.productmanager');
     Route::view('/productmanager/addrequest', 'productmanager.addrequest')->name('productmanager.addrequest');
 
@@ -93,6 +94,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/update/{id}', [CartController::class, 'updateCart'])->name('cart.update');
     Route::post('/cart/remove/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
     Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
+    Route::post('/cart/bid/{productId}', [CartController::class, 'submitBid'])->name('cart.bid');
 
     // Checkout Routes
     Route::match(['get', 'post'], '/procurement/checkout', [CheckoutController::class, 'checkout'])->name('procurement.checkout');
@@ -122,6 +124,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('vendor.orders');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('vendor.order_detail');
     Route::post('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('vendor.order_update_status');
+    Route::post('/bids/{id}/status', [OrderController::class, 'updateBidStatus'])->name('vendor.bid_update_status');
 
     // Profile Routes
     Route::get('/dashboard/profile', [ProfileController::class, 'edit'])->name('components.profile');

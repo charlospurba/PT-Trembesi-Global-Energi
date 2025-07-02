@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\Bid;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -27,11 +28,19 @@ class CheckoutController extends Controller
       $query->whereIn('product_id', $selectedIds);
     }
 
-    $cartItems = $query->get()->map(function ($cartItem) {
+    $cartItems = $query->get()->map(function ($cartItem) use ($user) {
+      // Check if there is an accepted bid for this product
+      $acceptedBid = Bid::where('product_id', $cartItem->product_id)
+        ->where('user_id', $user->id)
+        ->where('status', 'Accepted')
+        ->first();
+
+      $price = $acceptedBid ? $acceptedBid->bid_price : $cartItem->product->price;
+
       return [
         'id' => $cartItem->product_id,
         'name' => $cartItem->product->name,
-        'price' => $cartItem->product->price,
+        'price' => $price,
         'quantity' => $cartItem->quantity,
         'image' => !empty($cartItem->product->image_paths) && is_array($cartItem->product->image_paths)
           ? $cartItem->product->image_paths[0]
@@ -39,6 +48,7 @@ class CheckoutController extends Controller
         'variant' => $cartItem->variant ?? 'default',
         'supplier' => $cartItem->product->supplier,
         'vendor_id' => $cartItem->product->vendor_id,
+        'is_bid_price' => $acceptedBid ? true : false, // Indicate if price is from bid
       ];
     })->toArray();
 
@@ -101,15 +111,20 @@ class CheckoutController extends Controller
         ], 422);
       }
 
-      $totalPrice = $cartItems->sum(function ($item) {
-        return $item->product->price * $item->quantity;
+      $totalPrice = $cartItems->sum(function ($item) use ($user) {
+        $acceptedBid = Bid::where('product_id', $item->product_id)
+          ->where('user_id', $user->id)
+          ->where('status', 'Accepted')
+          ->first();
+        $price = $acceptedBid ? $acceptedBid->bid_price : $item->product->price;
+        return $price * $item->quantity;
       });
 
       // Create order
-      $order = $this->createOrder($user->id, $suppliers[0], $totalPrice, $validated);
+      $order = $this->createOrder($user->id, $suppliers[0], $totalPrice, $validated, $vendorIds[0]);
 
       // Create order items and update stock
-      $checkoutItems = $this->createOrderItemsAndUpdateStock($order, $cartItems);
+      $checkoutItems = $this->createOrderItemsAndUpdateStock($order, $cartItems, $user->id);
 
       // Create notifications
       $this->createOrderNotification($user->id, $suppliers[0], $cartItems, $order->id);
@@ -162,10 +177,11 @@ class CheckoutController extends Controller
       ->get();
   }
 
-  protected function createOrder($userId, $vendor, $totalPrice, array $validated)
+  protected function createOrder($userId, $vendor, $totalPrice, array $validated, $vendorId)
   {
     return Order::create([
       'user_id' => $userId,
+      'vendor_id' => $vendorId,
       'vendor' => $vendor,
       'total_price' => $totalPrice,
       'full_name' => $validated['full_name'],
@@ -178,15 +194,23 @@ class CheckoutController extends Controller
     ]);
   }
 
-  protected function createOrderItemsAndUpdateStock($order, $cartItems)
+  protected function createOrderItemsAndUpdateStock($order, $cartItems, $userId)
   {
-    return $cartItems->map(function ($cartItem) use ($order) {
+    return $cartItems->map(function ($cartItem) use ($order, $userId) {
+      // Check if there is an accepted bid for this product
+      $acceptedBid = Bid::where('product_id', $cartItem->product_id)
+        ->where('user_id', $userId)
+        ->where('status', 'Accepted')
+        ->first();
+
+      $price = $acceptedBid ? $acceptedBid->bid_price : $cartItem->product->price;
+
       // Create order item
       OrderItem::create([
         'order_id' => $order->id,
         'product_id' => $cartItem->product_id,
         'name' => $cartItem->product->name,
-        'price' => $cartItem->product->price,
+        'price' => $price,
         'quantity' => $cartItem->quantity,
         'variant' => $cartItem->variant ?? 'default',
       ]);
@@ -202,48 +226,67 @@ class CheckoutController extends Controller
       return [
         'id' => $cartItem->product_id,
         'name' => $cartItem->product->name,
-        'price' => $cartItem->product->price,
+        'price' => $price,
         'quantity' => $cartItem->quantity,
         'variant' => $cartItem->variant ?? 'default',
         'supplier' => $cartItem->product->supplier,
+        'is_bid_price' => $acceptedBid ? true : false, // Indicate if price is from bid
       ];
     })->toArray();
   }
 
   protected function createOrderNotification($userId, $vendor, $cartItems, $orderId)
   {
+    $itemsData = $cartItems->map(function ($item) use ($userId) {
+      $acceptedBid = Bid::where('product_id', $item->product_id)
+        ->where('user_id', $userId)
+        ->where('status', 'Accepted')
+        ->first();
+      $price = $acceptedBid ? $acceptedBid->bid_price : $item->product->price;
+
+      return [
+        'product_name' => $item->product->name,
+        'quantity' => $item->quantity,
+        'price' => $price,
+        'is_bid_price' => $acceptedBid ? true : false,
+      ];
+    })->toArray();
+
     Notification::create([
       'user_id' => $userId,
       'type' => 'order',
       'message' => 'New order placed with ' . $vendor . ' for ' . $cartItems->count() . ' items.',
       'data' => json_encode([
         'order_id' => $orderId,
-        'order_details' => $cartItems->map(function ($item) {
-          return [
-            'product_name' => $item->product->name,
-            'quantity' => $item->quantity,
-            'price' => $item->product->price,
-          ];
-        })->toArray(),
+        'order_details' => $itemsData,
       ]),
     ]);
   }
 
   protected function createVendorNotification($vendorId, $vendor, $cartItems, $orderId)
   {
+    $itemsData = $cartItems->map(function ($item) use ($vendorId) {
+      $acceptedBid = Bid::where('product_id', $item->product_id)
+        ->where('vendor_id', $vendorId)
+        ->where('status', 'Accepted')
+        ->first();
+      $price = $acceptedBid ? $acceptedBid->bid_price : $item->product->price;
+
+      return [
+        'product_name' => $item->product->name,
+        'quantity' => $item->quantity,
+        'price' => $price,
+        'is_bid_price' => $acceptedBid ? true : false,
+      ];
+    })->toArray();
+
     Notification::create([
       'user_id' => $vendorId,
       'type' => 'order',
       'message' => 'New order received from ' . $vendor . ' for ' . $cartItems->count() . ' items.',
       'data' => json_encode([
         'order_id' => $orderId,
-        'order_details' => $cartItems->map(function ($item) {
-          return [
-            'product_name' => $item->product->name,
-            'quantity' => $item->quantity,
-            'price' => $item->product->price,
-          ];
-        })->toArray(),
+        'order_details' => $itemsData,
       ]),
     ]);
   }
@@ -258,6 +301,7 @@ class CheckoutController extends Controller
             'quantity' => $item['quantity'],
             'price' => $item['price'],
             'total' => $item['price'] * $item['quantity'],
+            'is_bid_price' => $item['is_bid_price'],
           ];
         }, $checkoutItems),
         'totalPrice' => $totalPrice,
@@ -314,7 +358,12 @@ class CheckoutController extends Controller
       }
 
       $orderItems = OrderItem::where('order_id', $orderId)->with('product')->get();
-      $checkoutItems = $orderItems->map(function ($item) {
+      $checkoutItems = $orderItems->map(function ($item) use ($user) {
+        $acceptedBid = Bid::where('product_id', $item->product_id)
+          ->where('user_id', $user->id)
+          ->where('status', 'Accepted')
+          ->first();
+
         return [
           'id' => $item->product_id,
           'name' => $item->name,
@@ -322,6 +371,7 @@ class CheckoutController extends Controller
           'quantity' => $item->quantity,
           'variant' => $item->variant,
           'supplier' => $item->product->supplier,
+          'is_bid_price' => $acceptedBid ? true : false,
         ];
       })->toArray();
 
@@ -362,16 +412,13 @@ class CheckoutController extends Controller
       abort(404, 'E-Billing PDF not found.');
     }
 
-    // Ambil order dan item-nya
     $order = Order::findOrFail($orderId);
     $orderItems = OrderItem::where('order_id', $orderId)->get();
-    
+
     return view('procurement.ebilling', [
       'pdfUrl' => Storage::url($pdfPath),
       'order' => $order,
       'orderItems' => $orderItems,
     ]);
-
   }
-
 }
