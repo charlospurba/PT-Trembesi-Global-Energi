@@ -55,7 +55,7 @@
                                     <svg class="w-6 h-6 text-white drop-shadow-sm" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1ital-2 h6m0 0v5m-4 0h4" />
                                     </svg>
                                 </div>
                                 <div>
@@ -67,7 +67,7 @@
                     </div>
 
                     {{-- Enhanced Items List --}}
-                    <div class="divide-y divide-red-100">
+                    <div2019-06-17_074403_create_carts_table.php class="divide-y divide-red-100">
                         @foreach ($items as $item)
                             @php
                                 // Fetch bid history for the product
@@ -76,7 +76,7 @@
                                     ->orderBy('created_at', 'desc')
                                     ->take(3)
                                     ->get();
-                                $acceptedBid = $bids->where('status', 'Accepted')->first();
+                                $acceptedBid = $bids->where('status', 'Accepted')->sortByDesc('created_at')->first();
                             @endphp
                             <div class="p-8 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 transition-all duration-300 border-l-4 border-transparent hover:border-red-300"
                                 data-item-id="{{ $item['id'] }}">
@@ -218,77 +218,76 @@
                                 </div>
                             </div>
                         @endforeach
-                    </div>
                 </div>
-            @endforeach
+        </div>
+        @endforeach
 
-            {{-- Enhanced Sticky Bottom Summary --}}
-            <div
-                class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t-2 border-red-200 px-6 py-6 shadow-2xl z-10">
-                <div class="container mx-auto">
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center space-x-6">
-                            <div class="flex items-center">
-                                <div class="relative">
-                                    <input type="checkbox"
-                                        class="w-6 h-6 text-red-600 rounded-lg border-2 border-red-300 focus:ring-3 focus:ring-red-500/30 mr-4 shadow-md"
-                                        id="select-all">
-                                    <div
-                                        class="absolute inset-0 rounded-lg bg-red-50 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
-                                    </div>
-                                </div>
-                                <span class="font-bold text-gray-800 text-lg">🛍️ Select All Items</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center space-x-8">
-                            <div class="text-right">
-                                <div class="text-sm text-gray-600 font-medium" id="total-text">
-                                    Total (<span id="total-item-count"
-                                        class="font-bold text-red-600">{{ count($cartItems) }}</span> Products)
-                                </div>
-                                <div class="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent"
-                                    id="total-price">
-                                    Rp. {{ number_format($totalPrice, 0, ',', '.') }}
+        {{-- Enhanced Sticky Bottom Summary --}}
+        <div
+            class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t-2 border-red-200 px-6 py-6 shadow-2xl z-10">
+            <div class="container mx-auto">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-6">
+                        <div class="flex items-center">
+                            <div class="relative">
+                                <input type="checkbox"
+                                    class="w-6 h-6 text-red-600 rounded-lg border-2 border-red-300 focus:ring-3 focus:ring-red-500/30 mr-4 shadow-md"
+                                    id="select-all">
+                                <div
+                                    class="absolute inset-0 rounded-lg bg-red-50 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
                                 </div>
                             </div>
-                            <button
-                                class="bg-gradient-to-r from-red-500 via-red-600 to-pink-600 hover:from-red-600 hover:via-red-700 hover:to-pink-700 text-white font-bold py-4 px-10 rounded-2xl transition-all duration-200 transform hover:scale-105 hover:shadow-2xl flex items-center space-x-3 shadow-xl"
-                                onclick="proceedToCheckout()">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
-                                </svg>
-                                <span class="text-lg">🚀 Proceed to Checkout</span>
-                            </button>
+                            <span class="font-bold text-gray-800 text-lg">🛍️ Select All Items</span>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Bid Modal -->
-            <div id="bidModal"
-                class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-lg p-6 w-full max-w-md">
-                    <h2 class="text-xl font-bold mb-4">Submit Bid</h2>
-                    <form id="bidForm">
-                        <input type="hidden" id="bidProductId">
-                        <div class="mb-4">
-                            <label for="bidPrice" class="block text-sm font-medium text-gray-700">Bid Price (Rp)</label>
-                            <input type="number" id="bidPrice" name="bid_price"
-                                class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-400"
-                                required min="1">
+                    <div class="flex items-center space-x-8">
+                        <div class="text-right">
+                            <div class="text-sm text-gray-600 font-medium" id="total-text">
+                                Total (<span id="total-item-count"
+                                    class="font-bold text-red-600">{{ count($cartItems) }}</span> Products)
+                            </div>
+                            <div class="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent"
+                                id="total-price">
+                                Rp. {{ number_format($totalPrice, 0, ',', '.') }}
+                            </div>
                         </div>
-                        <div class="flex justify-end space-x-3">
-                            <button type="button" onclick="closeBidModal()"
-                                class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-                            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Submit
-                                Bid</button>
-                        </div>
-                    </form>
+                        <button
+                            class="bg-gradient-to-r from-red-500 via-red-600 to-pink-600 hover:from-red-600 hover:via-red-700 hover:to-pink-700 text-white font-bold py-4 px-10 rounded-2xl transition-all duration-200 transform hover:scale-105 hover:shadow-2xl flex items-center space-x-3 shadow-xl"
+                            onclick="proceedToCheckout()">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
+                            </svg>
+                            <span class="text-lg">🚀 Proceed to Checkout</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Bid Modal -->
+        <div id="bidModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                <h2 class="text-xl font-bold mb-4">Submit Bid</h2>
+                <form id="bidForm">
+                    <input type="hidden" id="bidProductId">
+                    <div class="mb-4">
+                        <label for="bidPrice" class="block text-sm font-medium text-gray-700">Bid Price (Rp)</label>
+                        <input type="number" id="bidPrice" name="bid_price"
+                            class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-400"
+                            required min="1">
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="closeBidModal()"
+                            class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Submit
+                            Bid</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     </div>
 
     <script>

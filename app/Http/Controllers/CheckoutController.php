@@ -29,10 +29,11 @@ class CheckoutController extends Controller
     }
 
     $cartItems = $query->get()->map(function ($cartItem) use ($user) {
-      // Check if there is an accepted bid for this product
+      // Check if there is an accepted bid for this product, ordered by latest
       $acceptedBid = Bid::where('product_id', $cartItem->product_id)
         ->where('user_id', $user->id)
         ->where('status', 'Accepted')
+        ->latest() // Order by created_at in descending order
         ->first();
 
       $price = $acceptedBid ? $acceptedBid->bid_price : $cartItem->product->price;
@@ -115,6 +116,7 @@ class CheckoutController extends Controller
         $acceptedBid = Bid::where('product_id', $item->product_id)
           ->where('user_id', $user->id)
           ->where('status', 'Accepted')
+          ->latest() // Order by created_at in descending order
           ->first();
         $price = $acceptedBid ? $acceptedBid->bid_price : $item->product->price;
         return $price * $item->quantity;
@@ -197,10 +199,11 @@ class CheckoutController extends Controller
   protected function createOrderItemsAndUpdateStock($order, $cartItems, $userId)
   {
     return $cartItems->map(function ($cartItem) use ($order, $userId) {
-      // Check if there is an accepted bid for this product
+      // Check if there is an accepted bid for this product, ordered by latest
       $acceptedBid = Bid::where('product_id', $cartItem->product_id)
         ->where('user_id', $userId)
         ->where('status', 'Accepted')
+        ->latest() // Order by created_at in descending order
         ->first();
 
       $price = $acceptedBid ? $acceptedBid->bid_price : $cartItem->product->price;
@@ -230,7 +233,7 @@ class CheckoutController extends Controller
         'quantity' => $cartItem->quantity,
         'variant' => $cartItem->variant ?? 'default',
         'supplier' => $cartItem->product->supplier,
-        'is_bid_price' => $acceptedBid ? true : false, // Indicate if price is from bid
+        'is_bid_price' => $acceptedBid ? true : false,
       ];
     })->toArray();
   }
@@ -241,6 +244,7 @@ class CheckoutController extends Controller
       $acceptedBid = Bid::where('product_id', $item->product_id)
         ->where('user_id', $userId)
         ->where('status', 'Accepted')
+        ->latest() // Order by created_at in descending order
         ->first();
       $price = $acceptedBid ? $acceptedBid->bid_price : $item->product->price;
 
@@ -269,6 +273,7 @@ class CheckoutController extends Controller
       $acceptedBid = Bid::where('product_id', $item->product_id)
         ->where('vendor_id', $vendorId)
         ->where('status', 'Accepted')
+        ->latest() // Order by created_at in descending order
         ->first();
       $price = $acceptedBid ? $acceptedBid->bid_price : $item->product->price;
 
@@ -362,6 +367,7 @@ class CheckoutController extends Controller
         $acceptedBid = Bid::where('product_id', $item->product_id)
           ->where('user_id', $user->id)
           ->where('status', 'Accepted')
+          ->latest() // Order by created_at in descending order
           ->first();
 
         return [

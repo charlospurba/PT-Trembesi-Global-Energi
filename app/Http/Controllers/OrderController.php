@@ -172,6 +172,15 @@ class OrderController extends Controller
                 'status' => 'required|in:Pending,Accepted,Rejected',
             ]);
 
+            if ($validated['status'] === 'Accepted') {
+                // Reject other accepted bids for the same product and user
+                Bid::where('product_id', $bid->product_id)
+                    ->where('user_id', $bid->user_id)
+                    ->where('id', '!=', $bid->id)
+                    ->where('status', 'Accepted')
+                    ->update(['status' => 'Rejected']);
+            }
+
             $bid->update(['status' => $validated['status']]);
 
             // Notify the user who submitted the bid
