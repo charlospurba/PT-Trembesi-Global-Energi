@@ -68,6 +68,6 @@ class RegisterController extends Controller
         // Optional: Langsung login setelah register
         auth()->login($user);
 
-        return redirect()->route('login')->with('success', 'Registrasi berhasil! Mohon tunggu persetujuan dari admin.');
+        return redirect()->route('vendor.registration_status');
     }
 }

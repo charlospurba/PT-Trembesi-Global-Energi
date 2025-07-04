@@ -16,28 +16,42 @@ class AuthController extends Controller
     {
         $credentials = $request->only('username', 'password');
 
-        // Tambahkan status sebagai bagian dari kriteria login
-        $credentials['status'] = 'active';
+        // Cek user berdasarkan username (tanpa filter status dulu)
+        $user = \App\Models\User::where('username', $credentials['username'])->first();
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-
-            switch ($user->role) {
-                case 'super_admin':
-                    return redirect('/dashboard/superadmin');
-                case 'procurement':
-                    return redirect('/dashboard/procurement');
-                case 'vendor':
-                    return redirect('/dashboard/vendor');
-                case 'project_manager':
-                    return redirect('/dashboard/productmanager');
-                default:
-                    Auth::logout();
-                    return redirect()->back()->withErrors(['role' => 'Invalid role']);
-            }
+        if (!$user) {
+            return redirect()->back()->withErrors(['login' => 'User not found']);
         }
 
-        return redirect()->back()->withErrors(['login' => 'Username, password, or status incorrect']);
+        if (!Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']])) {
+            return redirect()->back()->withErrors(['login' => 'Password incorrect']);
+        }
+
+        // Login sukses
+        $user = Auth::user();
+
+        switch ($user->role) {
+            case 'super_admin':
+                return redirect('/dashboard/superadmin');
+
+            case 'procurement':
+                return redirect('/dashboard/procurement');
+
+            case 'project_manager':
+                return redirect('/dashboard/productmanager');
+
+            case 'vendor':
+                // Kalau belum active, arahkan ke status
+                if ($user->status !== 'active') {
+                    return redirect()->route('vendor.registration_status');
+                }
+
+                return redirect('/dashboard/vendor');
+
+            default:
+                Auth::logout();
+                return redirect()->back()->withErrors(['role' => 'Invalid role']);
+        }
     }
 
     public function logout(Request $request)

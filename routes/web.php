@@ -24,6 +24,9 @@ Route::get('/dashboard', [ProductController::class, 'dashboard'])->name('dashboa
 Route::view('/signin', 'auth.login')->name('signin');
 Route::view('/signup', 'auth.register')->name('auth.register');
 Route::view('/signup/form', 'auth.register_form')->name('auth.register_form');
+Route::get('/registration-status', function () {
+    return view('vendor.status');
+})->middleware('auth')->name('vendor.registration_status');
 
 // 🔐 Authentication Routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login.form');

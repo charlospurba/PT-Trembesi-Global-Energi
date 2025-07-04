@@ -48,6 +48,19 @@
         </div>
       </div>
 
+      {{-- TAMPILKAN PESAN ERROR DI SINI --}}
+      @if ($errors->any())
+      <div class="mb-4">
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <ul class="list-disc list-inside text-sm">
+        @foreach ($errors->all() as $error)
+      <li>{{ $error }}</li>
+      @endforeach
+        </ul>
+      </div>
+      </div>
+    @endif
+
       <form id="register-form" method="POST" action="{{ route('auth.register_detail_submit') }}"
         enctype="multipart/form-data" class="flex flex-col gap-4 relative">
         @csrf
