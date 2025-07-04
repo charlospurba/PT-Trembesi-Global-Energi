@@ -32,13 +32,14 @@
                         <p class="text-gray-600">Update user information and status</p>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <a href="{{ route('superadmin.dashboard') }}" 
+                        <a href="{{ route('superadmin.dashboard') }}"
                            class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors duration-200">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                             </svg>
                             Back to Dashboard
                         </a>
+
                         @php
                             $statusConfig = $user->status === 'active' ? [
                                 'bg' => 'bg-green-100',
@@ -52,6 +53,7 @@
                                 'icon' => '🔴'
                             ];
                         @endphp
+
                         <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold {{ $statusConfig['bg'] }} {{ $statusConfig['text'] }} ring-1 {{ $statusConfig['ring'] }}">
                             <span class="mr-2">{{ $statusConfig['icon'] }}</span>
                             {{ ucfirst($user->status) }}
@@ -60,15 +62,13 @@
                 </div>
             </div>
 
-            <!-- Main Content Card -->
+            <!-- Card Content -->
             <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
                 <!-- Header Card -->
                 <div class="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-6">
                     <div class="flex items-center space-x-4">
-                        <div class="flex-shrink-0">
-                            <div class="h-16 w-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                                <span class="text-white font-bold text-2xl">{{ substr($user->name, 0, 1) }}</span>
-                            </div>
+                        <div class="h-16 w-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                            <span class="text-white font-bold text-2xl">{{ substr($user->name, 0, 1) }}</span>
                         </div>
                         <div>
                             <h2 class="text-2xl font-bold">{{ $user->name }}</h2>
@@ -78,11 +78,11 @@
                     </div>
                 </div>
 
-                <!-- Form Content -->
+                <!-- Form -->
                 <form action="{{ route('superadmin.users.update', ['id' => $user->id]) }}" method="POST" class="p-8">
                     @csrf
 
-                    <!-- User Information Section -->
+                    <!-- User Info Section -->
                     <div class="mb-8">
                         <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
                             <svg class="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,107 +92,22 @@
                         </h3>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Name -->
-                            <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-gray-700">Full Name</label>
-                                <div class="relative">
-                                    <input type="text" 
-                                           value="{{ $user->name }}" 
-                                           class="w-full border border-gray-200 rounded-lg px-4 py-3 bg-gray-50 text-gray-500 cursor-not-allowed focus:outline-none" 
+                            @foreach ([
+                                ['label' => 'Full Name', 'value' => $user->name],
+                                ['label' => 'Username', 'value' => $user->username],
+                                ['label' => 'Email Address', 'value' => $user->email],
+                                ['label' => 'Phone Number', 'value' => $user->phone_number],
+                                ['label' => 'User Role', 'value' => ucfirst($user->role)],
+                                ['label' => 'Project Code', 'value' => $user->project_kode]
+                            ] as $field)
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-semibold text-gray-700">{{ $field['label'] }}</label>
+                                    <input type="text" value="{{ $field['value'] }}"
+                                           class="w-full border border-gray-200 rounded-lg px-4 py-3 bg-gray-50 text-gray-500 cursor-not-allowed"
                                            disabled />
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                        </svg>
-                                    </div>
+                                    <p class="text-xs text-gray-500">This field cannot be modified</p>
                                 </div>
-                                <p class="text-xs text-gray-500">This field cannot be modified</p>
-                            </div>
-
-                            <!-- Username -->
-                            <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-gray-700">Username</label>
-                                <div class="relative">
-                                    <input type="text" 
-                                           value="{{ $user->username }}" 
-                                           class="w-full border border-gray-200 rounded-lg px-4 py-3 bg-gray-50 text-gray-500 cursor-not-allowed focus:outline-none" 
-                                           disabled />
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <p class="text-xs text-gray-500">This field cannot be modified</p>
-                            </div>
-
-                            <!-- Email -->
-                            <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-gray-700">Email Address</label>
-                                <div class="relative">
-                                    <input type="email" 
-                                           value="{{ $user->email }}" 
-                                           class="w-full border border-gray-200 rounded-lg px-4 py-3 bg-gray-50 text-gray-500 cursor-not-allowed focus:outline-none" 
-                                           disabled />
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <p class="text-xs text-gray-500">This field cannot be modified</p>
-                            </div>
-
-                            <!-- Phone -->
-                            <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-gray-700">Phone Number</label>
-                                <div class="relative">
-                                    <input type="text" 
-                                           value="{{ $user->phone_number }}" 
-                                           class="w-full border border-gray-200 rounded-lg px-4 py-3 bg-gray-50 text-gray-500 cursor-not-allowed focus:outline-none" 
-                                           disabled />
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <p class="text-xs text-gray-500">This field cannot be modified</p>
-                            </div>
-
-                            <!-- Role -->
-                            <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-gray-700">User Role</label>
-                                <div class="relative">
-                                    <input type="text" 
-                                           value="{{ ucfirst($user->role) }}" 
-                                           class="w-full border border-gray-200 rounded-lg px-4 py-3 bg-gray-50 text-gray-500 cursor-not-allowed focus:outline-none" 
-                                           disabled />
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <p class="text-xs text-gray-500">This field cannot be modified</p>
-                            </div>
-
-                            <!-- Project Code -->
-                            <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-gray-700">Project Code</label>
-                                <div class="relative">
-                                    <input type="text" 
-                                           value="{{ $user->project_kode }}" 
-                                           class="w-full border border-gray-200 rounded-lg px-4 py-3 bg-gray-50 text-gray-500 cursor-not-allowed focus:outline-none" 
-                                           disabled />
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <p class="text-xs text-gray-500">This field cannot be modified</p>
-                            </div>
+                            @endforeach
                         </div>
                     </div>
 
@@ -205,11 +120,10 @@
                             Editable Settings
                         </h3>
 
-                        <!-- Status -->
                         <div class="space-y-2">
                             <label class="block text-sm font-semibold text-gray-700">Account Status</label>
-                            <select name="status" 
-                                    class="w-full border border-blue-300 rounded-lg px-4 py-3 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                            <select name="status"
+                                    class="w-full border border-blue-300 rounded-lg px-4 py-3 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                                 <option value="active" {{ $user->status === 'active' ? 'selected' : '' }}>
                                     🟢 Active - User can access the system
                                 </option>
@@ -221,24 +135,24 @@
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
+                    <!-- Footer -->
                     <div class="flex items-center justify-between pt-6 border-t border-gray-200">
-                        <div class="text-sm text-gray-500">
-                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="text-sm text-gray-500 flex items-center space-x-1">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            Only the status field can be modified
+                            <span>Only the status field can be modified</span>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <a href="{{ route('superadmin.dashboard') }}" 
+                            <a href="{{ route('superadmin.dashboard') }}"
                                class="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold rounded-lg transition-all duration-200">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
                                 Cancel
                             </a>
-                            <button type="submit" 
-                                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-sm font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg">
+                            <button type="submit"
+                                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-sm font-semibold rounded-lg transition-transform duration-200 transform hover:scale-105 shadow-md hover:shadow-lg">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
@@ -250,36 +164,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Custom Styles -->
-    <style>
-        /* Smooth scrollbar */
-        .overflow-y-auto::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .overflow-y-auto::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
-        .overflow-y-auto::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        
-        .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        /* Button hover effects */
-        .transform:hover {
-            transform: translateY(-1px);
-        }
-
-        /* Disabled input styling */
-        input:disabled {
-            background-color: #f9fafb;
-            color: #6b7280;
-        }
-    </style>
 @endsection
