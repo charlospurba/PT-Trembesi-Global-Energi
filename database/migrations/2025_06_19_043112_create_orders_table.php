@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->string('vendor');
             $table->decimal('total_price', 15, 2);
             $table->string('full_name');
+            $table->string('phone_number'); 
             $table->string('country');
             $table->string('postal_code');
             $table->string('street_address');

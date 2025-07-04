@@ -104,7 +104,7 @@ class OrderController extends Controller
             'order_date' => $order->created_at->format('d M Y'),
             'status' => $order->status,
             'shipping_address' => $order->street_address . ', ' . ($order->city ?? '') . ', ' . $order->postal_code . ', ' . $order->country,
-            'phone' => $order->user->phone ?? 'N/A',
+            'phone_number' => $order->phone_number,
             'items' => $order->orderItems->map(function ($item) {
                 return [
                     'name' => $item->name,

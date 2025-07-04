@@ -16,7 +16,7 @@
                     <p><strong>Customer:</strong> {{ $orderDetails['user_name'] }} ({{ $orderDetails['user_email'] }})</p>
                     <p><strong>Order Date:</strong> {{ $orderDetails['order_date'] }}</p>
                     <p><strong>Shipping Address:</strong> {{ $orderDetails['shipping_address'] }}</p>
-                    <p><strong>Phone:</strong> {{ $orderDetails['phone'] }}</p>
+                    <p><strong>Phone:</strong> {{ $orderDetails['phone_number'] }}</p>
                     <p><strong>Status:</strong> {{ $orderDetails['status'] }}</p>
                 </div>
 

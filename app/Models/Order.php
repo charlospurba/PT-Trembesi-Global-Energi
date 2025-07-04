@@ -14,6 +14,7 @@ class Order extends Model
     'vendor',
     'total_price',
     'full_name',
+    'phone_number',
     'country',
     'postal_code',
     'street_address',

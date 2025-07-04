@@ -120,7 +120,7 @@
                                     <td class="p-3 text-sm leading-6">
                                         <div class="text-gray-900">{{ $order->street_address }}, {{ $order->city ?? '' }},
                                             {{ $order->postal_code }}, {{ $order->country }}</div>
-                                        <div class="text-gray-500">Telepon: {{ $order->user->phone ?? 'N/A' }}</div>
+                                        <div class="text-gray-500">Phone: {{ $order->phone_number ?? 'N/A' }}</div>
                                     </td>
                                     <td class="p-3">
                                         <a href="{{ route('vendor.order_detail', $order->id) }}"

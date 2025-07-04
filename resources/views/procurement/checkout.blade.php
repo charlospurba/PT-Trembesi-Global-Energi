@@ -38,6 +38,12 @@
                         </div>
 
                         <div class="mb-4">
+                            <label class="block mb-1 font-semibold">Phone Number *</label>
+                            <input type="text" name="phone_number" class="w-full border border-gray-300 rounded px-3 py-2"
+                                required />
+                        </div>
+
+                        <div class="mb-4">
                             <label class="block mb-1 font-semibold">Country *</label>
                             <input type="text" name="country" class="w-full border border-gray-300 rounded px-3 py-2"
                                 required />
@@ -51,8 +57,7 @@
                             </div>
                             <div>
                                 <label class="block mb-1 font-semibold">State/Province</label>
-                                <input type="text" name="state"
-                                    class="w-full border border-gray-300 rounded px-3 py-2" />
+                                <input type="text" name="state" class="w-full border border-gray-300 rounded px-3 py-2" />
                             </div>
                             <div>
                                 <label class="block mb-1 font-semibold">Postal code *</label>
@@ -63,7 +68,8 @@
 
                         <div class="mb-4">
                             <label class="block mb-1 font-semibold">Street Address *</label>
-                            <textarea rows="2" name="street_address" class="w-full border border-gray-300 rounded px-3 py-2" required></textarea>
+                            <textarea rows="2" name="street_address" class="w-full border border-gray-300 rounded px-3 py-2"
+                                required></textarea>
                         </div>
 
                         <div class="flex gap-4 mt-6">
@@ -133,15 +139,15 @@
             }
 
             fetch('/checkout/e-billing', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        order_id: lastOrderId
-                    })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    order_id: lastOrderId
                 })
+            })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -189,11 +195,11 @@
 
         function updateNotificationBadge() {
             fetch('/notifications/count', {
-                    method: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                })
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
                 .then(response => response.json())
                 .then(data => {
                     const badge = document.getElementById('notificationBadge');
@@ -206,11 +212,11 @@
 
         function loadNotifications() {
             fetch('/notifications', {
-                    method: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                })
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
                 .then(response => response.json())
                 .then(data => {
                     const notificationList = document.getElementById('notificationList');
@@ -225,10 +231,10 @@
                             div.style.borderBottom = '1px solid #ddd';
                             div.style.backgroundColor = notification.read ? '#fff' : '#f9f9f9';
                             div.innerHTML = `
-                            <div style="font-weight: ${notification.read ? 'normal' : 'bold'}">${notification.message}</div>
-                            <div style="font-size: 12px; color: #666;">${notification.created_at}</div>
-                            ${notification.type === 'e-billing' ? `<a href="/storage/${notification.data.pdf_path}" target="_blank" style="color: #3085d6; text-decoration: none;">View E-Billing</a>` : ''}
-                        `;
+                                <div style="font-weight: ${notification.read ? 'normal' : 'bold'}">${notification.message}</div>
+                                <div style="font-size: 12px; color: #666;">${notification.created_at}</div>
+                                ${notification.type === 'e-billing' ? `<a href="/storage/${notification.data.pdf_path}" target="_blank" style="color: #3085d6; text-decoration: none;">View E-Billing</a>` : ''}
+                            `;
                             div.addEventListener('click', () => markAsRead(notification.id));
                             notificationList.appendChild(div);
                         });
@@ -241,11 +247,11 @@
 
         function updateCartBadge() {
             fetch('/cart/count', {
-                    method: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                })
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
                 .then(response => response.json())
                 .then(data => {
                     const badge = document.getElementById('cartBadge');
@@ -256,7 +262,7 @@
                 });
         }
 
-        document.getElementById('checkout-form').addEventListener('submit', function(e) {
+        document.getElementById('checkout-form').addEventListener('submit', function (e) {
             e.preventDefault();
             const selectedIds = @json(array_column($cartItems, 'id'));
             if (selectedIds.length === 0) {
@@ -272,21 +278,22 @@
             submitButton.disabled = true;
 
             fetch(this.action, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('#checkout-form input[name="_token"]').value
-                    },
-                    body: JSON.stringify({
-                        full_name: this.querySelector('input[name="full_name"]').value,
-                        country: this.querySelector('input[name="country"]').value,
-                        city: this.querySelector('input[name="city"]').value,
-                        state: this.querySelector('input[name="state"]').value,
-                        postal_code: this.querySelector('input[name="postal_code"]').value,
-                        street_address: this.querySelector('textarea[name="street_address"]').value,
-                        selected_ids: selectedIds
-                    })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('#checkout-form input[name="_token"]').value
+                },
+                body: JSON.stringify({
+                    full_name: this.querySelector('input[name="full_name"]').value,
+                    phone_number: this.querySelector('input[name="phone_number"]').value,
+                    country: this.querySelector('input[name="country"]').value,
+                    city: this.querySelector('input[name="city"]').value,
+                    state: this.querySelector('input[name="state"]').value,
+                    postal_code: this.querySelector('input[name="postal_code"]').value,
+                    street_address: this.querySelector('textarea[name="street_address"]').value,
+                    selected_ids: selectedIds
                 })
+            })
                 .then(response => {
                     submitButton.disabled = false;
                     if (!response.ok) {

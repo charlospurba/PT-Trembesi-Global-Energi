@@ -162,6 +162,7 @@ class CheckoutController extends Controller
   {
     return $request->validate([
       'full_name' => 'required|string|max:255',
+      'phone_number' => 'required|string|max:20',
       'country' => 'required|string|max:255',
       'postal_code' => 'required|string|max:20',
       'street_address' => 'required|string|max:500',
@@ -187,6 +188,7 @@ class CheckoutController extends Controller
       'vendor' => $vendor,
       'total_price' => $totalPrice,
       'full_name' => $validated['full_name'],
+      'phone_number' => $validated['phone_number'],
       'country' => $validated['country'],
       'postal_code' => $validated['postal_code'],
       'street_address' => $validated['street_address'],

@@ -32,7 +32,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
                             <p><strong>Order ID:</strong> #{{ $order->id }}</p>
                             <p><strong>Vendor:</strong> {{ $order->vendor }}</p>
-                            <p><strong>Customer:</strong> {{ $order->full_name }}</p>
+                            <p><strong>Receiver:</strong> {{ $order->full_name }}</p>
                             <p><strong>Total:</strong> Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
                             <p><strong>Address:</strong> {{ $order->street_address }}, {{ $order->city }}, {{ $order->state ?? '-' }}, {{ $order->country }}</p>
                             <p><strong>Status:</strong> {{ $order->status }}</p>
