@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('content')
@@ -56,7 +55,7 @@
                                     <svg class="w-6 h-6 text-white drop-shadow-sm" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1ital-2 h6m0 0v5m-4 0h4" />
+                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                     </svg>
                                 </div>
                                 <div>
@@ -68,16 +67,15 @@
                     </div>
 
                     {{-- Enhanced Items List --}}
-                    <div2019-06-17_074403_create_carts_table.php class="divide-y divide-red-100">
+                    <div class="divide-y divide-red-100">
                         @foreach ($items as $item)
                             @php
-                                // Fetch bid history for the product
                                 $bids = App\Models\Bid::where('product_id', $item['id'])
                                     ->where('user_id', Auth::id())
                                     ->orderBy('created_at', 'desc')
                                     ->take(3)
                                     ->get();
-                                $acceptedBid = $bids->where('status', 'Accepted')->sortByDesc('created_at')->first();
+                                $acceptedBid = $bids->where('status', 'Approved')->sortByDesc('created_at')->first();
                             @endphp
                             <div class="p-8 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 transition-all duration-300 border-l-4 border-transparent hover:border-red-300"
                                 data-item-id="{{ $item['id'] }}">
@@ -87,7 +85,8 @@
                                         <div class="relative">
                                             <input type="checkbox"
                                                 class="w-6 h-6 text-red-600 rounded-lg border-2 border-red-300 focus:ring-3 focus:ring-red-500/30 item-checkbox shadow-md"
-                                                data-id="{{ $item['id'] }}" data-supplier="{{ $supplier }}">
+                                                data-id="{{ $item['id'] }}" data-supplier="{{ $item['supplier'] }}"
+                                                data-status="{{ $item['status'] }}">
                                             <div
                                                 class="absolute inset-0 rounded-lg bg-red-50 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
                                             </div>
@@ -140,12 +139,20 @@
                                                     BID ITEM
                                                 </button>
                                             </div>
+                                            <div class="mt-2">
+                                                <span
+                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                                                    {{ $item['status'] === 'Approved' ? 'bg-green-100 text-green-800' : ($item['status'] === 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                                    Status: {{ $item['status'] }}
+                                                </span>
+                                            </div>
                                         </div>
                                         <div class="flex items-center text-sm text-gray-700">
                                             <span class="mr-3 font-semibold text-red-600">🏷️ Variant:</span>
                                             <select
                                                 class="border-2 border-red-300 rounded-xl px-4 py-2 text-sm focus:ring-3 focus:ring-red-500/30 focus:border-red-500 bg-white shadow-md hover:shadow-lg transition-all"
-                                                onchange="updateVariant({{ $item['id'] }}, this.value)">
+                                                onchange="updateVariant({{ $item['id'] }}, this.value)"
+                                                {{ $item['status'] === 'Approved' ? '' : 'disabled' }}>
                                                 <option selected>{{ $item['variant'] }}</option>
                                                 <!-- Add more variant options as needed -->
                                             </select>
@@ -160,7 +167,7 @@
                                                     @foreach ($bids as $bid)
                                                         <li class="text-sm text-gray-600 flex items-center space-x-2">
                                                             <span
-                                                                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $bid->status === 'Accepted' ? 'bg-green-100 text-green-800' : ($bid->status === 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800') }}">
+                                                                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $bid->status === 'Approved' ? 'bg-green-100 text-green-800' : ($bid->status === 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800') }}">
                                                                 {{ $bid->status }}
                                                             </span>
                                                             <span>Rp.
@@ -182,7 +189,8 @@
                                             <div class="flex items-center ml-3">
                                                 <button
                                                     class="w-10 h-10 rounded-xl border-2 border-red-300 bg-white hover:bg-red-50 hover:border-red-400 hover:text-red-600 flex items-center justify-center transition-all duration-200 qty-btn shadow-md hover:shadow-lg transform hover:scale-105"
-                                                    onclick="updateCartQuantity({{ $item['id'] }}, -1)">
+                                                    onclick="updateCartQuantity({{ $item['id'] }}, -1)"
+                                                    {{ $item['status'] === 'Approved' ? '' : 'disabled' }}>
                                                     <svg class="w-5 h-5 font-bold" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -192,10 +200,12 @@
                                                 <input type="text"
                                                     class="w-16 h-10 border-t-2 border-b-2 border-red-300 text-center text-sm font-bold bg-white focus:bg-red-50 focus:outline-none focus:border-red-500 transition-all"
                                                     value="{{ $item['quantity'] }}" id="quantity-{{ $item['id'] }}"
-                                                    onchange="updateCartQuantity({{ $item['id'] }}, this.value)">
+                                                    onchange="updateCartQuantity({{ $item['id'] }}, this.value)"
+                                                    {{ $item['status'] === 'Approved' ? '' : 'disabled' }}>
                                                 <button
                                                     class="w-10 h-10 rounded-xl border-2 border-red-300 bg-white hover:bg-red-50 hover:border-red-400 hover:text-red-600 flex items-center justify-center transition-all duration-200 qty-btn shadow-md hover:shadow-lg transform hover:scale-105"
-                                                    onclick="updateCartQuantity({{ $item['id'] }}, 1)">
+                                                    onclick="updateCartQuantity({{ $item['id'] }}, 1)"
+                                                    {{ $item['status'] === 'Approved' ? '' : 'disabled' }}>
                                                     <svg class="w-5 h-5 font-bold" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -219,76 +229,88 @@
                                 </div>
                             </div>
                         @endforeach
+                    </div>
                 </div>
-        </div>
-        @endforeach
+            @endforeach
 
-        {{-- Enhanced Sticky Bottom Summary --}}
-        <div
-            class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t-2 border-red-200 px-6 py-6 shadow-2xl z-10">
-            <div class="container mx-auto">
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center space-x-6">
-                        <div class="flex items-center">
-                            <div class="relative">
-                                <input type="checkbox"
-                                    class="w-6 h-6 text-red-600 rounded-lg border-2 border-red-300 focus:ring-3 focus:ring-red-500/30 mr-4 shadow-md"
-                                    id="select-all">
-                                <div
-                                    class="absolute inset-0 rounded-lg bg-red-50 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
+            {{-- Enhanced Sticky Bottom Summary --}}
+            <div
+                class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t-2 border-red-200 px-6 py-6 shadow-2xl z-10">
+                <div class="container mx-auto">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-6">
+                            <div class="flex items-center">
+                                <div class="relative">
+                                    <input type="checkbox"
+                                        class="w-6 h-6 text-red-600 rounded-lg border-2 border-red-300 focus:ring-3 focus:ring-red-500/30 mr-4 shadow-md"
+                                        id="select-all">
+                                    <div
+                                        class="absolute inset-0 rounded-lg bg-red-50 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
+                                    </div>
+                                </div>
+                                <span class="font-bold text-gray-800 text-lg">🛍️ Select All Items</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-8">
+                            <div class="text-right">
+                                <div class="text-sm text-gray-600 font-medium" id="total-text">
+                                    Total (<span id="total-item-count"
+                                        class="font-bold text-red-600">{{ count($cartItems) }}</span> Products)
+                                </div>
+                                <div class="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent"
+                                    id="total-price">
+                                    Rp. {{ number_format($totalPrice, 0, ',', '.') }}
                                 </div>
                             </div>
-                            <span class="font-bold text-gray-800 text-lg">🛍️ Select All Items</span>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center space-x-8">
-                        <div class="text-right">
-                            <div class="text-sm text-gray-600 font-medium" id="total-text">
-                                Total (<span id="total-item-count"
-                                    class="font-bold text-red-600">{{ count($cartItems) }}</span> Products)
+                            <div class="flex gap-4">
+                                <button
+                                    class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 px-10 rounded-2xl transition-all duration-200 transform hover:scale-105 hover:shadow-2xl flex items-center space-x-3 shadow-xl request-purchase-btn"
+                                    onclick="requestPurchase()">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4M7.835 4.697a3.5 3.5 0 105.33 4.606 3.5 3.5 0 015.33 4.606M12 2v1m0 18v1m10-10h-1M3 12H2m17.413 5.413l-.707-.707M5.294 6.706l-.707-.707M18.706 5.294l.707.707M6.706 17.294l.707.707" />
+                                    </svg>
+                                    <span class="text-lg">📩 Request Purchase</span>
+                                </button>
+                                <button
+                                    class="bg-gradient-to-r from-red-500 via-red-600 to-pink-600 hover:from-red-600 hover:via-red-700 hover:to-pink-700 text-white font-bold py-4 px-10 rounded-2xl transition-all duration-200 transform hover:scale-105 hover:shadow-2xl flex items-center space-x-3 shadow-xl proceed-checkout-btn"
+                                    onclick="proceedToCheckout()" disabled>
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
+                                    </svg>
+                                    <span class="text-lg">🚀 Proceed to Checkout</span>
+                                </button>
                             </div>
-                            <div class="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent"
-                                id="total-price">
-                                Rp. {{ number_format($totalPrice, 0, ',', '.') }}
-                            </div>
                         </div>
-                        <button
-                            class="bg-gradient-to-r from-red-500 via-red-600 to-pink-600 hover:from-red-600 hover:via-red-700 hover:to-pink-700 text-white font-bold py-4 px-10 rounded-2xl transition-all duration-200 transform hover:scale-105 hover:shadow-2xl flex items-center space-x-3 shadow-xl"
-                            onclick="proceedToCheckout()">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
-                            </svg>
-                            <span class="text-lg">🚀 Proceed to Checkout</span>
-                        </button>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Bid Modal -->
-        <div id="bidModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-lg p-6 w-full max-w-md">
-                <h2 class="text-xl font-bold mb-4">Submit Bid</h2>
-                <form id="bidForm">
-                    <input type="hidden" id="bidProductId">
-                    <div class="mb-4">
-                        <label for="bidPrice" class="block text-sm font-medium text-gray-700">Bid Price (Rp)</label>
-                        <input type="number" id="bidPrice" name="bid_price"
-                            class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-400"
-                            required min="1">
-                    </div>
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeBidModal()"
-                            class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Submit
-                            Bid</button>
-                    </div>
-                </form>
+            <!-- Bid Modal -->
+            <div id="bidModal"
+                class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                    <h2 class="text-xl font-bold mb-4">Submit Bid</h2>
+                    <form id="bidForm">
+                        <input type="hidden" id="bidProductId">
+                        <div class="mb-4">
+                            <label for="bidPrice" class="block text-sm font-medium text-gray-700">Bid Price (Rp)</label>
+                            <input type="number" id="bidPrice" name="bid_price"
+                                class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                required min="1">
+                        </div>
+                        <div class="flex justify-end space-x-3">
+                            <button type="button" onclick="closeBidModal()"
+                                class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Submit
+                                Bid</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 
     <script>
@@ -331,7 +353,7 @@
                             confirmButtonColor: '#dc2626'
                         });
                         closeBidModal();
-                        location.reload(); // Reload to update bid history and price
+                        location.reload();
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -484,6 +506,85 @@
             });
         }
 
+        function requestPurchase() {
+            const selectedItems = document.querySelectorAll('.item-checkbox:checked');
+            if (selectedItems.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No Items Selected',
+                    text: 'Please select at least one item to request purchase.',
+                    confirmButtonColor: '#dc2626'
+                });
+                return;
+            }
+
+            const selectedIds = Array.from(selectedItems).map(item => item.dataset.id);
+            const vendors = Array.from(selectedItems).map(item => item.dataset.supplier);
+            const uniqueVendors = [...new Set(vendors)];
+
+            if (uniqueVendors.length > 1) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Multiple Vendors',
+                    text: 'Please select items from only one vendor for purchase request.',
+                    confirmButtonColor: '#dc2626'
+                });
+                return;
+            }
+
+            // Only allow items with 'Pending' status for purchase request
+            const invalidItems = Array.from(selectedItems).filter(item => item.dataset.status !== 'Pending');
+            if (invalidItems.length > 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Selection',
+                    text: 'Only items with Pending status can be submitted for purchase request.',
+                    confirmButtonColor: '#dc2626'
+                });
+                return;
+            }
+
+            fetch('/cart/request-purchase', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        selected_ids: selectedIds
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: data.message,
+                            timer: 1500,
+                            showConfirmButton: false,
+                            confirmButtonColor: '#dc2626'
+                        });
+                        location.reload();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'Failed to submit purchase request',
+                            confirmButtonColor: '#dc2626'
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to submit purchase request: ' + error.message,
+                        confirmButtonColor: '#dc2626'
+                    });
+                });
+        }
+
         function updateCartBadge(count) {
             const badge = document.getElementById('cartBadge');
             if (badge) {
@@ -518,6 +619,14 @@
             if (totalItemCountElement) {
                 totalItemCountElement.textContent = itemCount;
             }
+
+            const proceedButton = document.querySelector('.proceed-checkout-btn');
+            if (proceedButton) {
+                // Enable checkout only if all selected items are Approved
+                const selectedItems = document.querySelectorAll('.item-checkbox:checked');
+                const allApproved = Array.from(selectedItems).every(item => item.dataset.status === 'Approved');
+                proceedButton.disabled = itemCount === 0 || !allApproved;
+            }
         }
 
         function proceedToCheckout() {
@@ -541,6 +650,18 @@
                     icon: 'error',
                     title: 'Multiple Vendors',
                     text: 'Please select items from only one vendor for checkout.',
+                    confirmButtonColor: '#dc2626'
+                });
+                return;
+            }
+
+            // Ensure all selected items are Approved
+            const unapprovedItems = Array.from(selectedItems).filter(item => item.dataset.status !== 'Approved');
+            if (unapprovedItems.length > 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Unapproved Items',
+                    text: 'Only approved items can be checked out.',
                     confirmButtonColor: '#dc2626'
                 });
                 return;
@@ -578,7 +699,8 @@
                         if (firstSupplier) {
                             selectedVendor = firstSupplier.dataset.supplier;
                             firstSupplier.checked = true;
-                            document.querySelectorAll(`.item-checkbox[data-supplier="${selectedVendor}"]`)
+                            document.querySelectorAll(
+                                    `.item-checkbox[data-supplier="${selectedVendor}"]`)
                                 .forEach(cb => cb.checked = true);
                         }
                     } else if (!this.checked) {
@@ -598,7 +720,8 @@
                     if (isChecked) {
                         if (!selectedVendor || selectedVendor === supplier) {
                             selectedVendor = supplier;
-                            document.querySelectorAll(`.item-checkbox[data-supplier="${supplier}"]`)
+                            document.querySelectorAll(
+                                    `.item-checkbox[data-supplier="${supplier}"]`)
                                 .forEach(item => {
                                     item.checked = true;
                                 });
@@ -621,7 +744,8 @@
                             selectedVendor = null;
                         }
                     }
-                    selectAllCheckbox.checked = document.querySelectorAll('.item-checkbox')
+                    selectAllCheckbox.checked = document.querySelectorAll(
+                            '.item-checkbox')
                         .length === document.querySelectorAll('.item-checkbox:checked').length;
                     updateTotalPrice();
                 });
@@ -654,7 +778,8 @@
                     if (!document.querySelector('.item-checkbox:checked')) {
                         selectedVendor = null;
                     }
-                    selectAllCheckbox.checked = document.querySelectorAll('.item-checkbox')
+                    selectAllCheckbox.checked = document.querySelectorAll(
+                            '.item-checkbox')
                         .length === document.querySelectorAll('.item-checkbox:checked').length;
                     updateTotalPrice();
                 });

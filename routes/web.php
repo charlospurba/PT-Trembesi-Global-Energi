@@ -14,6 +14,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\VendorApprovalController;
+use App\Http\Controllers\PurchaseRequestController;
 use Illuminate\Support\Facades\Route;
 
 // 🏠 Default Routes
@@ -37,12 +38,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register.form');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
 
-// Gunakan ini sebagai route form detail (jika ingin split view)
+// Split view for registration details
 Route::get('/register-detail', function () {
     return view('auth.register_form_detail');
 })->name('register.step2');
 
-// Jika form step 1 dan 2 digabung (seperti yang kamu kirim sebelumnya)
+// Combined registration form submission
 Route::post('/register-detail', [RegisterController::class, 'register'])->name('auth.register_detail_submit');
 
 // ✅ Authenticated Routes
@@ -53,14 +54,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/superadmin/request', [VendorApprovalController::class, 'index'])->name('superadmin.request');
     Route::view('/dashboard/superadmin/add_users', 'superadmin.add_users')->name('superadmin.add_users');
 
-    // Manajemen User Superadmin
+    // Superadmin User Management
     Route::get('/superadmin/users/add', [UserManagementController::class, 'create'])->name('superadmin.users.create');
     Route::post('/superadmin/users/store', [UserManagementController::class, 'store'])->name('superadmin.users.store');
     Route::get('/superadmin/users/edit/{id}', [UserManagementController::class, 'edit'])->name('superadmin.edit');
     Route::post('/superadmin/users/update/{id}', [UserManagementController::class, 'update'])->name('superadmin.users.update');
     Route::delete('/superadmin/users/{id}', [UserManagementController::class, 'destroy'])->name('superadmin.users.destroy');
 
-    // Approval Vendor
+    // Superadmin Vendor Approval
     Route::prefix('superadmin')->group(function () {
         Route::get('/vendor-requests', [VendorApprovalController::class, 'index'])->name('superadmin.vendor.requests');
         Route::get('/vendor-requests/{id}', [VendorApprovalController::class, 'show'])->name('superadmin.vendor.detail');
@@ -71,6 +72,9 @@ Route::middleware(['auth'])->group(function () {
     // Product Manager Routes
     Route::view('/dashboard/productmanager', 'productmanager.dashboardpm')->name('dashboard.productmanager');
     Route::view('/productmanager/addrequest', 'productmanager.addrequest')->name('productmanager.addrequest');
+    Route::get('/productmanager/purchase-requests', [PurchaseRequestController::class, 'index'])->name('productmanager.purchase_requests');
+    Route::post('/productmanager/purchase-requests/{id}/approve', [PurchaseRequestController::class, 'approve'])->name('productmanager.purchase.approve');
+    Route::post('/productmanager/purchase-requests/{id}/reject', [PurchaseRequestController::class, 'reject'])->name('productmanager.purchase.reject');
 
     // Procurement Routes
     Route::get('/dashboard/procurement', [ProductController::class, 'dashboard'])->name('procurement.dashboardproc');
@@ -82,7 +86,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.detail');
     Route::get('/search', [ProductController::class, 'search'])->name('search.products');
 
-    // Notes Route
+    // Notes Routes
     Route::get('/procurement/notes', function () {
         return view('procurement.notes');
     })->name('procurement.notes');
@@ -135,5 +139,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/profilevendor', [ProfileVendorController::class, 'edit'])->name('components.profilevendor');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
+    // Store Routes
     Route::get('/store/{store}', [StoreController::class, 'show'])->name('store.show');
 });

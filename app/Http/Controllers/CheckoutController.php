@@ -22,18 +22,23 @@ class CheckoutController extends Controller
     $user = Auth::user();
     $selectedIds = $request->input('selected_ids', []);
 
-    $query = Cart::where('user_id', $user->id)->with('product');
+    $query = Cart::where('user_id', $user->id)
+      ->where('status', 'Approved')
+      ->with([
+        'product' => function ($query) {
+          $query->select('id', 'name', 'price', 'supplier', 'vendor_id', 'image_paths');
+        }
+      ]);
 
     if (!empty($selectedIds)) {
       $query->whereIn('product_id', $selectedIds);
     }
 
     $cartItems = $query->get()->map(function ($cartItem) use ($user) {
-      // Check if there is an accepted bid for this product, ordered by latest
       $acceptedBid = Bid::where('product_id', $cartItem->product_id)
         ->where('user_id', $user->id)
         ->where('status', 'Accepted')
-        ->latest() // Order by created_at in descending order
+        ->latest()
         ->first();
 
       $price = $acceptedBid ? $acceptedBid->bid_price : $cartItem->product->price;
@@ -49,9 +54,13 @@ class CheckoutController extends Controller
         'variant' => $cartItem->variant ?? 'default',
         'supplier' => $cartItem->product->supplier,
         'vendor_id' => $cartItem->product->vendor_id,
-        'is_bid_price' => $acceptedBid ? true : false, // Indicate if price is from bid
+        'is_bid_price' => $acceptedBid ? true : false,
       ];
     })->toArray();
+
+    if (empty($cartItems)) {
+      return redirect()->route('procurement.cart')->withErrors(['status' => 'No approved items available for checkout.']);
+    }
 
     $suppliers = array_unique(array_column($cartItems, 'supplier'));
     $vendorIds = array_unique(array_column($cartItems, 'vendor_id'));
@@ -93,6 +102,16 @@ class CheckoutController extends Controller
         ], 422);
       }
 
+      // Check if all selected items are approved
+      $unapprovedItems = $cartItems->where('status', '!=', 'Approved');
+      if ($unapprovedItems->isNotEmpty()) {
+        Log::warning('Unapproved items detected in checkout', ['unapproved_items' => $unapprovedItems->pluck('product_id')->toArray()]);
+        return response()->json([
+          'success' => false,
+          'message' => 'Some items are not approved by the Project Manager.'
+        ], 422);
+      }
+
       $suppliers = $cartItems->pluck('product.supplier')->unique()->toArray();
       $vendorIds = $cartItems->pluck('product.vendor_id')->unique()->toArray();
 
@@ -116,7 +135,7 @@ class CheckoutController extends Controller
         $acceptedBid = Bid::where('product_id', $item->product_id)
           ->where('user_id', $user->id)
           ->where('status', 'Accepted')
-          ->latest() // Order by created_at in descending order
+          ->latest()
           ->first();
         $price = $acceptedBid ? $acceptedBid->bid_price : $item->product->price;
         return $price * $item->quantity;
@@ -176,7 +195,12 @@ class CheckoutController extends Controller
   {
     return Cart::where('user_id', $userId)
       ->whereIn('product_id', $selectedIds)
-      ->with('product')
+      ->where('status', 'Approved')
+      ->with([
+        'product' => function ($query) {
+          $query->select('id', 'name', 'price', 'supplier', 'vendor_id', 'image_paths', 'quantity');
+        }
+      ])
       ->get();
   }
 
@@ -201,16 +225,14 @@ class CheckoutController extends Controller
   protected function createOrderItemsAndUpdateStock($order, $cartItems, $userId)
   {
     return $cartItems->map(function ($cartItem) use ($order, $userId) {
-      // Check if there is an accepted bid for this product, ordered by latest
       $acceptedBid = Bid::where('product_id', $cartItem->product_id)
         ->where('user_id', $userId)
-        ->where('status', 'Accepted')
-        ->latest() // Order by created_at in descending order
+        ->where('status', 'Approved')
+        ->latest()
         ->first();
 
       $price = $acceptedBid ? $acceptedBid->bid_price : $cartItem->product->price;
 
-      // Create order item
       OrderItem::create([
         'order_id' => $order->id,
         'product_id' => $cartItem->product_id,
@@ -220,7 +242,6 @@ class CheckoutController extends Controller
         'variant' => $cartItem->variant ?? 'default',
       ]);
 
-      // Update product stock
       $product = Product::findOrFail($cartItem->product_id);
       $newQuantity = $product->quantity - $cartItem->quantity;
       if ($newQuantity < 0) {
@@ -245,8 +266,8 @@ class CheckoutController extends Controller
     $itemsData = $cartItems->map(function ($item) use ($userId) {
       $acceptedBid = Bid::where('product_id', $item->product_id)
         ->where('user_id', $userId)
-        ->where('status', 'Accepted')
-        ->latest() // Order by created_at in descending order
+        ->where('status', 'Approved')
+        ->latest()
         ->first();
       $price = $acceptedBid ? $acceptedBid->bid_price : $item->product->price;
 
@@ -274,8 +295,8 @@ class CheckoutController extends Controller
     $itemsData = $cartItems->map(function ($item) use ($vendorId) {
       $acceptedBid = Bid::where('product_id', $item->product_id)
         ->where('vendor_id', $vendorId)
-        ->where('status', 'Accepted')
-        ->latest() // Order by created_at in descending order
+        ->where('status', 'Approved')
+        ->latest()
         ->first();
       $price = $acceptedBid ? $acceptedBid->bid_price : $item->product->price;
 
@@ -368,8 +389,8 @@ class CheckoutController extends Controller
       $checkoutItems = $orderItems->map(function ($item) use ($user) {
         $acceptedBid = Bid::where('product_id', $item->product_id)
           ->where('user_id', $user->id)
-          ->where('status', 'Accepted')
-          ->latest() // Order by created_at in descending order
+          ->where('status', 'Approved')
+          ->latest()
           ->first();
 
         return [
