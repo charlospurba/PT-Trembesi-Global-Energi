@@ -12,6 +12,7 @@
       @if ($status === 'pending') <span class="text-yellow-500">Waiting for Verification</span>
     @elseif ($status === 'rejected') <span class="text-red-500">Rejected</span>
     @elseif ($status === 'approved') <span class="text-green-600">Approved</span>
+    @elseif ($status === 'inactive') <span class="text-grey-600">Inactive</span>
     @endif
     </h2>
 
@@ -61,6 +62,12 @@
       <strong>Data Successfully Verified</strong><br>
       Your registration has been approved. However, your account is not yet active.<br>
       Please wait 1 × 24 hours for the administrator to activate your account before you can log in.
+      </div>
+    @elseif ($status === 'inactive')
+      <div class="bg-gray-100 text-gray-700 p-4 rounded">
+      <strong>Account Not Yet Activated</strong><br>
+      Your account has been verified but is currently inactive. Please wait for the administrator to activate your
+      account. For assistance, contact support.
       </div>
     @endif
     </div>
