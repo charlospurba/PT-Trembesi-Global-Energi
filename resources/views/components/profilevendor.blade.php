@@ -38,13 +38,13 @@
 
                     <input id="profilePictureInput" type="file" name="profile_picture" accept="image/*"
                         style="margin-top: 15px; background-color: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                    <div style="font-size: 12px; color: gray; margin-top: 5px;">Image formats .jpg .jpeg .png and max size 300KB</div>
+                    <div style="font-size: 12px; color: gray; margin-top: 5px;">Accepted formats: .jpg, .jpeg, .png. Max size: 300KB</div>
                 </div>
 
                 {{-- Basic Information --}}
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div>
-                        <label for="name" style="display: block; font-weight: bold; margin-bottom: 6px;">Nama</label>
+                        <label for="name" style="display: block; font-weight: bold; margin-bottom: 6px;">Name</label>
                         <input id="name" name="name" type="text" value="{{ $user->name }}"
                             style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
                         @error('name')
@@ -81,14 +81,14 @@
                         <label for="email" style="display: block; font-weight: bold; margin-bottom: 6px;">Email</label>
                         <input id="email" type="email" value="{{ $user->email }}" readonly
                             style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; background-color: #f9fafb;">
-                        <div style="font-size: 12px; color: gray; margin-top: 5px;">Email tidak dapat diubah</div>
+                        <div style="font-size: 12px; color: gray; margin-top: 5px;">Email cannot be changed</div>
                     </div>
 
                     <div>
                         <label for="username" style="display: block; font-weight: bold; margin-bottom: 6px;">Username</label>
                         <input id="username" type="text" value="{{ $user->username }}" readonly
                             style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; background-color: #f9fafb;">
-                        <div style="font-size: 12px; color: gray; margin-top: 5px;">Username tidak dapat diubah</div>
+                        <div style="font-size: 12px; color: gray; margin-top: 5px;">Username cannot be changed</div>
                     </div>
                 </div>
             </div>
@@ -102,14 +102,14 @@
                         <label for="npwp_readonly" style="display: block; font-weight: bold; margin-bottom: 6px;">NPWP</label>
                         <input id="npwp_readonly" type="text" value="{{ $user->npwp }}" readonly
                             style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; background-color: #f9fafb;">
-                        <div style="font-size: 12px; color: gray; margin-top: 5px;">NPWP tidak dapat diubah</div>
+                        <div style="font-size: 12px; color: gray; margin-top: 5px;">NPWP cannot be changed</div>
                     </div>
 
                     <div>
                         <label for="nib_readonly" style="display: block; font-weight: bold; margin-bottom: 6px;">NIB</label>
                         <input id="nib_readonly" type="text" value="{{ $user->nib }}" readonly
                             style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; background-color: #f9fafb;">
-                        <div style="font-size: 12px; color: gray; margin-top: 5px;">NIB tidak dapat diubah</div>
+                        <div style="font-size: 12px; color: gray; margin-top: 5px;">NIB cannot be changed</div>
                     </div>
                 </div>
             </div>
@@ -118,7 +118,7 @@
             <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); margin-bottom: 30px;">
                 <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">Business Documents</h2>
                 <div style="background: #fef3c7; padding: 10px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; color: #92400e;">
-                    <strong>Note:</strong> Dokumen bisnis tidak dapat diubah setelah registrasi. Jika perlu perubahan, silakan hubungi administrator.
+                    <strong>Note:</strong> Business documents cannot be edited after registration. Please contact the administrator if changes are required.
                 </div>
 
                 @php
@@ -147,7 +147,7 @@
                                 </div>
                             @else
                                 <div style="background: #f9fafb; padding: 10px; border-radius: 6px; color: #6B7280; font-size: 14px;">
-                                    Belum ada dokumen
+                                    No document uploaded
                                 </div>
                             @endif
                         </div>
