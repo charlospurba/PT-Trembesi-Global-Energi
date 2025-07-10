@@ -11,7 +11,7 @@
                 [
                     'label' => 'Purchase Requests',
                     'icon' => '🛒',
-                    'route' => route('projectmanager.purchase_requests'),
+                    'route' => route('projectmanager.purchaserequest'),
                     'desc' => 'Manage purchase requests'
                 ],
                 [
