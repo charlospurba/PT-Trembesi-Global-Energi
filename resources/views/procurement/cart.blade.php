@@ -9,7 +9,7 @@
     <div class="min-h-screen bg-white pb-24">
         <div class="container mx-auto max-w-5xl px-4 py-6">
             <div class="mb-6">
-                <nav class="flex items-center space-x-2 text-xs mb-4 px-4 py-2 rounded-xl shadow bg-red-50 border border-red-200">
+                <nav class="flex items-center space-x-2 text-xs mb-4 glass-effect px-4 py-2 rounded-xl shadow-lg">
                     <a href="{{ route('procurement.dashboardproc') }}" class="flex items-center text-red-600 hover:text-red-700 transition">
                         <i class="fas fa-home mr-1"></i>Home
                     </a>
@@ -23,6 +23,13 @@
             </div>
 
             @php $groupedItems = collect($cartItems)->groupBy('supplier'); @endphp
+
+            @if ($groupedItems->isEmpty())
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded-lg" role="alert">
+                    <p class="font-bold">Your cart is empty</p>
+                    <p>Looks like you haven’t added any items yet. Start shopping to fill your cart.</p>
+                </div>
+            @else
 
             @foreach ($groupedItems as $supplier => $items)
             <div class="bg-white shadow-md rounded-xl border border-red-200 mb-6">
@@ -72,7 +79,9 @@
                 </div>
             </div>
             @endforeach
+            @endif
 
+            @if (!$groupedItems->isEmpty())
             <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-red-200 shadow-lg px-6 py-4 flex justify-between items-center">
                 <div>
                     <label class="flex items-center">
@@ -104,6 +113,7 @@
 
                 </div>
             </div>
+            @endif
 
             <div id="bidModal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
                 <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
