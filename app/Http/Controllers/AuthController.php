@@ -43,7 +43,10 @@ class AuthController extends Controller
             case 'vendor':
                 // Kalau belum active, arahkan ke status
                 if ($user->status !== 'active') {
-                    return redirect()->route('vendor.registration_status');
+                    Auth::logout();
+                    return redirect()->route('vendor.registration_status')->withErrors([
+                        'inactive' => 'Your account has been approved but not yet activated by admin.'
+                    ]);
                 }
 
                 return redirect('/dashboard/vendor');

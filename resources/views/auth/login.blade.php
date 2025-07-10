@@ -42,9 +42,21 @@
                     <p class="text-gray-600">Welcome back! Please sign in to your account.</p>
                 </div>
 
+                @if ($errors->has('login'))
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        {{ $errors->first('login') }}
+                    </div>
+                @endif
+
                 @if ($errors->has('inactive'))
-                    <div class="text-red-500 text-sm mt-2">
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
                         {{ $errors->first('inactive') }}
+                    </div>
+                @endif
+
+                @if ($errors->has('role'))
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        {{ $errors->first('role') }}
                     </div>
                 @endif
 
