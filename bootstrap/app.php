@@ -11,7 +11,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        //tambahan
+        $middleware->append(\App\Http\Middleware\CheckUserStatus::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

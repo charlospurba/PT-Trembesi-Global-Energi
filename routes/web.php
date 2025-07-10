@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CheckUserStatus;
 use App\Http\Controllers\VendorHomeController;
 use App\Http\Controllers\VendorProductController;
 use App\Http\Controllers\CartController;
@@ -47,7 +48,7 @@ Route::get('/register-detail', function () {
 Route::post('/register-detail', [RegisterController::class, 'register'])->name('auth.register_detail_submit');
 
 // ✅ Authenticated Routes
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     // Superadmin & Product Manager Routes
     // Superadmin Dashboard
     Route::get('/dashboard/superadmin', [UserManagementController::class, 'dashboard'])->name('superadmin.dashboard');
