@@ -73,6 +73,7 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     // Product Manager Routes
     Route::view('/dashboard/productmanager', 'productmanager.dashboardpm')->name('dashboard.productmanager');
     Route::view('/productmanager/addrequest', 'productmanager.addrequest')->name('productmanager.addrequest');
+    Route::view('/productmanager/addrequest/formadd', 'productmanager.formadd')->name('productmanager.formadd');
     Route::get('/productmanager/purchase-requests', [PurchaseRequestController::class, 'index'])->name('productmanager.purchase_requests');
     Route::post('/productmanager/purchase-requests/{id}/approve', [PurchaseRequestController::class, 'approve'])->name('productmanager.purchase.approve');
     Route::post('/productmanager/purchase-requests/{id}/reject', [PurchaseRequestController::class, 'reject'])->name('productmanager.purchase.reject');
