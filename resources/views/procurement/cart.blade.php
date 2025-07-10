@@ -9,8 +9,9 @@
     <div class="min-h-screen bg-white pb-24">
         <div class="container mx-auto max-w-5xl px-4 py-6">
             <div class="mb-6">
-                <nav class="flex items-center space-x-2 text-xs mb-4 px-4 py-2 rounded-xl shadow glass-effect px-4 py-2 rounded-xl shadow-lg">
-                    <a href="{{ route('procurement.dashboardproc') }}" class="flex items-center text-red-600 hover:text-red-700 transition">
+                <nav class="flex items-center space-x-2 text-xs mb-4 glass-effect px-4 py-2 rounded-xl shadow-lg">
+                    <a href="{{ route('procurement.dashboardproc') }}"
+                        class="flex items-center text-red-600 hover:text-red-700 transition">
                         <i class="fas fa-home mr-1"></i>Home
                     </a>
                     <i class="fas fa-chevron-right text-red-400 text-xs"></i>
@@ -24,98 +25,119 @@
 
             @php $groupedItems = collect($cartItems)->groupBy('supplier'); @endphp
 
-            @foreach ($groupedItems as $supplier => $items)
-            <div class="bg-white shadow-md rounded-xl border border-red-200 mb-6">
-                <div class="bg-red-600 text-white px-4 py-3 rounded-t-xl flex items-center">
-                    <input type="checkbox" class="mr-3 select-supplier" data-supplier="{{ $supplier }}">
-                    <h2 class="font-semibold text-lg">{{ $supplier }}</h2>
-                    <span class="ml-auto text-sm">{{ count($items) }} item(s)</span>
+            @if ($groupedItems->isEmpty())
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded-lg" role="alert">
+                    <p class="font-bold">Your cart is empty</p>
+                    <p>Looks like you haven’t added any items yet. Start shopping to fill your cart.</p>
                 </div>
-                <div class="divide-y">
-                    @foreach ($items as $item)
-                    @php
-                        $bids = App\Models\Bid::where('product_id', $item['id'])->where('user_id', Auth::id())->latest()->take(3)->get();
-                        $acceptedBid = $bids->where('status', 'Approved')->first();
-                    @endphp
-                    <div class="p-4 flex items-center space-x-4" data-item-id="{{ $item['id'] }}">
-                        <input type="checkbox" class="item-checkbox" data-id="{{ $item['id'] }}" data-supplier="{{ $item['supplier'] }}" data-status="{{ $item['status'] ?? 'Pending' }}">
-                        <img src="{{ $item['image'] ? asset('storage/' . $item['image']) : '/images/pipa-besi.png' }}" class="w-16 h-16 rounded object-cover border border-red-200">
-                        <div class="flex-1">
-                            <h3 class="font-semibold text-red-700">{{ $item['name'] }}</h3>
-                            <div class="flex space-x-2 items-center mt-1">
-                                @if ($acceptedBid)
-                                    <span class="line-through text-gray-400 text-sm">Rp {{ number_format($item['price'], 0, ',', '.') }}</span>
-                                    <span class="font-bold text-red-600 price-value" data-price="{{ $acceptedBid->bid_price }}">Rp {{ number_format($acceptedBid->bid_price, 0, ',', '.') }}</span>
-                                @else
-                                    <span class="font-bold text-red-600 price-value" data-price="{{ $item['price'] }}">Rp {{ number_format($item['price'], 0, ',', '.') }}</span>
-                                @endif
-                            </div>
-                            <!-- Enhanced Bid History Section -->
-                            <div class="mt-2">
-                                <h5 class="text-sm font-medium text-gray-600">Bid History (Max 3):</h5>
-                                @if ($bids->isEmpty())
-                                    <p class="text-sm text-gray-500">No bids placed yet.</p>
-                                @else
-                                    <ul class="space-y-1 mt-1">
-                                        @foreach ($bids as $bid)
-                                            <li class="text-xs text-gray-600 flex items-center space-x-2 cursor-pointer bid-detail" data-bid-id="{{ $bid->id }}">
-                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium {{ $bid->status === 'Approved' ? 'bg-green-100 text-green-700' : ($bid->status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700') }}">
+            @else
+                @foreach ($groupedItems as $supplier => $items)
+                    <div class="bg-white shadow-md rounded-xl border border-red-200 mb-6">
+                        <div class="bg-red-600 text-white px-4 py-3 rounded-t-xl flex items-center">
+                            <input type="checkbox" class="mr-3 select-supplier" data-supplier="{{ $supplier }}">
+                            <h2 class="font-semibold text-lg">{{ $supplier }}</h2>
+                            <span class="ml-auto text-sm">{{ count($items) }} item(s)</span>
+                        </div>
+                        <div class="divide-y">
+                            @foreach ($items as $item)
+                                @php
+                                    $bids = App\Models\Bid::where('product_id', $item['id'])
+                                        ->where('user_id', Auth::id())
+                                        ->latest()
+                                        ->take(3)
+                                        ->get();
+                                    $acceptedBid = $bids->where('status', 'Approved')->first();
+                                @endphp
+                                <div class="p-4 flex items-center space-x-4" data-item-id="{{ $item['id'] }}">
+                                    <input type="checkbox" class="item-checkbox" data-id="{{ $item['id'] }}"
+                                        data-supplier="{{ $item['supplier'] }}" data-status="{{ $item['status'] }}">
+                                    <img src="{{ $item['image'] ? asset('storage/' . $item['image']) : '/images/pipa-besi.png' }}"
+                                        class="w-16 h-16 rounded object-cover border border-red-200">
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold text-red-700">{{ $item['name'] }}</h3>
+                                        <div class="flex space-x-2 items-center mt-1">
+                                            @if ($acceptedBid)
+                                                <span class="line-through text-gray-400 text-sm">Rp
+                                                    {{ number_format($item['price'], 0, ',', '.') }}</span>
+                                                <span class="font-bold text-red-600 price-value"
+                                                    data-price="{{ $acceptedBid->bid_price }}">Rp
+                                                    {{ number_format($acceptedBid->bid_price, 0, ',', '.') }}</span>
+                                            @else
+                                                <span class="font-bold text-red-600 price-value"
+                                                    data-price="{{ $item['price'] }}">Rp
+                                                    {{ number_format($item['price'], 0, ',', '.') }}</span>
+                                            @endif
+                                        </div>
+                                        <div class="flex gap-2 mt-2">
+                                            @foreach ($bids as $bid)
+                                                <span
+                                                    class="px-2 py-0.5 rounded-full text-xs {{ $bid->status === 'Approved' ? 'bg-green-100 text-green-700' : ($bid->status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700') }}">
                                                     {{ $bid->status }}
                                                 </span>
-                                                <span>Rp {{ number_format($bid->bid_price, 0, ',', '.') }}</span>
-                                                <span class="text-[10px]">{{ $bid->created_at->format('d M H:i') }}</span>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                @endif
-                            </div>
+                                            @endforeach
+                                        </div>
+                                        <p class="text-gray-500 text-sm mt-1">Status: {{ $item['status'] }}</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button type="button" onclick="updateQuantity({{ $item['id'] }}, -1)"
+                                            class="bg-red-100 px-2 py-1 rounded hover:bg-red-200 text-red-600 transition-all duration-200">-</button>
+                                        <input type="text" id="qty-{{ $item['id'] }}"
+                                            class="w-12 text-center border rounded focus:outline-none focus:ring-2 focus:ring-red-400"
+                                            value="{{ $item['quantity'] }}"
+                                            onchange="updateQuantity({{ $item['id'] }}, this.value)">
+                                        <button type="button" onclick="updateQuantity({{ $item['id'] }}, 1)"
+                                            class="bg-red-100 px-2 py-1 rounded hover:bg-red-200 text-red-600 transition-all duration-200">+</button>
+                                    </div>
+                                    <button onclick="removeItem({{ $item['id'] }})"
+                                        class="text-red-500 hover:text-red-700 ml-4 transition-all duration-200">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                    <button onclick="showBidModal({{ $item['id'] }})"
+                                        class="ml-3 px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-all duration-200"
+                                        {{ $bids->count() >= 3 ? 'disabled' : '' }}>BID</button>
+                                </div>
+                            @endforeach
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <button type="button" onclick="updateQuantity({{ $item['id'] }}, -1)" class="bg-red-100 px-2 py-1 rounded hover:bg-red-200 text-red-600 transition-all duration-200">-</button>
-                            <input type="text" id="qty-{{ $item['id'] }}" class="w-12 text-center border rounded focus:outline-none focus:ring-2 focus:ring-red-400" value="{{ $item['quantity'] }}" onchange="updateQuantity({{ $item['id'] }}, this.value)">
-                            <button type="button" onclick="updateQuantity({{ $item['id'] }}, 1)" class="bg-red-100 px-2 py-1 rounded hover:bg-red-200 text-red-600 transition-all duration-200">+</button>
-                        </div>
-                        <button onclick="removeItem({{ $item['id'] }})" class="text-red-500 hover:text-red-700 ml-4 transition-all duration-200">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                        <button onclick="showBidModal({{ $item['id'] }})" class="ml-3 px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-all duration-200" {{ $bids->count() >= 3 ? 'disabled' : '' }}>BID</button>
                     </div>
-                    @endforeach
-                </div>
-            </div>
-            @endforeach
+                @endforeach
+            @endif
 
-            <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-red-200 shadow-lg px-6 py-4 flex justify-between items-center">
-                <div>
-                    <label class="flex items-center">
-                        <input type="checkbox" id="select-all" class="mr-2">
-                        <span class="text-red-700 font-medium">Select All</span>
-                    </label>
-                </div>
-                <div class="flex items-center space-x-4">
+            @if (!$groupedItems->isEmpty())
+                <div
+                    class="fixed bottom-0 left-0 right-0 bg-white border-t border-red-200 shadow-lg px-6 py-4 flex justify-between items-center">
                     <div>
-                        <div class="text-sm text-red-500">Total (<span id="item-count">0</span> items)</div>
-                        <div class="text-2xl font-bold text-red-600" id="total-price">Rp {{ number_format($totalPrice, 0, ',', '.') }}</div>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="select-all" class="mr-2">
+                            <span class="text-red-700 font-medium">Select All</span>
+                        </label>
                     </div>
-                    <button class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-5 rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-2xl flex items-center space-x-2 shadow-xl request-purchase-btn" onclick="requestPurchase()">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.5 3.5 0 105.33 4.606 3.5 3.5 0 015.33 4.606M12 2v1m0 18v1m10-10h-1M3 12H2m17.413 5.413l-.707-.707M5.294 6.706l-.707-.707M18.706 5.294l.707.707M6.706 17.294l.707.707" />
-                        </svg>
-                        <span class="text-sm">📩 Request Purchase</span>
-                    </button>
-                    <button onclick="checkout()" 
-    class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-2 px-5 rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-2xl flex items-center space-x-2 shadow-xl" 
-    id="checkout-btn" disabled>
-    
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.5 3.5 0 105.33 4.606 3.5 3.5 0 015.33 4.606M12 2v1m0 18v1m10-10h-1M3 12H2m17.413 5.413l-.707-.707M5.294 6.706l-.707-.707M18.706 5.294l.707.707M6.706 17.294l.707.707" />
-    </svg>
-    
-    <span class="text-sm">🛒 Checkout</span>
-</button>
-
+                    <div class="flex items-center space-x-4">
+                        <div>
+                            <div class="text-sm text-red-500">Total (<span id="item-count">0</span> items)</div>
+                            <div class="text-2xl font-bold text-red-600" id="total-price">Rp
+                                {{ number_format($totalPrice, 0, ',', '.') }}</div>
+                        </div>
+                        <button
+                            class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-5 rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-2xl flex items-center space-x-2 shadow-xl request-purchase-btn"
+                            onclick="requestPurchase()">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4M7.835 4.697a3.5 3.5 0 105.33 4.606 3.5 3.5 0 015.33 4.606M12 2v1m0 18v1m10-10h-1M3 12H2m17.413 5.413l-.707-.707M5.294 6.706l-.707-.707M18.706 5.294l.707.707M6.706 17.294l.707.707" />
+                            </svg>
+                            <span class="text-sm">📩 Request Purchase</span>
+                        </button>
+                        <button onclick="checkout()"
+                            class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-2 px-5 rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-2xl flex items-center space-x-2 shadow-xl"
+                            id="checkout-btn" disabled>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4M7.835 4.697a3.5 3.5 0 105.33 4.606 3.5 3.5 0 015.33 4.606M12 2v1m0 18v1m10-10h-1M3 12H2m17.413 5.413l-.707-.707M5.294 6.706l-.707-.707M18.706 5.294l.707.707M6.706 17.294l.707.707" />
+                            </svg>
+                            <span class="text-sm">🛒 Checkout</span>
+                        </button>
+                    </div>
                 </div>
-            </div>
+            @endif
 
             <div id="bidModal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
                 <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
@@ -124,24 +146,17 @@
                         <input type="hidden" id="bidProductId">
                         <div class="mb-3">
                             <label class="block mb-1 text-sm font-medium">Bid Price (Rp)</label>
-                            <input type="number" id="bidPrice" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-400" required min="1">
+                            <input type="number" id="bidPrice"
+                                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                required min="1">
                         </div>
                         <div class="flex justify-end space-x-2">
-                            <button type="button" onclick="closeBidModal()" class="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400 transition-all duration-200">Cancel</button>
-                            <button type="submit" class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700 transition-all duration-200">Submit</button>
+                            <button type="button" onclick="closeBidModal()"
+                                class="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400 transition-all duration-200">Cancel</button>
+                            <button type="submit"
+                                class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700 transition-all duration-200">Submit</button>
                         </div>
                     </form>
-                </div>
-            </div>
-
-            <!-- Bid Detail Modal -->
-            <div id="bidDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-                    <h3 class="text-lg font-bold mb-3">Bid Details</h3>
-                    <div id="bidDetailContent" class="text-sm text-gray-600"></div>
-                    <div class="mt-4 flex justify-end">
-                        <button type="button" onclick="closeBidDetailModal()" class="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400 transition-all duration-200">Close</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -174,7 +189,9 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({ quantity: qty })
+                    body: JSON.stringify({
+                        quantity: qty
+                    })
                 });
                 const data = await response.json();
                 if (data.success) {
@@ -199,7 +216,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Failed to update quantity',
+                    text: 'Failed to update quantity: ' + error.message,
                     confirmButtonColor: '#dc2626'
                 });
             } finally {
@@ -250,7 +267,7 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'Failed to remove item',
+                            text: 'Failed to remove item: ' + error.message,
                             confirmButtonColor: '#dc2626'
                         });
                     }
@@ -259,7 +276,8 @@
         }
 
         function updateTotals() {
-            let total = 0, count = 0;
+            let total = 0,
+                count = 0;
             document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
                 const row = cb.closest('[data-item-id]');
                 const qty = parseInt(row.querySelector('input[id^="qty-"]').value) || 0;
@@ -283,29 +301,6 @@
             document.getElementById('bidForm').reset();
         }
 
-        function showBidDetailModal(bidId) {
-            // Simulasi data bid detail (harus diganti dengan fetch dari server)
-            const bidDetails = {
-                id: bidId,
-                price: 500000,
-                status: 'Pending',
-                timestamp: '10 Jul 14:45',
-                user: 'User123'
-            };
-            document.getElementById('bidDetailContent').innerHTML = `
-                <p><strong>Bid ID:</strong> ${bidDetails.id}</p>
-                <p><strong>Price:</strong> Rp ${bidDetails.price.toLocaleString('id-ID')}</p>
-                <p><strong>Status:</strong> ${bidDetails.status}</p>
-                <p><strong>Time:</strong> ${bidDetails.timestamp}</p>
-                <p><strong>User:</strong> ${bidDetails.user}</p>
-            `;
-            document.getElementById('bidDetailModal').classList.remove('hidden');
-        }
-
-        function closeBidDetailModal() {
-            document.getElementById('bidDetailModal').classList.add('hidden');
-        }
-
         async function requestPurchase() {
             const checkedItems = document.querySelectorAll('.item-checkbox:checked');
             if (checkedItems.length === 0) {
@@ -318,24 +313,36 @@
                 return;
             }
 
+            const requestButton = document.querySelector('.request-purchase-btn');
+            requestButton.classList.add('opacity-50', 'cursor-not-allowed');
+            requestButton.disabled = true;
+
             try {
                 const response = await fetch('/cart/request-purchase', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
                     body: JSON.stringify({
-                        items: Array.from(checkedItems).map(cb => cb.getAttribute('data-id'))
+                        selected_ids: Array.from(checkedItems).map(cb => cb.getAttribute('data-id'))
                     })
                 });
+
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`Server returned status ${response.status}: ${text}`);
+                }
+
                 const data = await response.json();
                 if (data.success) {
                     Swal.fire({
                         icon: 'success',
                         title: 'Purchase Requested',
                         text: 'Your purchase request has been submitted',
-                        confirmButtonColor: '#dc2626'
+                        confirmButtonColor: '#dc2626',
+                        showConfirmButton: false,
+                        timer: 1500
                     }).then(() => {
                         location.reload();
                     });
@@ -348,12 +355,16 @@
                     });
                 }
             } catch (error) {
+                console.error('Request Purchase Error:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Failed to request purchase',
+                    text: 'Failed to request purchase: ' + error.message,
                     confirmButtonColor: '#dc2626'
                 });
+            } finally {
+                requestButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                requestButton.disabled = false;
             }
         }
 
@@ -370,16 +381,22 @@
             }
 
             try {
-                const response = await fetch('/cart/checkout', {
+                const response = await fetch('/procurement/checkout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
                     body: JSON.stringify({
-                        items: Array.from(checkedItems).map(cb => cb.getAttribute('data-id'))
+                        selected_ids: Array.from(checkedItems).map(cb => cb.getAttribute('data-id'))
                     })
                 });
+
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`Server returned status ${response.status}: ${text}`);
+                }
+
                 const data = await response.json();
                 if (data.success) {
                     Swal.fire({
@@ -388,7 +405,7 @@
                         text: 'Your order has been placed',
                         confirmButtonColor: '#dc2626'
                     }).then(() => {
-                        location.reload();
+                        window.location.href = data.redirect || '{{ route('procurement.checkout') }}';
                     });
                 } else {
                     Swal.fire({
@@ -399,81 +416,46 @@
                     });
                 }
             } catch (error) {
+                console.error('Checkout Error:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Failed to checkout',
+                    text: 'Failed to checkout: ' + error.message,
                     confirmButtonColor: '#dc2626'
                 });
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // Select All Checkbox (Updated to control all items)
-            document.getElementById('select-all').addEventListener('change', function () {
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('select-all').addEventListener('change', function() {
                 const checked = this.checked;
-                // Select or deselect all item checkboxes
                 document.querySelectorAll('.item-checkbox').forEach(cb => {
-                    cb.checked = checked;
-                });
-                // Sync supplier checkboxes
-                document.querySelectorAll('.select-supplier').forEach(supplierCb => {
-                    const supplier = supplierCb.getAttribute('data-supplier');
-                    const allItems = document.querySelectorAll(`.item-checkbox[data-supplier="${supplier}"]`);
-                    supplierCb.checked = checked && allItems.length > 0;
+                    if (cb.getAttribute('data-status') === 'Approved') {
+                        cb.checked = checked;
+                    }
                 });
                 updateTotals();
             });
 
-            // Supplier Checkboxes (Act as Select All for their items)
+            document.querySelectorAll('.item-checkbox').forEach(cb => {
+                cb.addEventListener('change', updateTotals);
+            });
+
             document.querySelectorAll('.select-supplier').forEach(cb => {
-                cb.addEventListener('change', function () {
+                cb.addEventListener('change', function() {
                     const supplier = this.getAttribute('data-supplier');
                     const checked = this.checked;
-                    // Select or deselect all items under this supplier
-                    document.querySelectorAll(`.item-checkbox[data-supplier="${supplier}"]`).forEach(itemCb => {
-                        itemCb.checked = checked;
-                    });
-                    // Update Select All
-                    const allSuppliersChecked = Array.from(document.querySelectorAll('.select-supplier')).every(supCb => {
-                        const sup = supCb.getAttribute('data-supplier');
-                        const allItems = document.querySelectorAll(`.item-checkbox[data-supplier="${sup}"]`);
-                        return supCb.checked && allItems.length > 0;
-                    });
-                    document.getElementById('select-all').checked = allSuppliersChecked;
+                    document.querySelectorAll(`.item-checkbox[data-supplier="${supplier}"]`)
+                        .forEach(itemCb => {
+                            if (itemCb.getAttribute('data-status') === 'Approved') {
+                                itemCb.checked = checked;
+                            }
+                        });
                     updateTotals();
                 });
             });
 
-            // Item Checkboxes
-            document.querySelectorAll('.item-checkbox').forEach(cb => {
-                cb.addEventListener('change', function () {
-                    const supplier = this.getAttribute('data-supplier');
-                    const supplierCheckbox = document.querySelector(`.select-supplier[data-supplier="${supplier}"]`);
-                    if (supplierCheckbox) {
-                        const allItems = document.querySelectorAll(`.item-checkbox[data-supplier="${supplier}"]`);
-                        supplierCheckbox.checked = Array.from(allItems).every(itemCb => itemCb.checked);
-                    }
-                    // Update Select All
-                    const allSuppliersChecked = Array.from(document.querySelectorAll('.select-supplier')).every(supCb => {
-                        const sup = supCb.getAttribute('data-supplier');
-                        const allItems = document.querySelectorAll(`.item-checkbox[data-supplier="${sup}"]`);
-                        return supCb.checked && allItems.length > 0;
-                    });
-                    document.getElementById('select-all').checked = allSuppliersChecked;
-                    updateTotals();
-                });
-            });
-
-            // Bid Detail Click Event
-            document.querySelectorAll('.bid-detail').forEach(bid => {
-                bid.addEventListener('click', function () {
-                    const bidId = this.getAttribute('data-bid-id');
-                    showBidDetailModal(bidId);
-                });
-            });
-
-            document.getElementById('bidForm').addEventListener('submit', async function (e) {
+            document.getElementById('bidForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const id = document.getElementById('bidProductId').value;
                 const price = document.getElementById('bidPrice').value;
@@ -483,10 +465,19 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .content
                         },
-                        body: JSON.stringify({ bid_price: price })
+                        body: JSON.stringify({
+                            bid_price: price
+                        })
                     });
+
+                    if (!response.ok) {
+                        const text = await response.text();
+                        throw new Error(`Server returned status ${response.status}: ${text}`);
+                    }
+
                     const data = await response.json();
                     if (data.success) {
                         closeBidModal();
@@ -507,10 +498,11 @@
                         });
                     }
                 } catch (error) {
+                    console.error('Bid Submission Error:', error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Failed to submit bid',
+                        text: 'Failed to submit bid: ' + error.message,
                         confirmButtonColor: '#dc2626'
                     });
                 }

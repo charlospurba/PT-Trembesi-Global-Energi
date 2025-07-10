@@ -6,20 +6,20 @@
                     'label' => 'Dashboard',
                     'icon' => '📦',
                     'route' => route('dashboard.projectmanager'),
-                    'desc' => 'Overview & statistik'
+                    'desc' => 'Overview & statistik',
                 ],
                 [
                     'label' => 'Purchase Requests',
                     'icon' => '🛒',
-                    'route' => route('projectmanager.purchaserequest'),
-                    'desc' => 'Manage purchase requests'
+                    'route' => route('projectmanager.purchase_requests'),
+                    'desc' => 'Manage purchase requests',
                 ],
                 [
                     'label' => 'Add Request',
                     'icon' => '➕',
                     'route' => route('projectmanager.addrequest'),
-                    'desc' => 'Create new request'
-                ]
+                    'desc' => 'Create new request',
+                ],
             ];
 
             $currentPath = request()->path();
@@ -32,9 +32,9 @@
             @endphp
 
             <a href="{{ $menu['route'] }}"
-               class="group flex items-start space-x-3 p-3 rounded-lg transition-all duration-200
-               {{ $isActive 
-                   ? 'bg-red-50 border-l-4 border-red-600 text-red-700' 
+                class="group flex items-start space-x-3 p-3 rounded-lg transition-all duration-200
+               {{ $isActive
+                   ? 'bg-red-50 border-l-4 border-red-600 text-red-700'
                    : 'hover:bg-gray-50 text-gray-700 hover:text-red-600' }}">
                 <div class="flex items-center justify-center w-7 h-7 bg-red-100 text-red-600 rounded-md text-base">
                     {{ $menu['icon'] }}

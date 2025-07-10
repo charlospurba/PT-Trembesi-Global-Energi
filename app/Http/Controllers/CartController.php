@@ -63,7 +63,7 @@ class CartController extends Controller
         ]);
 
         // Notify Project Manager
-        $projectManagers = User::where('role', 'productmanager')->get();
+        $projectManagers = User::where('role', 'project_manager')->get();
         foreach ($projectManagers as $pm) {
           Notification::create([
             'user_id' => $pm->id,
@@ -185,7 +185,7 @@ class CartController extends Controller
       $cartItem->update(['quantity' => $quantity]);
 
       // Notify Project Manager of update
-      $projectManagers = User::where('role', 'productmanager')->get();
+      $projectManagers = User::where('role', 'project_manager')->get();
       foreach ($projectManagers as $pm) {
         Notification::create([
           'user_id' => $pm->id,
@@ -246,7 +246,7 @@ class CartController extends Controller
       $cartCount = Cart::where('user_id', $user->id)->count();
 
       // Notify Project Manager of removal
-      $projectManagers = User::where('role', 'productmanager')->get();
+      $projectManagers = User::where('role', 'project_manager')->get();
       foreach ($projectManagers as $pm) {
         Notification::create([
           'user_id' => $pm->id,
@@ -396,48 +396,81 @@ class CartController extends Controller
   {
     try {
       $user = Auth::user();
+      if (!$user) {
+        return response()->json([
+          'success' => false,
+          'message' => 'You must be logged in to submit a purchase request'
+        ], 401);
+      }
+
       $selectedIds = $request->input('selected_ids', []);
 
+      // Validate input
       if (empty($selectedIds)) {
+        Log::warning('Request Purchase - No items selected', ['user_id' => $user->id]);
         return response()->json([
           'success' => false,
           'message' => 'No items selected for purchase request.'
         ], 422);
       }
 
+      // Fetch cart items for the selected IDs
       $cartItems = Cart::where('user_id', $user->id)
         ->whereIn('product_id', $selectedIds)
-        ->with('product')
+        ->with([
+          'product' => function ($query) {
+            $query->select('id', 'name', 'supplier');
+          }
+        ])
         ->get();
 
       if ($cartItems->isEmpty()) {
+        Log::warning('Request Purchase - No valid cart items found', [
+          'user_id' => $user->id,
+          'selected_ids' => $selectedIds
+        ]);
         return response()->json([
           'success' => false,
           'message' => 'No valid items found in cart for purchase request.'
         ], 422);
       }
 
-      foreach ($cartItems as $cartItem) {
-        if ($cartItem->status !== 'Pending') {
-          return response()->json([
-            'success' => false,
-            'message' => 'Some items have already been processed.'
-          ], 422);
-        }
+      // Check for unprocessed items
+      $unprocessedItems = $cartItems->whereNotIn('status', ['Pending']);
+      if ($unprocessedItems->isNotEmpty()) {
+        Log::warning('Request Purchase - Non-pending items detected', [
+          'user_id' => $user->id,
+          'non_pending_items' => $unprocessedItems->pluck('product_id')->toArray()
+        ]);
+        return response()->json([
+          'success' => false,
+          'message' => 'Some selected items have already been processed (Approved/Rejected).'
+        ], 422);
+      }
 
-        // Notify Project Manager
-        $projectManagers = User::where('role', 'productmanager')->get();
+      // Notify Project Managers
+      $projectManagers = User::where('role', 'project_manager')->get();
+      if ($projectManagers->isEmpty()) {
+        Log::warning('Request Purchase - No project managers found', ['user_id' => $user->id]);
+        return response()->json([
+          'success' => false,
+          'message' => 'No project managers available to process the request.'
+        ], 422);
+      }
+
+      foreach ($cartItems as $cartItem) {
         foreach ($projectManagers as $pm) {
           Notification::create([
             'user_id' => $pm->id,
             'type' => 'cart_pending',
-            'message' => 'Purchase request from ' . $user->name . ' for product: ' . $cartItem->product->name,
+            'message' => "Purchase request from {$user->name} for product: {$cartItem->product->name}",
             'data' => json_encode([
               'cart_item' => [
+                'cart_id' => $cartItem->id,
                 'product_id' => $cartItem->product_id,
                 'product_name' => $cartItem->product->name,
                 'quantity' => $cartItem->quantity,
-                'variant' => $cartItem->variant,
+                'variant' => $cartItem->variant ?? 'default',
                 'user_id' => $user->id,
                 'user_name' => $user->name,
               ],
@@ -446,12 +479,29 @@ class CartController extends Controller
         }
       }
 
+      Log::info('Request Purchase - Success', [
+        'user_id' => $user->id,
+        'cart_item_ids' => $cartItems->pluck('id')->toArray()
+      ]);
+
       return response()->json([
         'success' => true,
         'message' => 'Purchase request submitted successfully! Awaiting Project Manager approval.'
       ]);
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+      Log::error('Request Purchase Error - Model not found: ' . $e->getMessage(), [
+        'user_id' => Auth::id(),
+        'trace' => $e->getTraceAsString()
+      ]);
+      return response()->json([
+        'success' => false,
+        'message' => 'One or more items not found in the cart.'
+      ], 404);
     } catch (\Exception $e) {
-      Log::error('Request Purchase Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+      Log::error('Request Purchase Error: ' . $e->getMessage(), [
+        'user_id' => Auth::id(),
+        'trace' => $e->getTraceAsString()
+      ]);
       return response()->json([
         'success' => false,
         'message' => 'Failed to submit purchase request: ' . $e->getMessage()

@@ -1,1 +1,189 @@
-ini test
+@extends('layouts.app')
+
+@section('content')
+    @include('components.navpm')
+
+    <div class="flex min-h-screen">
+          @include('components.sidepm')
+          <div class="bg-gray-100 min-h-screen p-6 flex-1">
+             <div class="mb-6">
+                <nav class="flex items-center space-x-2 text-xs mb-4 glass-effect px-4 py-2 rounded-xl shadow-lg">
+                    <a href="{{ route('dashboard.projectmanager') }}"
+                        class="flex items-center text-red-600 hover:text-red-700 transition">
+                        <i class="fas fa-home mr-1"></i>Home
+                    </a>
+                    <i class="fas fa-chevron-right text-red-400 text-xs"></i>
+                    <span class="text-red-700 font-semibold">Purchase Requests</span>
+                </nav>
+                <div class="mt-4">
+                    <h1 class="text-3xl font-extrabold text-red-600">📋 Purchase Requests</h1>
+                    <p class="text-red-400">Review and manage purchase requests from procurement team</p>
+                </div>
+            </div>
+
+            @if ($cartItems->isEmpty())
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded-lg" role="alert">
+                    <p class="font-bold">No Purchase Requests</p>
+                    <p>There are no purchase requests to review at this time.</p>
+                </div>
+            @else
+                <div class="bg-white shadow-md rounded-xl border border-red-200 mb-6">
+                    <div class="bg-red-600 text-white px-4 py-3 rounded-t-xl">
+                        <h2 class="font-semibold text-lg">Purchase Requests</h2>
+                    </div>
+                    <div class="divide-y">
+                        @foreach ($cartItems as $item)
+                            <div class="p-4 flex items-center space-x-4" data-item-id="{{ $item->id }}">
+                                <img src="{{ $item->product->image_paths && is_array($item->product->image_paths) ? asset('storage/' . $item->product->image_paths[0]) : '/images/pipa-besi.png' }}"
+                                    class="w-16 h-16 rounded object-cover border border-red-200">
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-red-700">{{ $item->product->name }}</h3>
+                                    <p class="text-gray-500 text-sm">Quantity: {{ $item->quantity }}</p>
+                                    <p class="text-gray-500 text-sm">Variant: {{ $item->variant ?? 'default' }}</p>
+                                    <p class="text-gray-500 text-sm">Supplier: {{ $item->product->supplier }}</p>
+                                    <p class="text-gray-500 text-sm">Requested by: {{ $item->user->name }}
+                                        ({{ $item->user->email }})
+                                    </p>
+                                    <p class="text-sm">
+                                        <span
+                                            class="px-2 py-0.5 rounded-full text-xs {{ $item->status === 'Approved' ? 'bg-green-100 text-green-700' : ($item->status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700') }}">
+                                            {{ $item->status }}
+                                        </span>
+                                    </p>
+                                </div>
+                                @if ($item->status === 'Pending')
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="approveRequest({{ $item->id }})"
+                                            class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition-all duration-200">
+                                            <i class="fas fa-check mr-1"></i> Approve
+                                        </button>
+                                        <button onclick="rejectRequest({{ $item->id }})"
+                                            class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-all duration-200">
+                                            <i class="fas fa-times mr-1"></i> Reject
+                                        </button>
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+        </div>
+    <script>
+        async function approveRequest(id) {
+            Swal.fire({
+                title: 'Approve Request',
+                text: 'Are you sure you want to approve this purchase request?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#16a34a',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, approve!'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/projectmanager/purchase-requests/${id}/approve`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .content
+                            }
+                        });
+
+                        if (!response.ok) {
+                            const text = await response.text();
+                            throw new Error(`Server returned status ${response.status}: ${text}`);
+                        }
+
+                        const data = await response.json();
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Approved',
+                                text: 'Purchase request approved successfully',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Failed to approve request',
+                                confirmButtonColor: '#dc2626'
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Approve Request Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to approve request: ' + error.message,
+                            confirmButtonColor: '#dc2626'
+                        });
+                    }
+                }
+            });
+        }
+
+        async function rejectRequest(id) {
+            Swal.fire({
+                title: 'Reject Request',
+                text: 'Are you sure you want to reject this purchase request?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, reject!'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/projectmanager/purchase-requests/${id}/reject`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .content
+                            }
+                        });
+
+                        if (!response.ok) {
+                            const text = await response.text();
+                            throw new Error(`Server returned status ${response.status}: ${text}`);
+                        }
+
+                        const data = await response.json();
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Rejected',
+                                text: 'Purchase request rejected successfully',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Failed to reject request',
+                                confirmButtonColor: '#dc2626'
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Reject Request Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to reject request: ' + error.message,
+                            confirmButtonColor: '#dc2626'
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+@endsection

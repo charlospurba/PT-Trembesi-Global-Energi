@@ -70,11 +70,10 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
         Route::post('/vendor-requests/{id}/reject', [VendorApprovalController::class, 'reject'])->name('superadmin.vendor.reject');
     });
 
-    // Product Manager Routes
+    // Project Manager Routes
     Route::view('/dashboard/projectmanager', 'projectmanager.dashboardpm')->name('dashboard.projectmanager');
     Route::view('/projectmanager/addrequest', 'projectmanager.addrequest')->name('projectmanager.addrequest');
-    Route::view('/projectmanager/purchase_request', 'projectmanager.purchase_requests')->name('projectmanager.purchaserequest');
-    Route::view('/projectmanager/addrequest/formadd', 'projectmanager.formadd')->name('projectmanager.formadd');
+    Route::view('/projectmanager/formadd', 'projectmanager.formadd')->name('projectmanager.formadd');
     Route::get('/projectmanager/purchase-requests', [PurchaseRequestController::class, 'index'])->name('projectmanager.purchase_requests');
     Route::post('/projectmanager/purchase-requests/{id}/approve', [PurchaseRequestController::class, 'approve'])->name('projectmanager.purchase.approve');
     Route::post('/projectmanager/purchase-requests/{id}/reject', [PurchaseRequestController::class, 'reject'])->name('projectmanager.purchase.reject');
@@ -106,6 +105,7 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     Route::post('/cart/remove/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
     Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
     Route::post('/cart/bid/{productId}', [CartController::class, 'submitBid'])->name('cart.bid');
+    Route::post('/cart/request-purchase', [CartController::class, 'requestPurchase'])->name('cart.request-purchase');
 
     // Checkout Routes
     Route::match(['get', 'post'], '/procurement/checkout', [CheckoutController::class, 'checkout'])->name('procurement.checkout');
