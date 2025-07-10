@@ -66,26 +66,26 @@
         @csrf
 
         <!-- Step 1: Basic Info -->
-        <div id="step1-form" class="flex flex-col gap-4">
+        <div id="step1-form" class="flex flex-col gap-4 {{ old('nib') ? 'hidden' : '' }}">
           <div>
             <label class="text-sm font-medium text-gray-700">Store Name</label>
-            <input type="text" name="store_name" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
+            <input type="text" name="store_name" value="{{ old('store_name') }}" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
           </div>
           <div>
             <label class="text-sm font-medium text-gray-700">Email Address</label>
-            <input type="email" name="email" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
+            <input type="email" name="email" value="{{ old('email') }}" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
           </div>
           <div>
             <label class="text-sm font-medium text-gray-700">Phone Number</label>
-            <input type="tel" name="phone_number" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
+            <input type="tel" name="phone_number" value="{{ old('phone_number') }}" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
           </div>
           <div>
             <label class="text-sm font-medium text-gray-700">Nomor NPWP</label>
-            <input type="text" name="npwp" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
+            <input type="text" name="npwp" value="{{ old('npwp') }}" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
           </div>
           <div>
             <label class="text-sm font-medium text-gray-700">Username</label>
-            <input type="text" name="username" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
+            <input type="text" name="username" value="{{ old(key: 'username') }}" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
           </div>
           <div>
             <label class="text-sm font-medium text-gray-700">Password</label>
@@ -103,10 +103,10 @@
         </div>
 
         <!-- Step 2: Business Details -->
-        <div id="step2-form" class="hidden space-y-4 mt-6">
+        <div id="step2-form" class="{{ old('nib') ? '' : 'hidden' }} space-y-4 mt-6">
           <div>
             <label class="text-sm font-medium text-gray-700">NIB</label>
-            <input type="text" name="nib" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
+            <input type="text" name="nib" value="{{ old('nib') }}" class="w-full mt-1 px-4 py-2 border rounded-lg text-sm" />
           </div>
 
           @php
