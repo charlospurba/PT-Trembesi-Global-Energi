@@ -164,10 +164,9 @@
                                 This vendor request is pending your review
                             </p>
                             <div class="flex items-center space-x-3">
-                                <form method="POST" action="{{ route('superadmin.vendor.reject', $vendor->id) }}">
+                                <form method="POST" action="{{ route('superadmin.vendor.reject', $vendor->id) }}" id="reject-form-{{ $vendor->id }}">
                                     @csrf
-                                    <button type="submit"
-                                        onclick="return confirm('Are you sure you want to reject this vendor request?')"
+                                    <button type="button" onclick="showRejectModal('{{ $vendor->id }}')"
                                         class="inline-flex items-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition duration-200 transform hover:scale-105 shadow-md hover:shadow-lg">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -177,10 +176,9 @@
                                         Reject Request
                                     </button>
                                 </form>
-                                <form method="POST" action="{{ route('superadmin.vendor.accept', $vendor->id) }}">
+                                <form method="POST" action="{{ route('superadmin.vendor.accept', $vendor->id) }}" id="accept-form-{{ $vendor->id }}">
                                     @csrf
-                                    <button type="submit"
-                                        onclick="return confirm('Are you sure you want to approve this vendor request?')"
+                                    <button type="button" onclick="showAcceptModal('{{ $vendor->id }}')"
                                         class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white text-sm font-semibold rounded-lg transition duration-200 transform hover:scale-105 shadow-md hover:shadow-lg">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -205,4 +203,55 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function showAcceptModal(vendorId) {
+            Swal.fire({
+                title: 'Confirm Acceptance',
+                text: 'Are you sure you want to approve this vendor request?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Accept',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#10B981',
+                cancelButtonColor: '#D1D5DB',
+                customClass: {
+                    popup: 'rounded-lg shadow-lg',
+                    confirmButton: 'bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200',
+                    cancelButton: 'bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-6 rounded-lg transition-colors duration-200'
+                },
+                buttonsStyling: false,
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`accept-form-${vendorId}`).submit();
+                }
+            });
+        }
+
+        function showRejectModal(vendorId) {
+            Swal.fire({
+                title: 'Confirm Rejection',
+                text: 'Are you sure you want to reject this vendor request?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Reject',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#D1D5DB',
+                customClass: {
+                    popup: 'rounded-lg shadow-lg',
+                    confirmButton: 'bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200',
+                    cancelButton: 'bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-6 rounded-lg transition-colors duration-200'
+                },
+                buttonsStyling: false,
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`reject-form-${vendorId}`).submit();
+                }
+            });
+        }
+    </script>
 @endsection
