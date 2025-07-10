@@ -38,56 +38,6 @@
                 </div>
             </div>
 
-            <!-- Statistics Bar -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div class="bg-white rounded-lg p-3 shadow-sm border-t-4 border-blue-500">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-gray-600">Total Produk</p>
-                            <p class="text-lg font-bold text-gray-800">{{ count($products) }}</p>
-                        </div>
-                        <div class="bg-blue-100 p-2 rounded-lg">
-                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg p-3 shadow-sm border-t-4 border-green-500">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-gray-600">Tersedia</p>
-                            <p class="text-lg font-bold text-gray-800">{{ $products->where('quantity', '>', 0)->count() }}</p>
-                        </div>
-                        <div class="bg-green-100 p-2 rounded-lg">
-                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Filter Section -->
-            <div class="bg-white rounded-lg shadow-sm p-3 mb-6">
-                <div class="flex flex-wrap items-center gap-3">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
-                        </svg>
-                        <span class="text-sm font-medium text-gray-700">Urutkan:</span>
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full cursor-pointer hover:bg-gray-200 transition-colors">
-                            Harga Terendah
-                        </span>
-                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full cursor-pointer hover:bg-gray-200 transition-colors">
-                            Harga Tertinggi
-                        </span>
-                    </div>
-                </div>
-            </div>
-
             <!-- Grid Produk -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 @forelse($products as $product)
@@ -160,9 +110,6 @@
                             </div>
                             <h3 class="text-base font-semibold text-gray-800 mb-2">Belum Ada Produk</h3>
                             <p class="text-sm text-gray-500 mb-3">Tidak ada produk PPE yang tersedia saat ini.</p>
-                            <button class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">
-                                Tambah Produk
-                            </button>
                         </div>
                     </div>
                 @endforelse

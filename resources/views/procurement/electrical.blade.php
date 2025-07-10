@@ -38,38 +38,6 @@
                 </div>
             </div>
 
-            <!-- Statistics Bar -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div class="bg-white rounded-lg p-3 shadow-sm border-t-4 border-blue-500">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-gray-600">Total Produk</p>
-                            <p class="text-lg font-bold text-gray-800">{{ count($products) }}</p>
-                        </div>
-                        <div class="bg-blue-100 p-2 rounded-lg">
-                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg p-3 shadow-sm border-t-4 border-green-500">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-gray-600">Tersedia</p>
-                            <p class="text-lg font-bold text-gray-800">{{ $products->where('quantity', '>', 0)->count() }}</p>
-                        </div>
-                        <div class="bg-green-100 p-2 rounded-lg">
-                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M5 13l4 4L19 7"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Filter Section -->
             <div class="bg-white rounded-lg shadow-sm p-3 mb-6">
                 <div class="flex flex-wrap items-center gap-3">
