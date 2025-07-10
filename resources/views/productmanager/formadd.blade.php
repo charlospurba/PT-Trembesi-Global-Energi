@@ -152,9 +152,42 @@
                             </div>
                         </div>
                     </form>
+                            <div class="border rounded-md mt-10 bg-white">
+                        <div class="bg-gray-100 px-4 py-2 flex items-center gap-2 border-b">
+                            <span class="text-red-600 text-xl">📂</span>
+                            <h3 class="font-semibold text-lg">Upload Request Via Excel</h3>
+                        </div>
+                        <div class="p-4">
+                            <div class="text-right mb-4">
+                                <a 
+                                    class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold text-sm"
+                                    download>
+                                    Download Template Excel
+                                </a>
+                            </div>
+
+                            <form  enctype="multipart/form-data"
+                                class="space-y-4">
+                                @csrf
+                                <div>
+                                    <label class="font-semibold block mb-1">Excel File</label>
+                                    <input type="file" name="excel_file" accept=".xlsx,.xls" required
+                                        class="w-full border px-4 py-2 rounded" />
+                                    <p class="text-xs text-gray-500 italic mt-2">
+                                        * Fill in all required columns in the Excel file and make sure the image file names match
+                                        the names listed in the Zip file.
+                                    </p>
+                                </div>
+                                <button type="submit"
+                                    class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded font-semibold">
+                                    Upload Products
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </div>  
     </div>
 @endsection
 
