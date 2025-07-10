@@ -27,6 +27,8 @@
                         <select id="sortSelect"
                             class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 min-w-48">
                             <option value="">All Products</option>
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
                             <option value="material">Material</option>
                             <option value="equipment">Equipment</option>
                             <option value="electrical tools">Electrical Tools</option>
@@ -49,7 +51,8 @@
                             }
                         @endphp
                         <div class="border rounded-lg p-4 hover:shadow-md transition-shadow product-item"
-                            data-name="{{ $product->name }}" data-category="{{ $product->category }}">
+                            data-name="{{ $product->name }}" data-category="{{ $product->category }}"
+                            data-created-at="{{ $product->created_at->timestamp }}">
                             @if (!empty($product->image_paths) && is_array($product->image_paths) && !empty($product->image_paths[0]))
                                 <img src="{{ asset('storage/' . $product->image_paths[0]) }}" alt="{{ $product->name }}"
                                     class="w-24 h-24 object-cover rounded mx-auto mb-4" />
@@ -131,14 +134,22 @@
 
         document.getElementById('sortSelect').addEventListener('change', function(e) {
             const sortValue = e.target.value.toLowerCase();
-            document.querySelectorAll('.product-item').forEach(item => {
-                const category = item.getAttribute('data-category').toLowerCase();
-                if (sortValue === '' || category === sortValue) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+            const productItems = Array.from(document.querySelectorAll('.product-item'));
+
+            if (sortValue === 'newest' || sortValue === 'oldest') {
+                productItems.sort((a, b) => {
+                    const timeA = parseInt(a.getAttribute('data-created-at'));
+                    const timeB = parseInt(b.getAttribute('data-created-at'));
+                    return sortValue === 'newest' ? timeB - timeA : timeA - timeB;
+                });
+                const productGrid = document.getElementById('productGrid');
+                productItems.forEach(item => productGrid.appendChild(item));
+            } else {
+                productItems.forEach(item => {
+                    const category = item.getAttribute('data-category').toLowerCase();
+                    item.style.display = (sortValue === '' || category === sortValue) ? 'block' : 'none';
+                });
+            }
         });
     </script>
 @endpush

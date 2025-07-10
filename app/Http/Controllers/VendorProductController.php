@@ -9,6 +9,7 @@ use ZipArchive;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -17,7 +18,7 @@ class VendorProductController extends Controller
 {
   public function index()
   {
-    $products = Product::where('vendor_id', Auth::id())->get();
+    $products = Product::where('vendor_id', Auth::id())->orderBy('created_at', 'DESC')->get();
     return view('vendor.myproducts', compact('products'));
   }
 
@@ -131,9 +132,8 @@ class VendorProductController extends Controller
     ]);
 
     try {
-      // Ambil path asli dari file zip
       $zipFile = $request->file('zip_file');
-      $realZipPath = $zipFile->getRealPath(); // ✅ lebih andal
+      $realZipPath = $zipFile->getRealPath();
       $extractPath = storage_path('app/temp_unzipped/' . uniqid());
 
       mkdir($extractPath, 0755, true);
@@ -146,18 +146,16 @@ class VendorProductController extends Controller
         return back()->withErrors(['zip_file' => 'ZIP tidak bisa dibuka.']);
       }
 
-      // Import Excel
       Excel::import(new ProductBulkWithImagesImport($extractPath), $request->file('excel_file'));
 
-      \File::deleteDirectory($extractPath);
+      File::deleteDirectory($extractPath);
 
       return back()->with('success', 'Produk berhasil diunggah secara massal!');
     } catch (\Exception $e) {
-      \Log::error('Upload bulk gagal', ['msg' => $e->getMessage()]);
+      Log::error('Upload bulk gagal', ['msg' => $e->getMessage()]);
       return back()->withErrors(['excel_file' => 'Gagal unggah: ' . $e->getMessage()]);
     }
   }
-
 
   public function edit($id)
   {
@@ -203,16 +201,13 @@ class VendorProductController extends Controller
       $existingImages = $request->input('existing_images', []);
       $removeIndices = $request->input('remove_image_indices') ? array_map('intval', explode(',', $request->input('remove_image_indices'))) : [];
 
-      // If new images are uploaded, replace all old images
       if ($request->hasFile('images')) {
-        // Delete all old images
         if ($product->image_paths && is_array($product->image_paths)) {
           foreach ($product->image_paths as $oldImage) {
             Storage::disk('public')->delete($oldImage);
             Log::info('Old image deleted', ['path' => $oldImage]);
           }
         }
-        // Upload new images
         foreach ($request->file('images') as $index => $image) {
           if ($image->isValid()) {
             $path = $image->store('products', 'public');
@@ -235,7 +230,6 @@ class VendorProductController extends Controller
           }
         }
       } else {
-        // No new images; retain non-removed existing images
         if ($product->image_paths && is_array($product->image_paths)) {
           foreach ($product->image_paths as $index => $path) {
             if (!in_array($index, $removeIndices) && in_array($path, $existingImages)) {
