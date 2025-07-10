@@ -5,19 +5,19 @@
                 [
                     'label' => 'Dashboard',
                     'icon' => '📦',
-                    'route' => route('dashboard.productmanager'),
+                    'route' => route('dashboard.projectmanager'),
                     'desc' => 'Overview & statistik'
                 ],
                 [
                     'label' => 'Purchase Requests',
                     'icon' => '🛒',
-                    'route' => route('productmanager.purchase_requests'),
+                    'route' => route('projectmanager.purchase_requests'),
                     'desc' => 'Manage purchase requests'
                 ],
                 [
                     'label' => 'Add Request',
                     'icon' => '➕',
-                    'route' => route('productmanager.addrequest'),
+                    'route' => route('projectmanager.addrequest'),
                     'desc' => 'Create new request'
                 ]
             ];

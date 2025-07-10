@@ -16,7 +16,7 @@ class PurchaseRequestController extends Controller
   public function index(Request $request)
   {
     // Check if the user is a Product Manager
-    if (Auth::user()->role !== 'productmanager') {
+    if (Auth::user()->role !== 'project_manager') {
       abort(403, 'Unauthorized access.');
     }
 

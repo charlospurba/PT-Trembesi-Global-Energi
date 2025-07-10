@@ -38,7 +38,7 @@ class AuthController extends Controller
                 return redirect('/dashboard/procurement');
 
             case 'project_manager':
-                return redirect('/dashboard/productmanager');
+                return redirect('/dashboard/projectmanager');
 
             case 'vendor':
                 // Kalau belum active, arahkan ke status

@@ -71,12 +71,12 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     });
 
     // Product Manager Routes
-    Route::view('/dashboard/productmanager', 'productmanager.dashboardpm')->name('dashboard.productmanager');
-    Route::view('/productmanager/addrequest', 'productmanager.addrequest')->name('productmanager.addrequest');
-    Route::view('/productmanager/addrequest/formadd', 'productmanager.formadd')->name('productmanager.formadd');
-    Route::get('/productmanager/purchase-requests', [PurchaseRequestController::class, 'index'])->name('productmanager.purchase_requests');
-    Route::post('/productmanager/purchase-requests/{id}/approve', [PurchaseRequestController::class, 'approve'])->name('productmanager.purchase.approve');
-    Route::post('/productmanager/purchase-requests/{id}/reject', [PurchaseRequestController::class, 'reject'])->name('productmanager.purchase.reject');
+    Route::view('/dashboard/projectmanager', 'projectmanager.dashboardpm')->name('dashboard.projectmanager');
+    Route::view('/projectmanager/addrequest', 'projectmanager.addrequest')->name('projectmanager.addrequest');
+    Route::view('/projectmanager/addrequest/formadd', 'projectmanager.formadd')->name('projectmanager.formadd');
+    Route::get('/projectmanager/purchase-requests', [PurchaseRequestController::class, 'index'])->name('projectmanager.purchase_requests');
+    Route::post('/projectmanager/purchase-requests/{id}/approve', [PurchaseRequestController::class, 'approve'])->name('projectmanager.purchase.approve');
+    Route::post('/projectmanager/purchase-requests/{id}/reject', [PurchaseRequestController::class, 'reject'])->name('projectmanager.purchase.reject');
 
     // Procurement Routes
     Route::get('/dashboard/procurement', [ProductController::class, 'dashboard'])->name('procurement.dashboardproc');
