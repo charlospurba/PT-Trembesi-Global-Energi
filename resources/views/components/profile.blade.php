@@ -4,67 +4,101 @@
     <!-- Include Navbar Component -->
     @include('components.navbar')
 
-    <div style="padding: 20px;">
-        <div style="font-size: 14px; color: #6B7280; margin-bottom: 10px;">
-            Dashboard &gt; <span style="color: red;">Profile</span>
-        </div>
-
-        <div
-            style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); margin-bottom: 30px;">
-            <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">General Information</h2>
-
-            <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-
-                {{-- Gambar Profil --}}
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <div
-                        style="width: 120px; height: 120px; border-radius: 50%; background: #f3f4f6; margin: 0 auto; overflow: hidden;">
-                        @if ($user && $user->profile_picture)
-                            <img id="profilePreview"
-                                src="{{ asset('storage/profile_picture/' . $user->profile_picture) . '?t=' . time() }}"
-                                alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover;">
-                        @else
-                            <img id="profilePreview" src="https://via.placeholder.com/120?text=No+Image"
-                                style="width: 100%; height: 100%; object-fit: cover;">
-                        @endif
+    <div class="p-5">
+        <div class="container mx-auto max-w-5xl px-4 py-6">
+            <!-- Breadcrumb -->
+            <div class="mb-6">
+                <div class="glass-effect px-4 py-2 rounded-xl shadow-lg text-sm">
+                    <div class="flex items-center space-x-2">
+                        <a href="{{ route('procurement.dashboardproc') }}" class="text-red-600 hover:text-red-700 transition font-medium flex items-center">
+                            <i class="fas fa-home mr-1"></i> Dashboard
+                        </a>
+                        <i class="fas fa-chevron-right text-red-400 text-xs"></i>
+                        <span class="text-red-700 font-semibold flex items-center">
+                            <i class="fas fa-user mr-1"></i> Profile
+                        </span>
                     </div>
-
-                    <input id="profilePictureInput" type="file" name="profile_picture" accept="image/*"
-                        style="margin-top: 15px; background-color: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                    <div style="font-size: 12px; color: gray; margin-top: 5px;">Image formats .jpg .jpeg .png and max size
-                        300KB</div>
                 </div>
-
-                {{-- Nama --}}
-                <div style="margin-top: 30px;">
-                    <label for="name">Nama</label>
-                    <input id="name" name="name" type="text" value="{{ $user->name }}"
-                        style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
-                </div>
-
-                {{-- Tombol --}}
-                <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
-                    <button type="submit"
-                        style="padding: 10px 20px; background-color: #ef4444; color: white; border: none; border-radius: 8px; font-weight: bold;">Save</button>
-                </div>
-            </form>
-        </div>
-
-        <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.1);">
-            <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">Email and Phone Number</h2>
-
-            <div style="margin-bottom: 20px;">
-                <label for="email" style="display: block; font-weight: bold; margin-bottom: 6px;">Email</label>
-                <input id="email" type="email" value="{{ $user->email }}" readonly
-                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; background-color: #f9fafb;">
             </div>
 
-            <div>
-                <label for="phone" style="display: block; font-weight: bold; margin-bottom: 6px;">Phone</label>
-                <input id="phone" type="text" value="{{ $user->phone_number }}" readonly
-                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; background-color: #f9fafb;">
+            <!-- General Information Card -->
+            <div class="bg-white p-8 rounded-xl shadow-sm mb-8">
+                <h2 class="text-xl font-bold mb-6 text-gray-800">General Information</h2>
+
+                <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+
+                    <!-- Profile Picture -->
+                    <div class="text-center mb-8">
+                        <div class="w-32 h-32 rounded-full bg-gray-100 mx-auto overflow-hidden mb-4">
+                            @if ($user && $user->profile_picture)
+                                <img id="profilePreview"
+                                    src="{{ asset('storage/profile_picture/' . $user->profile_picture) . '?t=' . time() }}"
+                                    alt="Profile Picture" 
+                                    class="w-full h-full object-cover">
+                            @else
+                                <img id="profilePreview" 
+                                    src="https://via.placeholder.com/120?text=No+Image"
+                                    alt="Profile Picture" 
+                                    class="w-full h-full object-cover">
+                            @endif
+                        </div>
+
+                        <input id="profilePictureInput" 
+                               type="file" 
+                               name="profile_picture" 
+                               accept="image/*"
+                               class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg cursor-pointer transition">
+                        
+                        <div class="text-xs text-gray-500 mt-2">
+                            Image formats .jpg .jpeg .png and max size 300KB
+                        </div>
+                    </div>
+
+                    <!-- Name Field -->
+                    <div class="mb-6">
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nama</label>
+                        <input id="name" 
+                               name="name" 
+                               type="text" 
+                               value="{{ $user->name }}"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                    </div>
+
+                    <!-- Save Button -->
+                    <div class="flex justify-end">
+                        <button type="submit"
+                                class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg transition">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Email and Phone Information Card -->
+            <div class="bg-white p-8 rounded-xl shadow-sm">
+                <h2 class="text-xl font-bold mb-6 text-gray-800">Email and Phone Number</h2>
+
+                <!-- Email Field -->
+                <div class="mb-6">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input id="email" 
+                           type="email" 
+                           value="{{ $user->email }}" 
+                           readonly
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed">
+                </div>
+
+                <!-- Phone Field -->
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                    <input id="phone" 
+                           type="text" 
+                           value="{{ $user->phone_number }}" 
+                           readonly
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed">
+                </div>
             </div>
         </div>
     </div>
