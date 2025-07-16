@@ -10,7 +10,7 @@
                 <nav class="flex items-center space-x-2 text-xs mb-4 glass-effect px-4 py-2 rounded-xl shadow-lg">
                     <a href="{{ route('dashboard.projectmanager') }}"
                         class="flex items-center text-red-600 hover:text-red-700 transition">
-                        <i class="fas fa-home mr-1"></i>Home
+                        <i class="fas fa-home mr-1"></i>Dashboard
                     </a>
                     <i class="fas fa-chevron-right text-red-400 text-xs"></i>
                     <span class="text-red-700 font-semibold">Purchase Requests</span>
