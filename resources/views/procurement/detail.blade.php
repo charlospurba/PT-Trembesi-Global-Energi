@@ -164,7 +164,7 @@
             <!-- Compact Breadcrumb -->
             <nav class="flex items-center space-x-2 text-xs mb-4 glass-effect px-4 py-2 rounded-xl shadow-lg">
                 <a href="{{ route('procurement.dashboardproc') }}" class="flex items-center text-gray-600 hover:text-red-600 transition-all duration-300">
-                    <i class="fas fa-home mr-1"></i>Home
+                    <i class="fas fa-home mr-1"></i>Dashboard
                 </a>
                 <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
                 <span class="text-red-600 font-semibold">{{ $product->name }}</span>

@@ -10,6 +10,8 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfileSAController;
+use App\Http\Controllers\ProfilePMController;
 use App\Http\Controllers\ProfileVendorController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreController;
@@ -141,6 +143,8 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     // Profile Routes
     Route::get('/dashboard/profile', [ProfileController::class, 'edit'])->name('components.profile');
     Route::get('/dashboard/profilevendor', [ProfileVendorController::class, 'edit'])->name('components.profilevendor');
+    Route::get('/dashboard/profilepm', [ProfilePMController::class, 'edit'])->name('components.profilepm');
+    Route::get('/dashboard/profilesa', [ProfileSAController::class, 'edit'])->name('components.profilesa');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     // Store Routes

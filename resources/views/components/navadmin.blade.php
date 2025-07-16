@@ -5,21 +5,19 @@
       <!-- Profile Dropdown -->
             <div class="profile-dropdown" style="position: relative;">
                 <div class="profile-trigger" onclick="toggleDropdown()"
-                    style="cursor: pointer; display: flex; align-items: center; color: white;">
-                    @auth
-                    <span>Hello, {{ Auth::user()->name }} </span> 
-                        @php
-                            $profilePicture = Auth::user()->profile_picture
-                                ? asset('storage/profile_picture/' . Auth::user()->profile_picture)
-                                : asset('assets/images/default-profile.png');
-                        @endphp
-                        <div style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden; margin-right: 8px;">
-                            <img src="{{ $profilePicture }}" alt="Profile Picture"
-                                style="width: 100%; height: 100%; object-fit: cover;">
-                        </div>
-                    @endauth
-
-
+                        style="cursor: pointer; display: flex; align-items: center; color: white; gap: 8px;">
+                        @auth
+                            @php
+                                $profilePicture = Auth::user()->profile_picture
+                                    ? asset('storage/profile_picture/' . Auth::user()->profile_picture)
+                                    : asset('assets/images/default-profile.png');
+                            @endphp
+                            <div style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden;">
+                                <img src="{{ $profilePicture }}" alt="Profile Picture"
+                                    style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                            <span>Hello, {{ Auth::user()->name }}</span>
+                        @endauth
                     @guest
                         <i class="fas fa-user-circle" style="font-size: 24px; margin-right: 8px;"></i>
                         <span>Guest</span>
@@ -31,7 +29,7 @@
                 <!-- Dropdown Menu -->
                 <div id="dropdownMenu" class="dropdown-menu"
                     style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; min-width: 150px; z-index: 999;">
-                    <a href="/dashboard/profile" class="dropdown-item"
+                    <a href="/dashboard/profilesa" class="dropdown-item"
                         style="display: block; padding: 10px 15px; text-decoration: none; color: black;">My Profile</a>
                     <form id="logoutForm" method="POST" action="/logout" style="margin: 0;">
                         @csrf
