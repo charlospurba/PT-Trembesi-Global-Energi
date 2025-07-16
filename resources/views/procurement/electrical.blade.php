@@ -57,6 +57,8 @@
                 </div>
             </div>
 
+             <p class="text-gray-600 mb-4">Menampilkan {{ count($products) }} dari {{ count($products) }} produk</p>
+             
             <!-- Produk Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 @forelse($products as $product)
@@ -138,7 +140,7 @@
             <!-- Pagination -->
             <div class="mt-12 text-center">
                 <div class="bg-white rounded-xl shadow-md p-6">
-                    <p class="text-gray-600 mb-4">Menampilkan {{ count($products) }} dari {{ count($products) }} produk</p>
+
                     <div class="flex justify-center gap-2">
                         <button class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors">
                             Previous
