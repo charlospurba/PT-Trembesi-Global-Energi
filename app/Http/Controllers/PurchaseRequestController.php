@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Cart;
+use App\Models\PurchaseRequest;
 use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +18,7 @@ class PurchaseRequestController extends Controller
     }
 
     try {
-      $cartItems = Cart::with([
+      $purchaseRequests = PurchaseRequest::with([
         'product' => function ($query) {
           $query->select('id', 'name', 'price', 'supplier', 'image_paths');
         },
@@ -30,7 +30,7 @@ class PurchaseRequestController extends Controller
         ->orderBy('created_at', 'desc')
         ->get();
 
-      return view('projectmanager.purchase_requests', compact('cartItems'));
+      return view('projectmanager.purchase_requests', compact('purchaseRequests'));
     } catch (\Exception $e) {
       Log::error('Purchase Requests Index Error: ' . $e->getMessage(), [
         'user_id' => Auth::id(),
@@ -43,7 +43,7 @@ class PurchaseRequestController extends Controller
   public function approve(Request $request, $id)
   {
     if (Auth::user()->role !== 'project_manager') {
-      Log::warning('Unauthorized access to approve purchase request', ['user_id' => Auth::id(), 'cart_id' => $id]);
+      Log::warning('Unauthorized access to approve purchase request', ['user_id' => Auth::id(), 'purchase_request_id' => $id]);
       return response()->json([
         'success' => false,
         'message' => 'Unauthorized access.'
@@ -51,30 +51,41 @@ class PurchaseRequestController extends Controller
     }
 
     try {
-      $cartItem = Cart::findOrFail($id);
+      $purchaseRequest = PurchaseRequest::findOrFail($id);
 
-      if ($cartItem->status !== 'Pending') {
+      if ($purchaseRequest->status !== 'Pending') {
         return response()->json([
           'success' => false,
           'message' => 'This request has already been processed.'
         ], 422);
       }
 
-      $cartItem->update(['status' => 'Approved']);
+      $purchaseRequest->update([
+        'status' => 'Approved',
+        'approved_at' => now(),
+      ]);
+
+      // Update associated cart item status, if it exists
+      if ($purchaseRequest->cart_id) {
+        $cartItem = $purchaseRequest->cart;
+        if ($cartItem) {
+          $cartItem->update(['status' => 'Approved']);
+        }
+      }
 
       Notification::create([
-        'user_id' => $cartItem->user_id,
+        'user_id' => $purchaseRequest->user_id,
         'type' => 'purchase_approved',
-        'message' => 'Your purchase request for ' . $cartItem->product->name . ' has been approved.',
+        'message' => 'Your purchase request for ' . $purchaseRequest->product->name . ' has been approved.',
         'data' => json_encode([
-          'cart_id' => $cartItem->id,
-          'product_name' => $cartItem->product->name,
-          'quantity' => $cartItem->quantity,
+          'purchase_request_id' => $purchaseRequest->id,
+          'product_name' => $purchaseRequest->product->name,
+          'quantity' => $purchaseRequest->quantity,
         ]),
       ]);
 
       Log::info('Purchase Request Approved', [
-        'cart_id' => $id,
+        'purchase_request_id' => $id,
         'user_id' => Auth::id()
       ]);
 
@@ -83,14 +94,14 @@ class PurchaseRequestController extends Controller
         'message' => 'Purchase request approved successfully.'
       ]);
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-      Log::error('Approve Purchase Request Error - Cart not found: ' . $id);
+      Log::error('Approve Purchase Request Error - Purchase request not found: ' . $id);
       return response()->json([
         'success' => false,
-        'message' => 'Cart item not found.'
+        'message' => 'Purchase request not found.'
       ], 404);
     } catch (\Exception $e) {
       Log::error('Approve Purchase Request Error: ' . $e->getMessage(), [
-        'cart_id' => $id,
+        'purchase_request_id' => $id,
         'user_id' => Auth::id(),
         'trace' => $e->getTraceAsString()
       ]);
@@ -104,7 +115,7 @@ class PurchaseRequestController extends Controller
   public function reject(Request $request, $id)
   {
     if (Auth::user()->role !== 'project_manager') {
-      Log::warning('Unauthorized access to reject purchase request', ['user_id' => Auth::id(), 'cart_id' => $id]);
+      Log::warning('Unauthorized access to reject purchase request', ['user_id' => Auth::id(), 'purchase_request_id' => $id]);
       return response()->json([
         'success' => false,
         'message' => 'Unauthorized access.'
@@ -112,30 +123,41 @@ class PurchaseRequestController extends Controller
     }
 
     try {
-      $cartItem = Cart::findOrFail($id);
+      $purchaseRequest = PurchaseRequest::findOrFail($id);
 
-      if ($cartItem->status !== 'Pending') {
+      if ($purchaseRequest->status !== 'Pending') {
         return response()->json([
           'success' => false,
           'message' => 'This request has already been processed.'
         ], 422);
       }
 
-      $cartItem->update(['status' => 'Rejected']);
+      $purchaseRequest->update([
+        'status' => 'Rejected',
+        'rejected_at' => now(),
+      ]);
+
+      // Update associated cart item status, if it exists
+      if ($purchaseRequest->cart_id) {
+        $cartItem = $purchaseRequest->cart;
+        if ($cartItem) {
+          $cartItem->update(['status' => 'Rejected']);
+        }
+      }
 
       Notification::create([
-        'user_id' => $cartItem->user_id,
+        'user_id' => $purchaseRequest->user_id,
         'type' => 'purchase_rejected',
-        'message' => 'Your purchase request for ' . $cartItem->product->name . ' has been rejected.',
+        'message' => 'Your purchase request for ' . $purchaseRequest->product->name . ' has been rejected.',
         'data' => json_encode([
-          'cart_id' => $cartItem->id,
-          'product_name' => $cartItem->product->name,
-          'quantity' => $cartItem->quantity,
+          'purchase_request_id' => $purchaseRequest->id,
+          'product_name' => $purchaseRequest->product->name,
+          'quantity' => $purchaseRequest->quantity,
         ]),
       ]);
 
       Log::info('Purchase Request Rejected', [
-        'cart_id' => $id,
+        'purchase_request_id' => $id,
         'user_id' => Auth::id()
       ]);
 
@@ -144,14 +166,14 @@ class PurchaseRequestController extends Controller
         'message' => 'Purchase request rejected successfully.'
       ]);
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-      Log::error('Reject Purchase Request Error - Cart not found: ' . $id);
+      Log::error('Reject Purchase Request Error - Purchase request not found: ' . $id);
       return response()->json([
         'success' => false,
-        'message' => 'Cart item not found.'
+        'message' => 'Purchase request not found.'
       ], 404);
     } catch (\Exception $e) {
       Log::error('Reject Purchase Request Error: ' . $e->getMessage(), [
-        'cart_id' => $id,
+        'purchase_request_id' => $id,
         'user_id' => Auth::id(),
         'trace' => $e->getTraceAsString()
       ]);

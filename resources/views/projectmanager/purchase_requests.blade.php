@@ -4,9 +4,9 @@
     @include('components.navpm')
 
     <div class="flex min-h-screen">
-          @include('components.sidepm')
-          <div class="bg-gray-100 min-h-screen p-6 flex-1">
-             <div class="mb-6">
+        @include('components.sidepm')
+        <div class="bg-gray-100 min-h-screen p-6 flex-1">
+            <div class="mb-6">
                 <nav class="flex items-center space-x-2 text-xs mb-4 glass-effect px-4 py-2 rounded-xl shadow-lg">
                     <a href="{{ route('dashboard.projectmanager') }}"
                         class="flex items-center text-red-600 hover:text-red-700 transition">
@@ -21,7 +21,7 @@
                 </div>
             </div>
 
-            @if ($cartItems->isEmpty())
+            @if ($purchaseRequests->isEmpty())
                 <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded-lg" role="alert">
                     <p class="font-bold">No Purchase Requests</p>
                     <p>There are no purchase requests to review at this time.</p>
@@ -32,32 +32,39 @@
                         <h2 class="font-semibold text-lg">Purchase Requests</h2>
                     </div>
                     <div class="divide-y">
-                        @foreach ($cartItems as $item)
-                            <div class="p-4 flex items-center space-x-4" data-item-id="{{ $item->id }}">
-                                <img src="{{ $item->product->image_paths && is_array($item->product->image_paths) ? asset('storage/' . $item->product->image_paths[0]) : '/images/pipa-besi.png' }}"
+                        @foreach ($purchaseRequests as $request)
+                            <div class="p-4 flex items-center space-x-4" data-item-id="{{ $request->id }}">
+                                <img src="{{ $request->product->image_paths && is_array($request->product->image_paths) ? asset('storage/' . $request->product->image_paths[0]) : '/images/pipa-besi.png' }}"
                                     class="w-16 h-16 rounded object-cover border border-red-200">
                                 <div class="flex-1">
-                                    <h3 class="font-semibold text-red-700">{{ $item->product->name }}</h3>
-                                    <p class="text-gray-500 text-sm">Quantity: {{ $item->quantity }}</p>
-                                    <p class="text-gray-500 text-sm">Variant: {{ $item->variant ?? 'default' }}</p>
-                                    <p class="text-gray-500 text-sm">Supplier: {{ $item->product->supplier }}</p>
-                                    <p class="text-gray-500 text-sm">Requested by: {{ $item->user->name }}
-                                        ({{ $item->user->email }})
+                                    <h3 class="font-semibold text-red-700">{{ $request->product->name }}</h3>
+                                    <p class="text-gray-500 text-sm">Quantity: {{ $request->quantity }}</p>
+                                    <p class="text-gray-500 text-sm">Price: Rp
+                                        {{ number_format($request->price, 0, ',', '.') }}</p>
+                                    <p class="text-gray-500 text-sm">Variant: {{ $request->cart->variant ?? 'default' }}</p>
+                                    <p class="text-gray-500 text-sm">Supplier: {{ $request->supplier }}</p>
+                                    <p class="text-gray-500 text-sm">Requested by: {{ $request->user->name }}
+                                        ({{ $request->user->email }})
                                     </p>
+                                    <p class="text-gray-500 text-sm">Submitted:
+                                        {{ $request->submitted_at->format('Y-m-d H:i:s') }}</p>
+                                    @if ($request->notes)
+                                        <p class="text-gray-500 text-sm">Notes: {{ $request->notes }}</p>
+                                    @endif
                                     <p class="text-sm">
                                         <span
-                                            class="px-2 py-0.5 rounded-full text-xs {{ $item->status === 'Approved' ? 'bg-green-100 text-green-700' : ($item->status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700') }}">
-                                            {{ $item->status }}
+                                            class="px-2 py-0.5 rounded-full text-xs {{ $request->status === 'Approved' ? 'bg-green-100 text-green-700' : ($request->status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700') }}">
+                                            {{ $request->status }}
                                         </span>
                                     </p>
                                 </div>
-                                @if ($item->status === 'Pending')
+                                @if ($request->status === 'Pending')
                                     <div class="flex items-center space-x-2">
-                                        <button onclick="approveRequest({{ $item->id }})"
+                                        <button onclick="approveRequest({{ $request->id }})"
                                             class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition-all duration-200">
                                             <i class="fas fa-check mr-1"></i> Approve
                                         </button>
-                                        <button onclick="rejectRequest({{ $item->id }})"
+                                        <button onclick="rejectRequest({{ $request->id }})"
                                             class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-all duration-200">
                                             <i class="fas fa-times mr-1"></i> Reject
                                         </button>
@@ -69,6 +76,8 @@
                 </div>
             @endif
         </div>
+    </div>
+
     <script>
         async function approveRequest(id) {
             Swal.fire({

@@ -8,6 +8,7 @@ use App\Models\Cart;
 use App\Models\Bid;
 use App\Models\Notification;
 use App\Models\User;
+use App\Models\PurchaseRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -419,7 +420,7 @@ class CartController extends Controller
         ->whereIn('product_id', $selectedIds)
         ->with([
           'product' => function ($query) {
-            $query->select('id', 'name', 'supplier');
+            $query->select('id', 'name', 'price', 'supplier');
           }
         ])
         ->get();
@@ -448,6 +449,45 @@ class CartController extends Controller
         ], 422);
       }
 
+      // Check for existing purchase requests
+      $existingRequests = PurchaseRequest::whereIn('cart_id', $cartItems->pluck('id'))
+        ->where('status', 'Pending')
+        ->pluck('cart_id')
+        ->toArray();
+      if (!empty($existingRequests)) {
+        Log::warning('Request Purchase - Duplicate purchase requests detected', [
+          'user_id' => $user->id,
+          'cart_ids' => $existingRequests
+        ]);
+        return response()->json([
+          'success' => false,
+          'message' => 'Some items already have pending purchase requests.'
+        ], 422);
+      }
+
+      // Create PurchaseRequest entries
+      $purchaseRequestIds = [];
+      foreach ($cartItems as $cartItem) {
+        $acceptedBid = Bid::where('product_id', $cartItem->product_id)
+          ->where('user_id', $user->id)
+          ->where('status', 'Accepted')
+          ->latest()
+          ->first();
+        $price = $acceptedBid ? $acceptedBid->bid_price : $cartItem->product->price;
+
+        $purchaseRequest = PurchaseRequest::create([
+          'user_id' => $user->id,
+          'product_id' => $cartItem->product_id,
+          'cart_id' => $cartItem->id,
+          'quantity' => $cartItem->quantity,
+          'price' => $price,
+          'supplier' => $cartItem->product->supplier,
+          'status' => 'Pending',
+          'submitted_at' => now(),
+        ]);
+        $purchaseRequestIds[] = $purchaseRequest->id;
+      }
+
       // Notify Project Managers
       $projectManagers = User::where('role', 'project_manager')->get();
       if ($projectManagers->isEmpty()) {
@@ -462,14 +502,15 @@ class CartController extends Controller
         foreach ($projectManagers as $pm) {
           Notification::create([
             'user_id' => $pm->id,
-            'type' => 'cart_pending',
-            'message' => "Purchase request from {$user->name} for product: {$cartItem->product->name}",
+            'type' => 'purchase_request',
+            'message' => "New purchase request from {$user->name} for product: {$cartItem->product->name}",
             'data' => json_encode([
-              'cart_item' => [
+              'purchase_request' => [
                 'cart_id' => $cartItem->id,
                 'product_id' => $cartItem->product_id,
                 'product_name' => $cartItem->product->name,
                 'quantity' => $cartItem->quantity,
+                'price' => $cartItem->product->price,
                 'variant' => $cartItem->variant ?? 'default',
                 'user_id' => $user->id,
                 'user_name' => $user->name,
@@ -481,12 +522,14 @@ class CartController extends Controller
 
       Log::info('Request Purchase - Success', [
         'user_id' => $user->id,
-        'cart_item_ids' => $cartItems->pluck('id')->toArray()
+        'cart_item_ids' => $cartItems->pluck('id')->toArray(),
+        'purchase_request_ids' => $purchaseRequestIds
       ]);
 
       return response()->json([
         'success' => true,
-        'message' => 'Purchase request submitted successfully! Awaiting Project Manager approval.'
+        'message' => 'Purchase request submitted successfully! Awaiting Project Manager approval.',
+        'purchase_request_ids' => $purchaseRequestIds
       ]);
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
       Log::error('Request Purchase Error - Model not found: ' . $e->getMessage(), [
