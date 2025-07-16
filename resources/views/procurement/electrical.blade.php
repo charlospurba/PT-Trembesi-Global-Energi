@@ -28,7 +28,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h1 class="text-4xl font-bold text-gray-800 mb-1">Koleksi Electrical</h1>
+                            <h1 class="text-4xl font-bold text-gray-800 mb-1">Electrical Collection</h1>
                             <p class="text-gray-600">Temukan berbagai perlengkapan electrical terbaik untuk kebutuhan Anda</p>
                         </div>
                     </div>
@@ -50,8 +50,9 @@
                         <span class="text-sm font-medium text-gray-700">Urutkan:</span>
                     </div>
                     <select class="bg-gray-100 text-gray-600 text-xs font-medium rounded-full cursor-pointer hover:bg-gray-200 transition-colors px-3 py-1">
-                        <option value="lowest">Harga Terendah</option>
-                        <option value="highest">Harga Tertinggi</option>
+                        <option value="highest">All</option>
+                        <option value="lowest">Lowest Price</option>
+                        <option value="highest">Highest Price</option>
                     </select>
                 </div>
             </div>
@@ -129,9 +130,6 @@
                             </div>
                             <h3 class="text-base font-semibold text-gray-800 mb-2">Belum Ada Produk</h3>
                             <p class="text-sm text-gray-500 mb-3">Tidak ada produk electrical yang tersedia saat ini.</p>
-                            <button class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">
-                                Tambah Produk
-                            </button>
                         </div>
                     </div>
                 @endforelse
