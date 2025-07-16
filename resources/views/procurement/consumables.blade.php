@@ -49,6 +49,7 @@
                         <span class="text-sm font-medium text-gray-700">Sort:</span>
                     </div>
                     <select class="bg-gray-100 text-gray-600 text-xs font-medium rounded-full cursor-pointer hover:bg-gray-200 transition-colors px-3 py-1">
+                        <option value="highest">All</option>
                         <option value="lowest">Lowest Price</option>
                         <option value="highest">Highest Price</option>
                     </select>
