@@ -1,20 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     @include('components.navpm')
 
     <div class="flex min-h-screen">
         @include('components.sidepm')
         <div class="bg-gray-100 min-h-screen p-6 flex-1">
             <div class="mb-6">
-                <nav class="flex items-center space-x-2 text-xs mb-4 glass-effect px-4 py-2 rounded-xl shadow-lg">
-                    <a href="{{ route('dashboard.projectmanager') }}"
-                        class="flex items-center text-red-600 hover:text-red-700 transition">
-                        <i class="fas fa-home mr-1"></i>Dashboard
-                    </a>
-                    <i class="fas fa-chevron-right text-red-400 text-xs"></i>
-                    <span class="text-red-700 font-semibold">Purchase Requests</span>
-                </nav>
                 <div class="mt-4">
                     <h1 class="text-3xl font-extrabold text-red-600">📋 Purchase Requests</h1>
                     <p class="text-red-400">Review and manage purchase requests from procurement team</p>
@@ -28,16 +23,16 @@
                 </div>
             @else
                 <div class="bg-white shadow-md rounded-xl border border-red-200 mb-6">
-                    <div class="bg-red-600 text-white px-4 py-3 rounded-t-xl">
-                        <h2 class="font-semibold text-lg">Purchase Requests</h2>
-                    </div>
                     <div class="divide-y">
                         @foreach ($purchaseRequests as $request)
                             <div class="p-4 flex items-center space-x-4" data-item-id="{{ $request->id }}">
                                 <img src="{{ $request->product->image_paths && is_array($request->product->image_paths) ? asset('storage/' . $request->product->image_paths[0]) : '/images/pipa-besi.png' }}"
                                     class="w-16 h-16 rounded object-cover border border-red-200">
                                 <div class="flex-1">
-                                    <h3 class="font-semibold text-red-700">{{ $request->product->name }}</h3>
+                                    <a href="{{ route('projectmanager.purchase_requests.detail', $request->id) }}"
+                                        class="font-semibold text-red-700 hover:text-red-800 hover:underline">
+                                        {{ $request->product->name }}
+                                    </a>
                                     <p class="text-gray-500 text-sm">Quantity: {{ $request->quantity }}</p>
                                     <p class="text-gray-500 text-sm">Price: Rp
                                         {{ number_format($request->price, 0, ',', '.') }}</p>

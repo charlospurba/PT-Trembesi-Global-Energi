@@ -75,6 +75,7 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     Route::view('/projectmanager/addrequest', 'projectmanager.addrequest')->name('projectmanager.addrequest');
     Route::view('/projectmanager/formadd', 'projectmanager.formadd')->name('projectmanager.formadd');
     Route::get('/projectmanager/purchase-requests', [PurchaseRequestController::class, 'index'])->name('projectmanager.purchase_requests');
+    Route::get('/projectmanager/purchase-requests/{id}', [PurchaseRequestController::class, 'showDetail'])->name('projectmanager.purchase_requests.detail');
     Route::post('/projectmanager/purchase-requests/{id}/approve', [PurchaseRequestController::class, 'approve'])->name('projectmanager.purchase.approve');
     Route::post('/projectmanager/purchase-requests/{id}/reject', [PurchaseRequestController::class, 'reject'])->name('projectmanager.purchase.reject');
 

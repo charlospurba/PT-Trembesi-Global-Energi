@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PurchaseRequest;
+use App\Models\Bid;
 use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -24,7 +25,8 @@ class PurchaseRequestController extends Controller
         },
         'user' => function ($query) {
           $query->select('id', 'name', 'email');
-        }
+        },
+        'cart'
       ])
         ->whereIn('status', ['Pending', 'Approved', 'Rejected'])
         ->orderBy('created_at', 'desc')
@@ -37,6 +39,56 @@ class PurchaseRequestController extends Controller
         'trace' => $e->getTraceAsString()
       ]);
       return back()->withErrors(['error' => 'Failed to load purchase requests: ' . $e->getMessage()]);
+    }
+  }
+
+  public function showDetail($id)
+  {
+    if (Auth::user()->role !== 'project_manager') {
+      Log::warning('Unauthorized access to purchase request detail', ['user_id' => Auth::id(), 'purchase_request_id' => $id]);
+      abort(403, 'Unauthorized access.');
+    }
+
+    try {
+      $purchaseRequest = PurchaseRequest::with([
+        'product' => function ($query) {
+          $query->select('id', 'name', 'price', 'supplier', 'image_paths');
+        },
+        'user' => function ($query) {
+          $query->select('id', 'name', 'email');
+        },
+        'cart'
+      ])->findOrFail($id);
+
+      $bids = Bid::where('product_id', $purchaseRequest->product_id)
+        ->where('user_id', $purchaseRequest->user_id)
+        ->latest()
+        ->take(3)
+        ->get();
+
+      $purchaseRequests = PurchaseRequest::with(['product', 'user', 'cart'])
+        ->where('product_id', $purchaseRequest->product_id)
+        ->where('user_id', $purchaseRequest->user_id)
+        ->latest()
+        ->get();
+
+      return view('projectmanager.purchase_request_detail', compact('purchaseRequest', 'bids', 'purchaseRequests'));
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+      Log::error('Purchase Request Detail Error - Purchase request not found: ' . $id);
+      return response()->json([
+        'success' => false,
+        'message' => 'Purchase request not found.'
+      ], 404);
+    } catch (\Exception $e) {
+      Log::error('Purchase Request Detail Error: ' . $e->getMessage(), [
+        'purchase_request_id' => $id,
+        'user_id' => Auth::id(),
+        'trace' => $e->getTraceAsString()
+      ]);
+      return response()->json([
+        'success' => false,
+        'message' => 'Failed to load purchase request details: ' . $e->getMessage()
+      ], 500);
     }
   }
 
