@@ -18,8 +18,21 @@
             </a>
         </div>
 
-        <!-- Search Form -->
-        <form id="searchForm" action="{{ route('search.products') }}" method="GET" class="flex-grow max-w-xl mx-4">
+        @php
+            $currentRoute = request()->route()->getName();
+
+            $searchRoute = match ($currentRoute) {
+                'procurement.material' => route('search.material'),
+                'procurement.equipment' => route('search.equipment'),
+                'procurement.electrical' => route('search.electrical'),
+                'procurement.consumables' => route('search.consumables'),
+                'procurement.personal' => route('search.personal'),
+                default => route('search.products') // untuk dashboard umum
+            };
+        @endphp
+
+        <form id="searchForm" action="{{ $searchRoute }}" method="GET" class="flex-grow max-w-xl mx-4">
+            <input type="hidden" name="category" value="{{ request()->segment(1) }}"> {{-- auto detect category --}}
             <div class="flex items-center h-11 border border-white rounded-full overflow-hidden">
                 <div class="px-4 text-white">
                     <i class="fas fa-search text-lg"></i>
@@ -33,14 +46,17 @@
         <!-- Icons + Auth Buttons (Right Aligned) -->
         <div class="flex items-center gap-3">
             <!-- Notes -->
-            <a href="{{ route('procurement.notes') }}" class="relative w-9 h-9 flex items-center justify-center text-white hover:text-white/80 transition">
+            <a href="{{ route('procurement.notes') }}"
+                class="relative w-9 h-9 flex items-center justify-center text-white hover:text-white/80 transition">
                 <i class="fas fa-sticky-note text-base"></i>
             </a>
 
             <!-- Cart -->
-            <a href="/cart" class="relative w-9 h-9 flex items-center justify-center text-white hover:text-white/80 transition">
+            <a href="/cart"
+                class="relative w-9 h-9 flex items-center justify-center text-white hover:text-white/80 transition">
                 <i class="fas fa-shopping-cart text-base"></i>
-                <span id="cartBadge" class="absolute -top-1 -right-1 bg-white text-red-600 text-xs px-1.5 rounded-full hidden">0</span>
+                <span id="cartBadge"
+                    class="absolute -top-1 -right-1 bg-white text-red-600 text-xs px-1.5 rounded-full hidden">0</span>
             </a>
 
             <!-- Notification -->
@@ -103,28 +119,28 @@
         document.getElementById("notificationDropdown").style.display = "none";
     }
 
-   function toggleNotificationDropdown(event) {
-    event.preventDefault();
-    const dropdown = document.getElementById("notificationDropdown");
-    const isVisible = dropdown.style.display === "block";
+    function toggleNotificationDropdown(event) {
+        event.preventDefault();
+        const dropdown = document.getElementById("notificationDropdown");
+        const isVisible = dropdown.style.display === "block";
 
-    dropdown.style.display = isVisible ? "none" : "block";
-    document.getElementById("profileDropdown").style.display = "none";
+        dropdown.style.display = isVisible ? "none" : "block";
+        document.getElementById("profileDropdown").style.display = "none";
 
-    // Jika baru dibuka (bukan ditutup)
-    if (!isVisible) {
-        // Tandai semua sebagai sudah dibaca di backend
-        fetch('/notifications/read-all', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Content-Type': 'application/json'
-            }
-        }).then(() => {
-            loadNotifications(); // refresh tampilan list & badge
-        });
+        // Jika baru dibuka (bukan ditutup)
+        if (!isVisible) {
+            // Tandai semua sebagai sudah dibaca di backend
+            fetch('/notifications/read-all', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            }).then(() => {
+                loadNotifications(); // refresh tampilan list & badge
+            });
+        }
     }
-}
 
 
     window.addEventListener("click", function (e) {

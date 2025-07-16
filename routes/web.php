@@ -91,6 +91,14 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.detail');
     Route::get('/search', [ProductController::class, 'search'])->name('search.products');
 
+
+    //Searching
+    Route::get('/material/search', [ProductController::class, 'searchMaterial'])->name('search.material');
+    Route::get('/equipment/search', [ProductController::class, 'searchEquipment'])->name('search.equipment');
+    Route::get('/electrical/search', [ProductController::class, 'searchElectrical'])->name('search.electrical');
+    Route::get('/consumables/search', [ProductController::class, 'searchConsumables'])->name('search.consumables');
+    Route::get('/personal/search', [ProductController::class, 'searchPersonal'])->name('search.personal');
+
     // Notes Routes
     Route::get('/procurement/notes', function () {
         return view('procurement.notes');

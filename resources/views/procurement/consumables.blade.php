@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('content')
@@ -9,11 +8,12 @@
 
             <!-- Breadcrumb -->
             <nav class="flex items-center space-x-2 text-xs mb-4 glass-effect px-4 py-2 rounded-xl shadow-lg">
-                <a href="{{ route('procurement.dashboardproc') }}" class="flex items-center text-gray-600 hover:text-red-600 transition-all duration-300">
+                <a href="{{ route('procurement.dashboardproc') }}"
+                    class="flex items-center text-gray-600 hover:text-red-600 transition-all duration-300">
                     <i class="fas fa-home mr-1"></i>Dashboard
                 </a>
-                <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
-                <span class="text-red-600 font-semibold">Consumables</span>
+                 <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                <a href="{{ route('procurement.consumables') }}"><span class="text-red-600 font-semibold">Consumables</span></a>
             </nav>
 
             <!-- Header Section -->
@@ -21,10 +21,10 @@
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
                         <div class="bg-gradient-to-r from-red-600 to-red-700 text-white p-3 rounded-xl shadow-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none"
-                                 viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M3 10h2l1 2h13l1-2h2M5 12h14l-1.5 9h-11L5 12zM10 21h4"/>
+                                    d="M3 10h2l1 2h13l1-2h2M5 12h14l-1.5 9h-11L5 12zM10 21h4" />
                             </svg>
                         </div>
                         <div>
@@ -44,11 +44,13 @@
                 <div class="flex flex-wrap items-center gap-3">
                     <div class="flex items-center gap-2">
                         <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                         </svg>
                         <span class="text-sm font-medium text-gray-700">Sort:</span>
                     </div>
-                    <select class="bg-gray-100 text-gray-600 text-xs font-medium rounded-full cursor-pointer hover:bg-gray-200 transition-colors px-3 py-1">
+                    <select
+                        class="bg-gray-100 text-gray-600 text-xs font-medium rounded-full cursor-pointer hover:bg-gray-200 transition-colors px-3 py-1">
                         <option value="highest">All</option>
                         <option value="lowest">Lowest Price</option>
                         <option value="highest">Highest Price</option>
@@ -56,15 +58,32 @@
                 </div>
             </div>
 
+            @if(isset($query))
+                <div class="text-sm text-gray-500 mb-2">
+                    Search results for: <strong>{{ $query }}</strong>
+                </div>
+            @endif
+
+            {{-- Display products --}}
+            @if($products->count())
+                @foreach ($products as $product)
+                    {{-- display the product --}}
+                @endforeach
+            @else
+                <p>No products found.</p>
+            @endif
+
             <p class="text-gray-600 mb-4">Showing {{ count($products) }} of {{ count($products) }} products</p>
 
             <!-- Product Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 @forelse($products as $product)
                     <a href="{{ route('product.detail', $product->id) }}" class="block group">
-                        <div class="bg-white rounded-lg shadow-sm overflow-hidden max-w-[250px] w-full transition hover:shadow-md hover:-translate-y-1 border border-gray-100">
+                        <div
+                            class="bg-white rounded-lg shadow-sm overflow-hidden max-w-[250px] w-full transition hover:shadow-md hover:-translate-y-1 border border-gray-100">
                             <!-- Image -->
-                            <div class="relative bg-gradient-to-br from-red-600 to-red-700 p-3 flex justify-center items-center h-32">
+                            <div
+                                class="relative bg-gradient-to-br from-red-600 to-red-700 p-3 flex justify-center items-center h-32">
                                 @php
                                     $imagePath = 'https://via.placeholder.com/200';
                                     if (!empty($product->image_paths)) {
@@ -75,29 +94,36 @@
                                         }
                                     }
                                 @endphp
-                                <img src="{{ $imagePath }}" alt="{{ $product->name }}" class="object-contain h-full rounded-md transition-transform duration-300 group-hover:scale-105" />
+                                <img src="{{ $imagePath }}" alt="{{ $product->name }}"
+                                    class="object-contain h-full rounded-md transition-transform duration-300 group-hover:scale-105" />
                             </div>
 
                             <!-- Information -->
                             <div class="p-3 space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <span class="inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">
                                         {{ $product->supplier ?? 'Supplier' }}
                                     </span>
                                     <div class="flex items-center gap-1">
                                         <svg class="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 census1.118l1.07 3.292c.3 .921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            <path
+                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 census1.118l1.07 3.292c.3 .921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                         </svg>
                                         <span class="text-xs text-gray-500">{{ $product->rating ?? '4.5' }}</span>
                                     </div>
                                 </div>
-                                <h3 class="text-sm font-semibold text-gray-900 line-clamp-2 group-hover:text-red-600">{{ $product->name }}</h3>
+                                <h3 class="text-sm font-semibold text-gray-900 line-clamp-2 group-hover:text-red-600">
+                                    {{ $product->name }}
+                                </h3>
                                 <div class="flex justify-between">
-                                    <span class="text-base font-bold text-red-600">IDR {{ number_format($product->price ?? 0, 0, ',', '.') }}</span>
+                                    <span class="text-base font-bold text-red-600">IDR
+                                        {{ number_format($product->price ?? 0, 0, ',', '.') }}</span>
                                 </div>
                                 <div class="flex items-center text-xs text-gray-600 bg-gray-50 p-2 rounded-lg">
                                     <svg class="w-3 h-3 text-red-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M10 2a6 6 0 016 6c0 4.418-6 10-6 10S4 12.418 4 8a6 6 0 016-6zM8 8a2 2 0 114 0 2 2 0 01-4 0z" />
+                                        <path
+                                            d="M10 2a6 6 0 016 6c0 4.418-6 10-6 10S4 12.418 4 8a6 6 0 016-6zM8 8a2 2 0 114 0 2 2 0 01-4 0z" />
                                     </svg>
                                     <span>{{ $product->address ?? 'Location not available' }}</span>
                                 </div>
@@ -116,8 +142,10 @@
                     <div class="col-span-full">
                         <div class="bg-white rounded-lg shadow-sm p-8 text-center">
                             <div class="bg-gray-100 rounded-full p-4 w-16 h-16 mx-auto mb-3">
-                                <svg class="w-8 h-8 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                                <svg class="w-8 h-8 text-gray-400 mx-auto" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                                 </svg>
                             </div>
                             <h3 class="text-base font-semibold text-gray-800 mb-2">No Products Available</h3>
