@@ -14,6 +14,24 @@
                 <span class="text-red-500 font-bold"> > Check Out</span>
             </h5>
 
+            <!-- Error Message -->
+            <div id="checkout-error" class="hidden bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg">
+                <p class="font-bold">Error</p>
+                <p id="checkout-error-message">An error occurred. Please try again or log in.</p>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="checkout-loading" class="hidden flex justify-center items-center py-10">
+                <svg class="animate-spin h-8 w-8 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                    </circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+            </div>
+
             <div class="flex flex-col md:flex-row gap-6">
                 <div class="w-full md:w-1/2 bg-white p-6 rounded-xl shadow text-sm">
                     <h2 class="text-lg font-bold mb-4">CONTACT INFORMATION <span
@@ -25,7 +43,7 @@
                         @endforeach
                         <div class="mb-4">
                             <label class="block mb-1 font-semibold">Email *</label>
-                            <input type="email" value="{{ auth()->user()->email }}" disabled
+                            <input type="email" value="{{ auth()->user()->email ?? '' }}" disabled
                                 class="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2" />
                         </div>
 
@@ -39,8 +57,8 @@
 
                         <div class="mb-4">
                             <label class="block mb-1 font-semibold">Phone Number *</label>
-                            <input type="text" name="phone_number" class="w-full border border-gray-300 rounded px-3 py-2"
-                                required />
+                            <input type="text" name="phone_number"
+                                class="w-full border border-gray-300 rounded px-3 py-2" required />
                         </div>
 
                         <div class="mb-4">
@@ -57,7 +75,8 @@
                             </div>
                             <div>
                                 <label class="block mb-1 font-semibold">State/Province</label>
-                                <input type="text" name="state" class="w-full border border-gray-300 rounded px-3 py-2" />
+                                <input type="text" name="state"
+                                    class="w-full border border-gray-300 rounded px-3 py-2" />
                             </div>
                             <div>
                                 <label class="block mb-1 font-semibold">Postal code *</label>
@@ -68,8 +87,7 @@
 
                         <div class="mb-4">
                             <label class="block mb-1 font-semibold">Street Address *</label>
-                            <textarea rows="2" name="street_address" class="w-full border border-gray-300 rounded px-3 py-2"
-                                required></textarea>
+                            <textarea rows="2" name="street_address" class="w-full border border-gray-300 rounded px-3 py-2" required></textarea>
                         </div>
 
                         <div class="flex gap-4 mt-6">
@@ -86,21 +104,25 @@
                     <h2 class="text-lg font-bold mb-4 text-center">CHECK OUT</h2>
 
                     <div class="space-y-3 mb-4">
-                        @foreach ($cartItems as $item)
-                            <div class="flex items-center justify-between border-b pb-2">
-                                <div class="flex items-center gap-2">
-                                    <img src="{{ $item['image'] ? asset('storage/' . $item['image']) : 'https://via.placeholder.com/50' }}"
-                                        class="w-12 h-12 object-cover rounded border border-red-400">
-                                    <div>
-                                        <div class="font-semibold text-sm">{{ $item['name'] }}</div>
-                                        <div class="text-gray-500 text-xs">Variasi: {{ $item['variant'] }}</div>
+                        @if (empty($cartItems))
+                            <p class="text-red-500">No items selected for checkout.</p>
+                        @else
+                            @foreach ($cartItems as $item)
+                                <div class="flex items-center justify-between border-b pb-2">
+                                    <div class="flex items-center gap-2">
+                                        <img src="{{ $item['image'] ? asset('storage/' . $item['image']) : 'https://via.placeholder.com/50' }}"
+                                            class="w-12 h-12 object-cover rounded border border-red-400">
+                                        <div>
+                                            <div class="font-semibold text-sm">{{ $item['name'] }}</div>
+                                            <div class="text-gray-500 text-xs">Variasi: {{ $item['variant'] }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="font-semibold text-right text-sm">
+                                        Rp. {{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}
                                     </div>
                                 </div>
-                                <div class="font-semibold text-right text-sm">
-                                    Rp. {{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}
-                                </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        @endif
                     </div>
 
                     <div class="text-sm text-gray-600 mb-1 flex justify-between">
@@ -133,22 +155,34 @@
                 Swal.fire({
                     icon: 'warning',
                     title: 'Checkout Required',
-                    text: 'Please complete the checkout process before generating e-billing.'
+                    text: 'Please complete the checkout process before generating e-billing.',
+                    confirmButtonColor: '#dc2626'
                 });
                 return;
             }
 
+            document.getElementById('checkout-loading').classList.remove('hidden');
             fetch('/checkout/e-billing', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    order_id: lastOrderId
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        order_id: lastOrderId
+                    })
                 })
-            })
-                .then(response => response.json())
+                .then(response => {
+                    document.getElementById('checkout-loading').classList.add('hidden');
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            console.error('Print E-Billing Response:', text);
+                            throw new Error(`Server returned status ${response.status}: ${text}`);
+                        });
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         window.open(data.pdf_path, '_blank');
@@ -156,7 +190,8 @@
                             icon: 'success',
                             title: 'Success',
                             text: data.message || 'E-Billing generated successfully!',
-                            timer: 1500
+                            timer: 1500,
+                            confirmButtonColor: '#dc2626'
                         });
                         updateNotificationBadge();
                         loadNotifications();
@@ -164,16 +199,28 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: data.message || 'Failed to generate E-Billing'
+                            text: data.message || 'Failed to generate E-Billing',
+                            confirmButtonColor: '#dc2626'
                         });
                     }
                 })
                 .catch(error => {
+                    document.getElementById('checkout-loading').classList.add('hidden');
+                    console.error('Print E-Billing Error:', error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Failed to generate E-Billing: ' + error.message
+                        text: error.message.includes('Unauthenticated') ?
+                            'Your session has expired. Please log in again.' : error.message.includes('500') ?
+                            'Server error occurred. Please try again later or contact support.' :
+                            `Failed to generate E-Billing: ${error.message}`,
+                        confirmButtonColor: '#dc2626'
                     });
+                    if (error.message.includes('Unauthenticated')) {
+                        setTimeout(() => {
+                            window.location.href = '{{ route('login.form') }}';
+                        }, 2000);
+                    }
                 });
         }
 
@@ -195,11 +242,12 @@
 
         function updateNotificationBadge() {
             fetch('/notifications/count', {
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
                 .then(response => response.json())
                 .then(data => {
                     const badge = document.getElementById('notificationBadge');
@@ -207,19 +255,24 @@
                         badge.textContent = data.count;
                         badge.style.display = data.count > 0 ? 'inline-block' : 'none';
                     }
+                })
+                .catch(error => {
+                    console.error('Update Notification Badge Error:', error);
                 });
         }
 
         function loadNotifications() {
             fetch('/notifications', {
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
                 .then(response => response.json())
                 .then(data => {
                     const notificationList = document.getElementById('notificationList');
+                    if (!notificationList) return;
                     notificationList.innerHTML = '';
                     if (data.notifications.length === 0) {
                         notificationList.innerHTML =
@@ -240,18 +293,44 @@
                         });
                     }
                     const badge = document.getElementById('notificationBadge');
-                    badge.textContent = data.unread_count;
-                    badge.style.display = data.unread_count > 0 ? 'inline-block' : 'none';
+                    if (badge) {
+                        badge.textContent = data.unread_count;
+                        badge.style.display = data.unread_count > 0 ? 'inline-block' : 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Load Notifications Error:', error);
+                });
+        }
+
+        function markAsRead(notificationId) {
+            fetch(`/notifications/${notificationId}/read`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateNotificationBadge();
+                        loadNotifications();
+                    }
+                })
+                .catch(error => {
+                    console.error('Mark As Read Error:', error);
                 });
         }
 
         function updateCartBadge() {
             fetch('/cart/count', {
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
                 .then(response => response.json())
                 .then(data => {
                     const badge = document.getElementById('cartBadge');
@@ -259,46 +338,64 @@
                         badge.textContent = data.count;
                         badge.style.display = data.count > 0 ? 'inline-block' : 'none';
                     }
+                })
+                .catch(error => {
+                    console.error('Update Cart Badge Error:', error);
                 });
         }
 
-        document.getElementById('checkout-form').addEventListener('submit', function (e) {
+        document.getElementById('checkout-form').addEventListener('submit', function(e) {
             e.preventDefault();
+            const errorDiv = document.getElementById('checkout-error');
+            const errorMessage = document.getElementById('checkout-error-message');
+            const loadingDiv = document.getElementById('checkout-loading');
+            const submitButton = this.querySelector('button[type="submit"]');
             const selectedIds = @json(array_column($cartItems, 'id'));
+
             if (selectedIds.length === 0) {
+                errorDiv.classList.remove('hidden');
+                errorMessage.textContent = 'No items selected for checkout.';
                 Swal.fire({
                     icon: 'error',
                     title: 'No Items',
-                    text: 'No items selected for checkout.'
+                    text: 'No items selected for checkout.',
+                    confirmButtonColor: '#dc2626'
                 });
                 return;
             }
 
-            const submitButton = this.querySelector('button[type="submit"]');
+            errorDiv.classList.add('hidden');
+            loadingDiv.classList.remove('hidden');
             submitButton.disabled = true;
+            submitButton.classList.add('opacity-50', 'cursor-not-allowed');
 
             fetch(this.action, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('#checkout-form input[name="_token"]').value
-                },
-                body: JSON.stringify({
-                    full_name: this.querySelector('input[name="full_name"]').value,
-                    phone_number: this.querySelector('input[name="phone_number"]').value,
-                    country: this.querySelector('input[name="country"]').value,
-                    city: this.querySelector('input[name="city"]').value,
-                    state: this.querySelector('input[name="state"]').value,
-                    postal_code: this.querySelector('input[name="postal_code"]').value,
-                    street_address: this.querySelector('textarea[name="street_address"]').value,
-                    selected_ids: selectedIds
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('#checkout-form input[name="_token"]').value,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        full_name: this.querySelector('input[name="full_name"]').value,
+                        phone_number: this.querySelector('input[name="phone_number"]').value,
+                        country: this.querySelector('input[name="country"]').value,
+                        city: this.querySelector('input[name="city"]').value,
+                        state: this.querySelector('input[name="state"]').value,
+                        postal_code: this.querySelector('input[name="postal_code"]').value,
+                        street_address: this.querySelector('textarea[name="street_address"]').value,
+                        selected_ids: selectedIds
+                    })
                 })
-            })
                 .then(response => {
+                    loadingDiv.classList.add('hidden');
                     submitButton.disabled = false;
+                    submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
                     if (!response.ok) {
-                        throw new Error(
-                            `Network response was not ok: ${response.status} - ${response.statusText}`);
+                        return response.text().then(text => {
+                            console.error('Checkout Response:', text);
+                            throw new Error(`Server returned status ${response.status}: ${text}`);
+                        });
                     }
                     return response.json();
                 })
@@ -312,7 +409,8 @@
                             title: 'Success',
                             text: data.message || 'Checkout completed successfully!',
                             timer: 1500,
-                            showConfirmButton: false
+                            showConfirmButton: false,
+                            confirmButtonColor: '#dc2626'
                         }).then(() => {
                             updateNotificationBadge();
                             loadNotifications();
@@ -321,21 +419,50 @@
                                 '{{ route('procurement.dashboardproc') }}';
                         });
                     } else {
+                        errorDiv.classList.remove('hidden');
+                        errorMessage.textContent = data.message || 'Failed to complete checkout';
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: data.message || 'Failed to complete checkout'
+                            text: data.message || 'Failed to complete checkout',
+                            confirmButtonColor: '#dc2626'
                         });
                     }
                 })
                 .catch(error => {
+                    loadingDiv.classList.add('hidden');
                     submitButton.disabled = false;
+                    submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                    errorDiv.classList.remove('hidden');
+                    errorMessage.textContent = error.message.includes('Unauthenticated') ?
+                        'Your session has expired. Please log in again.' :
+                        error.message.includes('500') ?
+                        'Server error occurred. Please try again later or contact support.' :
+                        `Failed to complete checkout: ${error.message}`;
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: `Failed to complete checkout: ${error.message}`
+                        text: error.message.includes('Unauthenticated') ?
+                            'Your session has expired. Please log in again.' : error.message.includes(
+                                '500') ?
+                            'Server error occurred. Please try again later or contact support.' :
+                            `Failed to complete checkout: ${error.message}`,
+                        confirmButtonColor: '#dc2626'
                     });
+                    if (error.message.includes('Unauthenticated')) {
+                        setTimeout(() => {
+                            window.location.href = '{{ route('login.form') }}';
+                        }, 2000);
+                    }
+                    console.error('Checkout Form Error:', error);
                 });
+        });
+
+        // Initialize UI state
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNotificationBadge();
+            updateCartBadge();
+            loadNotifications();
         });
     </script>
 @endsection

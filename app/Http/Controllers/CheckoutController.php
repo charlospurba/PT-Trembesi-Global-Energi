@@ -17,76 +17,139 @@ use Barryvdh\DomPDF\Facade\PDF;
 
 class CheckoutController extends Controller
 {
+  public function __construct()
+  {
+    // Middleware is applied in web.php, so no middleware() call here
+  }
+
   public function checkout(Request $request)
   {
-    $user = Auth::user();
-    $selectedIds = $request->input('selected_ids', []);
-
-    $query = Cart::where('user_id', $user->id)
-      ->where('status', 'Approved')
-      ->with([
-        'product' => function ($query) {
-          $query->select('id', 'name', 'price', 'supplier', 'vendor_id', 'image_paths');
+    try {
+      $user = Auth::user();
+      if (!$user) {
+        if ($request->expectsJson()) {
+          return response()->json([
+            'success' => false,
+            'message' => 'Unauthenticated. Please log in.'
+          ], 401);
         }
+        return redirect()->route('login.form')->withErrors(['login' => 'Please log in to continue.']);
+      }
+
+      $selectedIds = $request->input('selected_ids', []);
+
+      $query = Cart::where('user_id', $user->id)
+        ->where('status', 'Approved')
+        ->with([
+          'product' => function ($query) {
+            $query->select('id', 'name', 'price', 'supplier', 'vendor_id', 'image_paths');
+          }
+        ]);
+
+      if (!empty($selectedIds)) {
+        $query->whereIn('product_id', $selectedIds);
+      }
+
+      $cartItems = $query->get()->map(function ($cartItem) use ($user) {
+        $acceptedBid = Bid::where('product_id', $cartItem->product_id)
+          ->where('user_id', $user->id)
+          ->where('status', 'Accepted')
+          ->latest()
+          ->first();
+
+        $price = $acceptedBid ? $acceptedBid->bid_price : $cartItem->product->price;
+
+        return [
+          'id' => $cartItem->product_id,
+          'name' => $cartItem->product->name,
+          'price' => $price,
+          'quantity' => $cartItem->quantity,
+          'image' => !empty($cartItem->product->image_paths) && is_array($cartItem->product->image_paths)
+            ? $cartItem->product->image_paths[0]
+            : null,
+          'variant' => $cartItem->variant ?? 'default',
+          'supplier' => $cartItem->product->supplier,
+          'vendor_id' => $cartItem->product->vendor_id,
+          'is_bid_price' => $acceptedBid ? true : false,
+        ];
+      })->toArray();
+
+      if (empty($cartItems)) {
+        if ($request->expectsJson()) {
+          return response()->json([
+            'success' => false,
+            'message' => 'No approved items available for checkout.'
+          ], 422);
+        }
+        return redirect()->route('procurement.cart')->withErrors([
+          'status' => 'No approved items available for checkout.'
+        ]);
+      }
+
+      $suppliers = array_unique(array_column($cartItems, 'supplier'));
+      $vendorIds = array_unique(array_column($cartItems, 'vendor_id'));
+
+      if (count($suppliers) > 1 || count($vendorIds) > 1) {
+        if ($request->expectsJson()) {
+          return response()->json([
+            'success' => false,
+            'message' => 'Please select products from only one vendor for checkout.'
+          ], 422);
+        }
+        return redirect()->back()->withErrors([
+          'vendor' => 'Please select products from only one vendor for checkout.'
+        ]);
+      }
+
+      $totalPrice = array_sum(array_map(function ($item) {
+        return $item['price'] * $item['quantity'];
+      }, $cartItems));
+
+      if ($request->expectsJson()) {
+        return response()->json([
+          'success' => true,
+          'cartItems' => $cartItems,
+          'totalPrice' => $totalPrice
+        ], 200);
+      }
+
+      return view('procurement.checkout', compact('cartItems', 'totalPrice'));
+    } catch (\Exception $e) {
+      Log::error('Checkout View Error: ' . $e->getMessage(), [
+        'user_id' => Auth::id(),
+        'selected_ids' => $selectedIds ?? [],
+        'trace' => $e->getTraceAsString()
       ]);
-
-    if (!empty($selectedIds)) {
-      $query->whereIn('product_id', $selectedIds);
+      if ($request->expectsJson()) {
+        return response()->json([
+          'success' => false,
+          'message' => 'Failed to load checkout page: ' . $e->getMessage()
+        ], 500);
+      }
+      return redirect()->route('procurement.cart')->withErrors([
+        'error' => 'Failed to load checkout page: ' . $e->getMessage()
+      ]);
     }
-
-    $cartItems = $query->get()->map(function ($cartItem) use ($user) {
-      $acceptedBid = Bid::where('product_id', $cartItem->product_id)
-        ->where('user_id', $user->id)
-        ->where('status', 'Accepted')
-        ->latest()
-        ->first();
-
-      $price = $acceptedBid ? $acceptedBid->bid_price : $cartItem->product->price;
-
-      return [
-        'id' => $cartItem->product_id,
-        'name' => $cartItem->product->name,
-        'price' => $price,
-        'quantity' => $cartItem->quantity,
-        'image' => !empty($cartItem->product->image_paths) && is_array($cartItem->product->image_paths)
-          ? $cartItem->product->image_paths[0]
-          : null,
-        'variant' => $cartItem->variant ?? 'default',
-        'supplier' => $cartItem->product->supplier,
-        'vendor_id' => $cartItem->product->vendor_id,
-        'is_bid_price' => $acceptedBid ? true : false,
-      ];
-    })->toArray();
-
-    if (empty($cartItems)) {
-      return redirect()->route('procurement.cart')->withErrors(['status' => 'No approved items available for checkout.']);
-    }
-
-    $suppliers = array_unique(array_column($cartItems, 'supplier'));
-    $vendorIds = array_unique(array_column($cartItems, 'vendor_id'));
-
-    if (count($suppliers) > 1 || count($vendorIds) > 1) {
-      return redirect()->back()->withErrors(['vendor' => 'Please select products from only one vendor for checkout.']);
-    }
-
-    $totalPrice = array_sum(array_map(function ($item) {
-      return $item['price'] * $item['quantity'];
-    }, $cartItems));
-
-    return view('procurement.checkout', compact('cartItems', 'totalPrice'));
   }
 
   public function submitCheckout(Request $request)
   {
     try {
-      $validated = $this->validateCheckout($request);
       $user = Auth::user();
+      if (!$user) {
+        return response()->json([
+          'success' => false,
+          'message' => 'Unauthenticated. Please log in.'
+        ], 401);
+      }
+
+      $validated = $this->validateCheckout($request);
       $selectedIds = $request->input('selected_ids', []);
 
       Log::info('Submit Checkout - User: ' . $user->id . ', Selected IDs: ', $selectedIds);
 
       if (empty($selectedIds)) {
-        Log::warning('No selected IDs provided for checkout');
+        Log::warning('No selected IDs provided for checkout', ['user_id' => $user->id]);
         return response()->json([
           'success' => false,
           'message' => 'No items selected for checkout.'
@@ -95,7 +158,10 @@ class CheckoutController extends Controller
 
       $cartItems = $this->fetchCartItems($user->id, $selectedIds);
       if ($cartItems->isEmpty()) {
-        Log::warning('No cart items found for selected IDs', ['selected_ids' => $selectedIds]);
+        Log::warning('No cart items found for selected IDs', [
+          'user_id' => $user->id,
+          'selected_ids' => $selectedIds
+        ]);
         return response()->json([
           'success' => false,
           'message' => 'No valid items found in cart for checkout.'
@@ -105,7 +171,10 @@ class CheckoutController extends Controller
       // Check if all selected items are approved
       $unapprovedItems = $cartItems->where('status', '!=', 'Approved');
       if ($unapprovedItems->isNotEmpty()) {
-        Log::warning('Unapproved items detected in checkout', ['unapproved_items' => $unapprovedItems->pluck('product_id')->toArray()]);
+        Log::warning('Unapproved items detected in checkout', [
+          'user_id' => $user->id,
+          'unapproved_items' => $unapprovedItems->pluck('product_id')->toArray()
+        ]);
         return response()->json([
           'success' => false,
           'message' => 'Some items are not approved by the Project Manager.'
@@ -116,7 +185,11 @@ class CheckoutController extends Controller
       $vendorIds = $cartItems->pluck('product.vendor_id')->unique()->toArray();
 
       if (count($suppliers) > 1 || count($vendorIds) > 1) {
-        Log::warning('Multiple vendors detected in checkout', ['suppliers' => $suppliers, 'vendor_ids' => $vendorIds]);
+        Log::warning('Multiple vendors detected in checkout', [
+          'user_id' => $user->id,
+          'suppliers' => $suppliers,
+          'vendor_ids' => $vendorIds
+        ]);
         return response()->json([
           'success' => false,
           'message' => 'Checkout can only include products from one vendor.'
@@ -124,7 +197,10 @@ class CheckoutController extends Controller
       }
 
       if (empty($vendorIds[0]) || !User::where('id', $vendorIds[0])->where('role', 'vendor')->exists()) {
-        Log::error('Invalid or missing vendor_id', ['vendor_id' => $vendorIds[0] ?? 'null']);
+        Log::error('Invalid or missing vendor_id', [
+          'user_id' => $user->id,
+          'vendor_id' => $vendorIds[0] ?? 'null'
+        ]);
         return response()->json([
           'success' => false,
           'message' => 'Invalid vendor for selected products.'
@@ -160,16 +236,24 @@ class CheckoutController extends Controller
         ->whereIn('product_id', $selectedIds)
         ->delete();
 
-      Log::info('Checkout Completed Successfully', ['order_id' => $order->id, 'vendor_id' => $vendorIds[0]]);
+      Log::info('Checkout Completed Successfully', [
+        'order_id' => $order->id,
+        'user_id' => $user->id,
+        'vendor_id' => $vendorIds[0]
+      ]);
 
       return response()->json([
         'success' => true,
         'message' => 'Checkout completed successfully! E-Billing has been generated.',
         'order_id' => $order->id,
         'redirect' => route('procurement.dashboardproc'),
-      ]);
+      ], 200);
     } catch (\Exception $e) {
-      Log::error('Checkout Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+      Log::error('Checkout Error: ' . $e->getMessage(), [
+        'user_id' => Auth::id() ?? 'guest',
+        'selected_ids' => $selectedIds ?? [],
+        'trace' => $e->getTraceAsString()
+      ]);
       return response()->json([
         'success' => false,
         'message' => 'Failed to complete checkout: ' . $e->getMessage()
@@ -188,6 +272,9 @@ class CheckoutController extends Controller
       'city' => 'required|string|max:255',
       'state' => 'nullable|string|max:255',
       'selected_ids' => 'required|array',
+    ], [
+      'selected_ids.required' => 'At least one item must be selected for checkout.',
+      'selected_ids.array' => 'Selected items must be provided as an array.',
     ]);
   }
 
@@ -227,7 +314,7 @@ class CheckoutController extends Controller
     return $cartItems->map(function ($cartItem) use ($order, $userId) {
       $acceptedBid = Bid::where('product_id', $cartItem->product_id)
         ->where('user_id', $userId)
-        ->where('status', 'Approved')
+        ->where('status', 'Accepted')
         ->latest()
         ->first();
 
@@ -266,7 +353,7 @@ class CheckoutController extends Controller
     $itemsData = $cartItems->map(function ($item) use ($userId) {
       $acceptedBid = Bid::where('product_id', $item->product_id)
         ->where('user_id', $userId)
-        ->where('status', 'Approved')
+        ->where('status', 'Accepted')
         ->latest()
         ->first();
       $price = $acceptedBid ? $acceptedBid->bid_price : $item->product->price;
@@ -295,7 +382,7 @@ class CheckoutController extends Controller
     $itemsData = $cartItems->map(function ($item) use ($vendorId) {
       $acceptedBid = Bid::where('product_id', $item->product_id)
         ->where('vendor_id', $vendorId)
-        ->where('status', 'Approved')
+        ->where('status', 'Accepted')
         ->latest()
         ->first();
       $price = $acceptedBid ? $acceptedBid->bid_price : $item->product->price;
@@ -353,7 +440,10 @@ class CheckoutController extends Controller
 
       return $filename;
     } catch (\Exception $e) {
-      Log::error('E-Billing PDF Generation Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+      Log::error('E-Billing PDF Generation Error: ' . $e->getMessage(), [
+        'user_id' => $user->id,
+        'trace' => $e->getTraceAsString()
+      ]);
       throw $e;
     }
   }
@@ -375,10 +465,21 @@ class CheckoutController extends Controller
   {
     try {
       $user = Auth::user();
+      if (!$user) {
+        return response()->json([
+          'success' => false,
+          'message' => 'Unauthenticated. Please log in.'
+        ], 401);
+      }
+
       $orderId = $request->input('order_id');
       $order = Order::findOrFail($orderId);
 
       if ($order->user_id !== $user->id) {
+        Log::warning('Unauthorized access to order', [
+          'user_id' => $user->id,
+          'order_id' => $orderId
+        ]);
         return response()->json([
           'success' => false,
           'message' => 'Unauthorized access to order.'
@@ -389,7 +490,7 @@ class CheckoutController extends Controller
       $checkoutItems = $orderItems->map(function ($item) use ($user) {
         $acceptedBid = Bid::where('product_id', $item->product_id)
           ->where('user_id', $user->id)
-          ->where('status', 'Approved')
+          ->where('status', 'Accepted')
           ->latest()
           ->first();
 
@@ -414,9 +515,23 @@ class CheckoutController extends Controller
         'success' => true,
         'message' => 'E-Billing generated and sent to notifications!',
         'pdf_path' => Storage::url($pdfPath),
+      ], 200);
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+      Log::error('E-Billing Error - Order not found: ' . $e->getMessage(), [
+        'user_id' => Auth::id() ?? 'guest',
+        'order_id' => $request->input('order_id'),
+        'trace' => $e->getTraceAsString()
       ]);
+      return response()->json([
+        'success' => false,
+        'message' => 'Order not found.'
+      ], 404);
     } catch (\Exception $e) {
-      Log::error('E-Billing Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+      Log::error('E-Billing Error: ' . $e->getMessage(), [
+        'user_id' => Auth::id() ?? 'guest',
+        'order_id' => $request->input('order_id'),
+        'trace' => $e->getTraceAsString()
+      ]);
       return response()->json([
         'success' => false,
         'message' => 'Failed to generate E-Billing: ' . $e->getMessage()
@@ -426,28 +541,45 @@ class CheckoutController extends Controller
 
   public function viewEBilling($notificationId)
   {
-    $user = Auth::user();
+    try {
+      $user = Auth::user();
+      if (!$user) {
+        return redirect()->route('login.form')->withErrors(['login' => 'Please log in to view E-Billing.']);
+      }
 
-    $notification = Notification::where('id', $notificationId)
-      ->where('user_id', $user->id)
-      ->where('type', 'e-billing')
-      ->firstOrFail();
+      $notification = Notification::where('id', $notificationId)
+        ->where('user_id', $user->id)
+        ->where('type', 'e-billing')
+        ->firstOrFail();
 
-    $data = json_decode($notification->data, true);
-    $pdfPath = $data['pdf_path'] ?? null;
-    $orderId = $data['order_id'] ?? null;
+      $data = json_decode($notification->data, true);
+      $pdfPath = $data['pdf_path'] ?? null;
+      $orderId = $data['order_id'] ?? null;
 
-    if (!$pdfPath || !Storage::disk('public')->exists($pdfPath)) {
-      abort(404, 'E-Billing PDF not found.');
+      if (!$pdfPath || !Storage::disk('public')->exists($pdfPath)) {
+        Log::error('E-Billing PDF not found', [
+          'user_id' => $user->id,
+          'notification_id' => $notificationId,
+          'pdf_path' => $pdfPath
+        ]);
+        abort(404, 'E-Billing PDF not found.');
+      }
+
+      $order = Order::findOrFail($orderId);
+      $orderItems = OrderItem::where('order_id', $orderId)->get();
+
+      return view('procurement.ebilling', [
+        'pdfUrl' => Storage::url($pdfPath),
+        'order' => $order,
+        'orderItems' => $orderItems,
+      ]);
+    } catch (\Exception $e) {
+      Log::error('View E-Billing Error: ' . $e->getMessage(), [
+        'user_id' => Auth::id() ?? 'guest',
+        'notification_id' => $notificationId,
+        'trace' => $e->getTraceAsString()
+      ]);
+      return redirect()->route('login.form')->withErrors(['error' => 'Failed to view E-Billing: ' . $e->getMessage()]);
     }
-
-    $order = Order::findOrFail($orderId);
-    $orderItems = OrderItem::where('order_id', $orderId)->get();
-
-    return view('procurement.ebilling', [
-      'pdfUrl' => Storage::url($pdfPath),
-      'order' => $order,
-      'orderItems' => $orderItems,
-    ]);
   }
 }

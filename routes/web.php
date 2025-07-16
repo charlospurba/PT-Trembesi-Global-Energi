@@ -110,8 +110,8 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     // Checkout Routes
     Route::match(['get', 'post'], '/procurement/checkout', [CheckoutController::class, 'checkout'])->name('procurement.checkout');
     Route::post('/procurement/checkout/submit', [CheckoutController::class, 'submitCheckout'])->name('procurement.checkout.submit');
-    Route::get('/e-billing/view/{notification}', [CheckoutController::class, 'viewEBilling'])->name('ebilling.view');
     Route::post('/checkout/e-billing', [CheckoutController::class, 'generateEBilling'])->name('checkout.e-billing');
+    Route::get('/e-billing/view/{notificationId}', [CheckoutController::class, 'viewEBilling'])->name('ebilling.view');
 
     // Notification Routes
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');

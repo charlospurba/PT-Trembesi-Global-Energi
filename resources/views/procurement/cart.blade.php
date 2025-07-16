@@ -46,7 +46,7 @@
                                         ->latest()
                                         ->take(3)
                                         ->get();
-                                    $acceptedBid = $bids->where('status', 'Approved')->first();
+                                    $acceptedBid = $bids->where('status', 'Accepted')->first();
                                 @endphp
                                 <div class="p-4 flex items-center space-x-4" data-item-id="{{ $item['id'] }}">
                                     <input type="checkbox" class="item-checkbox" data-id="{{ $item['id'] }}"
@@ -71,7 +71,7 @@
                                         <div class="flex gap-2 mt-2">
                                             @foreach ($bids as $bid)
                                                 <span
-                                                    class="px-2 py-0.5 rounded-full text-xs {{ $bid->status === 'Approved' ? 'bg-green-100 text-green-700' : ($bid->status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700') }}">
+                                                    class="px-2 py-0.5 rounded-full text-xs {{ $bid->status === 'Accepted' ? 'bg-green-100 text-green-700' : ($bid->status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700') }}">
                                                     {{ $bid->status }}
                                                 </span>
                                             @endforeach
@@ -187,7 +187,8 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify({
                         quantity: qty
@@ -196,11 +197,17 @@
                 const data = await response.json();
                 if (data.success) {
                     input.value = qty;
+                    // Reset status to Pending if quantity changes
+                    const checkbox = document.querySelector(`.item-checkbox[data-id="${id}"]`);
+                    if (checkbox.getAttribute('data-status') === 'Approved') {
+                        checkbox.setAttribute('data-status', 'Pending');
+                        await resetCartItemStatus(id);
+                    }
                     updateTotals();
                     Swal.fire({
                         icon: 'success',
                         title: 'Updated',
-                        text: 'Quantity updated successfully',
+                        text: 'Quantity updated successfully, awaiting re-approval.',
                         showConfirmButton: false,
                         timer: 1500
                     });
@@ -213,6 +220,7 @@
                     });
                 }
             } catch (error) {
+                console.error('Update Quantity Error:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -222,6 +230,28 @@
             } finally {
                 buttons.forEach(btn => btn.classList.remove('opacity-50', 'cursor-not-allowed'));
                 input.classList.remove('opacity-50');
+            }
+        }
+
+        async function resetCartItemStatus(id) {
+            try {
+                const response = await fetch(`/cart/update/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: 'Pending'
+                    })
+                });
+                const data = await response.json();
+                if (!data.success) {
+                    console.error('Failed to reset cart item status:', data.message);
+                }
+            } catch (error) {
+                console.error('Error resetting cart item status:', error);
             }
         }
 
@@ -241,7 +271,8 @@
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
                             }
                         });
                         const data = await response.json();
@@ -264,6 +295,7 @@
                             });
                         }
                     } catch (error) {
+                        console.error('Remove Item Error:', error);
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -283,8 +315,11 @@
                 const qty = parseInt(row.querySelector('input[id^="qty-"]').value) || 0;
                 const priceElement = row.querySelector('[data-price]');
                 const price = parseFloat(priceElement.getAttribute('data-price')) || 0;
-                total += qty * price;
-                count++;
+                const status = cb.getAttribute('data-status');
+                if (status === 'Approved') {
+                    total += qty * price;
+                    count++;
+                }
             });
             document.getElementById('total-price').textContent = `Rp ${total.toLocaleString('id-ID')}`;
             document.getElementById('item-count').textContent = count;
@@ -322,7 +357,8 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify({
                         selected_ids: Array.from(checkedItems).map(cb => cb.getAttribute('data-id'))
@@ -331,6 +367,7 @@
 
                 if (!response.ok) {
                     const text = await response.text();
+                    console.error('Request Purchase Response:', text);
                     throw new Error(`Server returned status ${response.status}: ${text}`);
                 }
 
@@ -356,12 +393,23 @@
                 }
             } catch (error) {
                 console.error('Request Purchase Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to request purchase: ' + error.message,
-                    confirmButtonColor: '#dc2626'
-                });
+                if (error.message.includes('Unauthenticated')) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Authentication Error',
+                        text: 'Your session has expired. Please log in again.',
+                        confirmButtonColor: '#dc2626'
+                    }).then(() => {
+                        window.location.href = '{{ route('login.form') }}';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to request purchase: ' + error.message,
+                        confirmButtonColor: '#dc2626'
+                    });
+                }
             } finally {
                 requestButton.classList.remove('opacity-50', 'cursor-not-allowed');
                 requestButton.disabled = false;
@@ -369,70 +417,84 @@
         }
 
         async function checkout() {
-            const checkedItems = document.querySelectorAll('.item-checkbox:checked');
+            const checkedItems = document.querySelectorAll('.item-checkbox:checked[data-status="Approved"]');
             if (checkedItems.length === 0) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'No Items Selected',
-                    text: 'Please select at least one item to checkout',
+                    title: 'No Approved Items Selected',
+                    text: 'Please select at least one approved item to checkout',
                     confirmButtonColor: '#dc2626'
                 });
                 return;
             }
+
+            const checkoutButton = document.getElementById('checkout-btn');
+            checkoutButton.classList.add('opacity-50', 'cursor-not-allowed');
+            checkoutButton.disabled = true;
 
             try {
                 const response = await fetch('/procurement/checkout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify({
                         selected_ids: Array.from(checkedItems).map(cb => cb.getAttribute('data-id'))
                     })
                 });
 
-                if (!response.ok) {
-                    const text = await response.text();
-                    throw new Error(`Server returned status ${response.status}: ${text}`);
-                }
-
                 const data = await response.json();
                 if (data.success) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Checkout Successful',
-                        text: 'Your order has been placed',
-                        confirmButtonColor: '#dc2626'
+                        title: 'Proceeding to Checkout',
+                        text: 'Redirecting to checkout page...',
+                        confirmButtonColor: '#dc2626',
+                        showConfirmButton: false,
+                        timer: 1500
                     }).then(() => {
-                        window.location.href = data.redirect || '{{ route('procurement.checkout') }}';
+                        window.location.href = '/procurement/checkout';
                     });
                 } else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: data.message || 'Failed to checkout',
+                        text: data.message || 'Failed to proceed to checkout',
                         confirmButtonColor: '#dc2626'
                     });
                 }
             } catch (error) {
                 console.error('Checkout Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to checkout: ' + error.message,
-                    confirmButtonColor: '#dc2626'
-                });
+                if (error.message.includes('Unauthenticated')) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Authentication Error',
+                        text: 'Your session has expired. Please log in again.',
+                        confirmButtonColor: '#dc2626'
+                    }).then(() => {
+                        window.location.href = '{{ route('login.form') }}';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to proceed to checkout: ' + error.message,
+                        confirmButtonColor: '#dc2626'
+                    });
+                }
+            } finally {
+                checkoutButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                checkoutButton.disabled = false;
             }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('select-all').addEventListener('change', function() {
                 const checked = this.checked;
-                document.querySelectorAll('.item-checkbox').forEach(cb => {
-                    if (cb.getAttribute('data-status') === 'Approved') {
-                        cb.checked = checked;
-                    }
+                document.querySelectorAll('.item-checkbox[data-status="Approved"]').forEach(cb => {
+                    cb.checked = checked;
                 });
                 updateTotals();
             });
@@ -445,11 +507,10 @@
                 cb.addEventListener('change', function() {
                     const supplier = this.getAttribute('data-supplier');
                     const checked = this.checked;
-                    document.querySelectorAll(`.item-checkbox[data-supplier="${supplier}"]`)
+                    document.querySelectorAll(
+                            `.item-checkbox[data-supplier="${supplier}"][data-status="Approved"]`)
                         .forEach(itemCb => {
-                            if (itemCb.getAttribute('data-status') === 'Approved') {
-                                itemCb.checked = checked;
-                            }
+                            itemCb.checked = checked;
                         });
                     updateTotals();
                 });
@@ -466,7 +527,8 @@
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .content
+                                .content,
+                            'Accept': 'application/json'
                         },
                         body: JSON.stringify({
                             bid_price: price
@@ -475,6 +537,7 @@
 
                     if (!response.ok) {
                         const text = await response.text();
+                        console.error('Bid Submission Response:', text);
                         throw new Error(`Server returned status ${response.status}: ${text}`);
                     }
 
@@ -499,12 +562,23 @@
                     }
                 } catch (error) {
                     console.error('Bid Submission Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Failed to submit bid: ' + error.message,
-                        confirmButtonColor: '#dc2626'
-                    });
+                    if (error.message.includes('Unauthenticated')) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Authentication Error',
+                            text: 'Your session has expired. Please log in again.',
+                            confirmButtonColor: '#dc2626'
+                        }).then(() => {
+                            window.location.href = '{{ route('login.form') }}';
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to submit bid: ' + error.message,
+                            confirmButtonColor: '#dc2626'
+                        });
+                    }
                 }
             });
 
