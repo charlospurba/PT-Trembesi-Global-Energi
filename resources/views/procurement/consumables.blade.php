@@ -77,14 +77,10 @@
                         </svg>
                         <span class="text-sm font-medium text-gray-700">Urutkan:</span>
                     </div>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full hover:bg-gray-200 transition">
-                            Harga Terendah
-                        </span>
-                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full hover:bg-gray-200 transition">
-                            Harga Tertinggi
-                        </span>
-                    </div>
+                    <select class="bg-gray-100 text-gray-600 text-xs font-medium rounded-full cursor-pointer hover:bg-gray-200 transition-colors px-3 py-1">
+                        <option value="lowest">Harga Terendah</option>
+                        <option value="highest">Harga Tertinggi</option>
+                    </select>
                 </div>
             </div>
 
