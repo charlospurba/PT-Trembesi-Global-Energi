@@ -31,7 +31,7 @@
             };
         @endphp
 
-        <form id="searchForm" action="{{ $searchRoute }}" method="GET" class="flex-grow max-w-xl mx-4">
+        <form id="searchForm" action="{{ url()->current() }}" method="GET" class="flex-grow max-w-xl mx-4">
             <input type="hidden" name="category" value="{{ request()->segment(1) }}"> {{-- auto detect category --}}
             <div class="flex items-center h-11 border border-white rounded-full overflow-hidden">
                 <div class="px-4 text-white">

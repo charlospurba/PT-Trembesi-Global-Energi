@@ -79,34 +79,89 @@ class ProductController extends Controller
     return view('vendor.myproducts', compact('products'));
   }
 
-  public function materialProducts()
+  public function materialProducts(Request $request)
   {
-    $products = Product::where('category', 'material')->get();
-    return view('procurement.material', compact('products'));
+    $query = strtolower($request->input('query'));
+
+    $products = Product::where('category', 'material')
+      ->when($query, function ($q) use ($query) {
+        $q->where(function ($inner) use ($query) {
+          $inner->where(DB::raw('LOWER(name)'), 'like', "%$query%")
+            ->orWhere(DB::raw('LOWER(supplier)'), 'like', "%$query%")
+            ->orWhere(DB::raw('LOWER(address)'), 'like', "%$query%");
+        });
+      })
+      ->get();
+
+    return view('procurement.material', compact('products', 'query'));
   }
 
-  public function equipmentProducts()
+  public function equipmentProducts(Request $request)
   {
-    $products = Product::where('category', 'equipment')->get();
-    return view('procurement.equipment', compact('products'));
+    $query = strtolower($request->input('query'));
+
+    $products = Product::where('category', 'equipment')
+      ->when($query, function ($q) use ($query) {
+        $q->where(function ($inner) use ($query) {
+          $inner->where(DB::raw('LOWER(name)'), 'like', "%$query%")
+            ->orWhere(DB::raw('LOWER(supplier)'), 'like', "%$query%")
+            ->orWhere(DB::raw('LOWER(address)'), 'like', "%$query%");
+        });
+      })
+      ->get();
+
+    return view('procurement.equipment', compact('products', 'query'));
   }
 
-  public function consumablesProducts()
+  public function consumablesProducts(Request $request)
   {
-    $products = Product::where('category', 'consumables')->get();
-    return view('procurement.consumables', compact('products'));
+    $query = strtolower($request->input('query'));
+
+    $products = Product::where('category', 'consumables')
+      ->when($query, function ($q) use ($query) {
+        $q->where(function ($inner) use ($query) {
+          $inner->where(DB::raw('LOWER(name)'), 'like', "%$query%")
+            ->orWhere(DB::raw('LOWER(supplier)'), 'like', "%$query%")
+            ->orWhere(DB::raw('LOWER(address)'), 'like', "%$query%");
+        });
+      })
+      ->get();
+
+    return view('procurement.consumables', compact('products', 'query'));
   }
 
-  public function electricalProducts()
+  public function electricalProducts(Request $request)
   {
-    $products = Product::where('category', 'electrical tools')->get();
-    return view('procurement.electrical', compact('products'));
+    $query = strtolower($request->input('query'));
+
+    $products = Product::where('category', 'electrical')
+      ->when($query, function ($q) use ($query) {
+        $q->where(function ($inner) use ($query) {
+          $inner->where(DB::raw('LOWER(name)'), 'like', "%$query%")
+            ->orWhere(DB::raw('LOWER(supplier)'), 'like', "%$query%")
+            ->orWhere(DB::raw('LOWER(address)'), 'like', "%$query%");
+        });
+      })
+      ->get();
+
+    return view('procurement.electrical', compact('products', 'query'));
   }
 
-  public function personalProducts()
+  public function personalProducts(Request $request)
   {
-    $products = Product::where('category', 'personal protective equipment')->get();
-    return view('procurement.personal', compact('products'));
+    $query = strtolower($request->input('query'));
+
+    $products = Product::where('category', 'personal')
+      ->when($query, function ($q) use ($query) {
+        $q->where(function ($inner) use ($query) {
+          $inner->where(DB::raw('LOWER(name)'), 'like', "%$query%")
+            ->orWhere(DB::raw('LOWER(supplier)'), 'like', "%$query%")
+            ->orWhere(DB::raw('LOWER(address)'), 'like', "%$query%");
+        });
+      })
+      ->get();
+
+    return view('procurement.personal', compact('products', 'query'));
   }
 
   public function dashboard(Request $request)
