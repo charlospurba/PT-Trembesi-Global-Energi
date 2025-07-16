@@ -47,54 +47,137 @@
                                         ->take(3)
                                         ->get();
                                     $acceptedBid = $bids->where('status', 'Accepted')->first();
+                                    $purchaseRequests = App\Models\PurchaseRequest::where('product_id', $item['id'])
+                                        ->where('user_id', Auth::id())
+                                        ->latest()
+                                        ->get();
                                 @endphp
-                                <div class="p-4 flex items-center space-x-4" data-item-id="{{ $item['id'] }}">
-                                    <input type="checkbox" class="item-checkbox" data-id="{{ $item['id'] }}"
-                                        data-supplier="{{ $item['supplier'] }}" data-status="{{ $item['status'] }}">
-                                    <img src="{{ $item['image'] ? asset('storage/' . $item['image']) : '/images/pipa-besi.png' }}"
-                                        class="w-16 h-16 rounded object-cover border border-red-200">
-                                    <div class="flex-1">
-                                        <h3 class="font-semibold text-red-700">{{ $item['name'] }}</h3>
-                                        <div class="flex space-x-2 items-center mt-1">
-                                            @if ($acceptedBid)
-                                                <span class="line-through text-gray-400 text-sm">Rp
-                                                    {{ number_format($item['price'], 0, ',', '.') }}</span>
-                                                <span class="font-bold text-red-600 price-value"
-                                                    data-price="{{ $acceptedBid->bid_price }}">Rp
-                                                    {{ number_format($acceptedBid->bid_price, 0, ',', '.') }}</span>
-                                            @else
-                                                <span class="font-bold text-red-600 price-value"
-                                                    data-price="{{ $item['price'] }}">Rp
-                                                    {{ number_format($item['price'], 0, ',', '.') }}</span>
-                                            @endif
+                                <div class="p-4" data-item-id="{{ $item['id'] }}">
+                                    <div class="flex items-center space-x-4">
+                                        <input type="checkbox" class="item-checkbox" data-id="{{ $item['id'] }}"
+                                            data-supplier="{{ $item['supplier'] }}" data-status="{{ $item['status'] }}">
+                                        <img src="{{ $item['image'] ? asset('storage/' . $item['image']) : '/images/pipa-besi.png' }}"
+                                            class="w-16 h-16 rounded object-cover border border-red-200">
+                                        <div class="flex-1">
+                                            <h3 class="font-semibold text-red-700">{{ $item['name'] }}</h3>
+                                            <div class="flex space-x-2 items-center mt-1">
+                                                @if ($acceptedBid)
+                                                    <span class="line-through text-gray-400 text-sm">Rp
+                                                        {{ number_format($item['price'], 0, ',', '.') }}</span>
+                                                    <span class="font-bold text-red-600 price-value"
+                                                        data-price="{{ $acceptedBid->bid_price }}">Rp
+                                                        {{ number_format($acceptedBid->bid_price, 0, ',', '.') }}</span>
+                                                @else
+                                                    <span class="font-bold text-red-600 price-value"
+                                                        data-price="{{ $item['price'] }}">Rp
+                                                        {{ number_format($item['price'], 0, ',', '.') }}</span>
+                                                @endif
+                                            </div>
+                                            <div class="flex gap-2 mt-2">
+                                                @foreach ($bids as $bid)
+                                                    <span
+                                                        class="px-2 py-0.5 rounded-full text-xs {{ $bid->status === 'Accepted' ? 'bg-green-100 text-green-700' : ($bid->status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700') }}">
+                                                        Bid: {{ $bid->status }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                            <p class="text-gray-500 text-sm mt-1">Cart Status: {{ $item['status'] }}</p>
+                                            <p class="text-gray-500 text-sm mt-1">Purchase Request:
+                                                {{ $purchaseRequests->isNotEmpty() ? $purchaseRequests->first()->status : 'None' }}
+                                            </p>
                                         </div>
-                                        <div class="flex gap-2 mt-2">
-                                            @foreach ($bids as $bid)
-                                                <span
-                                                    class="px-2 py-0.5 rounded-full text-xs {{ $bid->status === 'Accepted' ? 'bg-green-100 text-green-700' : ($bid->status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700') }}">
-                                                    {{ $bid->status }}
-                                                </span>
-                                            @endforeach
+                                        <div class="flex items-center space-x-2">
+                                            <button type="button" onclick="updateQuantity({{ $item['id'] }}, -1)"
+                                                class="bg-red-100 px-2 py-1 rounded hover:bg-red-200 text-red-600 transition-all duration-200">-</button>
+                                            <input type="text" id="qty-{{ $item['id'] }}"
+                                                class="w-12 text-center border rounded focus:outline-none focus:ring-2 focus:ring-red-400"
+                                                value="{{ $item['quantity'] }}"
+                                                onchange="updateQuantity({{ $item['id'] }}, this.value)">
+                                            <button type="button" onclick="updateQuantity({{ $item['id'] }}, 1)"
+                                                class="bg-red-100 px-2 py-1 rounded hover:bg-red-200 text-red-600 transition-all duration-200">+</button>
                                         </div>
-                                        <p class="text-gray-500 text-sm mt-1">Status: {{ $item['status'] }}</p>
+                                        <button onclick="removeItem({{ $item['id'] }})"
+                                            class="text-red-500 hover:text-red-700 ml-4 transition-all duration-200">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                        <button onclick="showBidModal({{ $item['id'] }})"
+                                            class="ml-3 px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-all duration-200"
+                                            {{ $bids->count() >= 3 ? 'disabled' : '' }}>BID</button>
                                     </div>
-                                    <div class="flex items-center space-x-2">
-                                        <button type="button" onclick="updateQuantity({{ $item['id'] }}, -1)"
-                                            class="bg-red-100 px-2 py-1 rounded hover:bg-red-200 text-red-600 transition-all duration-200">-</button>
-                                        <input type="text" id="qty-{{ $item['id'] }}"
-                                            class="w-12 text-center border rounded focus:outline-none focus:ring-2 focus:ring-red-400"
-                                            value="{{ $item['quantity'] }}"
-                                            onchange="updateQuantity({{ $item['id'] }}, this.value)">
-                                        <button type="button" onclick="updateQuantity({{ $item['id'] }}, 1)"
-                                            class="bg-red-100 px-2 py-1 rounded hover:bg-red-200 text-red-600 transition-all duration-200">+</button>
+                                    <!-- History Table -->
+                                    <div class="mt-4">
+                                        <h4 class="text-sm font-semibold text-red-600 mb-2">History</h4>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <!-- Bid History -->
+                                            <div>
+                                                <h5 class="text-sm font-semibold text-red-600 mb-1">Bid History</h5>
+                                                @if ($bids->isEmpty())
+                                                    <p class="text-gray-500 text-sm">No bids submitted for this item.</p>
+                                                @else
+                                                    <div class="border border-gray-200 rounded-lg">
+                                                        <table class="w-full text-sm text-gray-600">
+                                                            <thead>
+                                                                <tr class="bg-gray-50">
+                                                                    <th class="p-2 text-left">Price</th>
+                                                                    <th class="p-2 text-left">Status</th>
+                                                                    <th class="p-2 text-left">Submitted</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach ($bids as $bid)
+                                                                    <tr class="border-t">
+                                                                        <td class="p-2">Rp
+                                                                            {{ number_format($bid->bid_price, 0, ',', '.') }}
+                                                                        </td>
+                                                                        <td class="p-2">{{ $bid->status }}</td>
+                                                                        <td class="p-2">
+                                                                            {{ $bid->created_at->format('d M Y H:i') }}
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <!-- Purchase Request History -->
+                                            <div>
+                                                <h5 class="text-sm font-semibold text-red-600 mb-1">Purchase Request History
+                                                </h5>
+                                                @if ($purchaseRequests->isEmpty())
+                                                    <p class="text-gray-500 text-sm">No purchase requests submitted for this
+                                                        item.</p>
+                                                @else
+                                                    <div class="border border-gray-200 rounded-lg">
+                                                        <table class="w-full text-sm text-gray-600">
+                                                            <thead>
+                                                                <tr class="bg-gray-50">
+                                                                    <th class="p-2 text-left">Quantity</th>
+                                                                    <th class="p-2 text-left">Price</th>
+                                                                    <th class="p-2 text-left">Status</th>
+                                                                    <th class="p-2 text-left">Submitted</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach ($purchaseRequests as $request)
+                                                                    <tr class="border-t">
+                                                                        <td class="p-2">{{ $request->quantity }}</td>
+                                                                        <td class="p-2">Rp
+                                                                            {{ number_format($request->price, 0, ',', '.') }}
+                                                                        </td>
+                                                                        <td class="p-2">{{ $request->status }}</td>
+                                                                        <td class="p-2">
+                                                                            {{ $request->submitted_at->format('d M Y H:i') }}
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </div>
-                                    <button onclick="removeItem({{ $item['id'] }})"
-                                        class="text-red-500 hover:text-red-700 ml-4 transition-all duration-200">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                    <button onclick="showBidModal({{ $item['id'] }})"
-                                        class="ml-3 px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-all duration-200"
-                                        {{ $bids->count() >= 3 ? 'disabled' : '' }}>BID</button>
                                 </div>
                             @endforeach
                         </div>
@@ -491,31 +574,86 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('select-all').addEventListener('change', function() {
+            const selectAllCheckbox = document.getElementById('select-all');
+            const supplierCheckboxes = document.querySelectorAll('.select-supplier');
+            const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+
+            // Debugging: Log all item statuses
+            console.log('Item Checkboxes:', itemCheckboxes.length);
+            itemCheckboxes.forEach(cb => {
+                console.log(
+                    `Item ID: ${cb.getAttribute('data-id')}, Status: ${cb.getAttribute('data-status')}`);
+            });
+
+            // Update Select All and Supplier checkboxes based on item selections
+            function updateParentCheckboxes() {
+                const allItems = document.querySelectorAll('.item-checkbox');
+                const checkedItems = document.querySelectorAll('.item-checkbox:checked');
+                selectAllCheckbox.checked = allItems.length > 0 && checkedItems.length === allItems.length;
+
+                supplierCheckboxes.forEach(supplierCb => {
+                    const supplier = supplierCb.getAttribute('data-supplier');
+                    const supplierItems = document.querySelectorAll(
+                        `.item-checkbox[data-supplier="${supplier}"]`);
+                    const checkedSupplierItems = document.querySelectorAll(
+                        `.item-checkbox[data-supplier="${supplier}"]:checked`);
+                    supplierCb.checked = supplierItems.length > 0 && checkedSupplierItems.length ===
+                        supplierItems.length;
+                });
+                console.log('Updated parent checkboxes:', {
+                    selectAll: selectAllCheckbox.checked
+                });
+            }
+
+            // Select All checkbox logic
+            selectAllCheckbox.addEventListener('change', function() {
                 const checked = this.checked;
-                document.querySelectorAll('.item-checkbox[data-status="Approved"]').forEach(cb => {
+                console.log('Select All clicked, checked:', checked);
+                itemCheckboxes.forEach(cb => {
                     cb.checked = checked;
+                    console.log(`Item ID: ${cb.getAttribute('data-id')} checked: ${cb.checked}`);
+                });
+                supplierCheckboxes.forEach(cb => {
+                    const supplier = cb.getAttribute('data-supplier');
+                    const supplierItems = document.querySelectorAll(
+                        `.item-checkbox[data-supplier="${supplier}"]`);
+                    if (supplierItems.length > 0) {
+                        cb.checked = checked;
+                    }
                 });
                 updateTotals();
             });
 
-            document.querySelectorAll('.item-checkbox').forEach(cb => {
-                cb.addEventListener('change', updateTotals);
-            });
-
-            document.querySelectorAll('.select-supplier').forEach(cb => {
+            // Supplier checkbox logic
+            supplierCheckboxes.forEach(cb => {
                 cb.addEventListener('change', function() {
                     const supplier = this.getAttribute('data-supplier');
                     const checked = this.checked;
-                    document.querySelectorAll(
-                            `.item-checkbox[data-supplier="${supplier}"][data-status="Approved"]`)
+                    console.log(`Supplier ${supplier} clicked, checked:`, checked);
+                    document.querySelectorAll(`.item-checkbox[data-supplier="${supplier}"]`)
                         .forEach(itemCb => {
                             itemCb.checked = checked;
+                            console.log(
+                                `Item ID: ${itemCb.getAttribute('data-id')} checked: ${itemCb.checked}`
+                                );
                         });
+                    updateParentCheckboxes();
                     updateTotals();
                 });
             });
 
+            // Item checkbox logic
+            itemCheckboxes.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    console.log(
+                        `Item ID: ${cb.getAttribute('data-id')} changed, checked: ${cb.checked}`
+                        );
+                    updateParentCheckboxes();
+                    updateTotals();
+                });
+            });
+
+            // Bid form submission
             document.getElementById('bidForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const id = document.getElementById('bidProductId').value;
@@ -583,6 +721,7 @@
             });
 
             updateTotals();
+            updateParentCheckboxes();
         });
     </script>
 @endsection
