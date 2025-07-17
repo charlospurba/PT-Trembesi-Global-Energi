@@ -197,12 +197,12 @@
                                 </select>
                             </div>
 
-                            <!-- Project Code -->
+                            <!-- Procurement Code -->
                             <div class="lg:col-span-2 group transition-all duration-200 hover:-translate-y-1 focus-within:scale-[1.02]">
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    <i class="fas fa-code text-gray-400 mr-2"></i>Project Code
+                                    <i class="fas fa-code text-gray-400 mr-2"></i>Procurement Code
                                 </label>
-                                <input type="text" name="project_kode" value="{{ old('project_kode') }}"
+                                <input type="text" name="procurement_kode" value="{{ old('procurement_kode') }}"
                                        class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-700
                                               focus:border-blue-500 focus:ring-0 focus:shadow-lg focus:shadow-blue-500/20"
                                        placeholder="PRJ-001" />

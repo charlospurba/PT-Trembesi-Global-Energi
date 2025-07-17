@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->string('name'); // tambahkan
             $table->string('email')->unique(); // tambahkan
             $table->string('phone_number')->nullable(); // tambahkan
-            $table->string('project_kode')->nullable(); // tambahkan
+            $table->string('procurement_kode')->nullable(); // tambahkan
             $table->string('store_name')->nullable(); // tambahkan
             $table->string('npwp')->nullable(); // tambahkan
             $table->string('nib')->nullable(); // tambahkan

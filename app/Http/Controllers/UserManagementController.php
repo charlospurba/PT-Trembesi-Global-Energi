@@ -23,7 +23,7 @@ class UserManagementController extends Controller
             'phone_number' => 'nullable|string',
             'role' => 'required|in:project_manager,procurement,vendor',
             'status' => 'nullable|in:active,inactive',
-            'project_kode' => 'nullable|string',
+            'procurement_kode' => 'nullable|string',
         ]);
 
         User::create([
@@ -34,7 +34,7 @@ class UserManagementController extends Controller
             'phone_number' => $request->phone_number,
             'role' => $request->role,
             'status' => $request->status,
-            'project_kode' => $request->project_kode,
+            'procurement_kode' => $request->procurement_kode,
         ]);
 
         return redirect()->route('superadmin.dashboard')->with('success', 'User berhasil ditambahkan!');
