@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -191,7 +192,7 @@ class ProductController extends Controller
       'randomPPEs'
     );
 
-    if (auth()->check() && auth()->user()->role === 'procurement') {
+    if (Auth::check() && Auth::user()->role === 'procurement') {
       return view('procurement.dashboardproc', $data);
     }
 
@@ -205,7 +206,6 @@ class ProductController extends Controller
 
     $results = Product::query()
       ->when($category, function ($q) use ($category) {
-        // Map URL path ke nama kategori database
         $categoryMap = [
           'material' => 'material',
           'electrical' => 'electrical tools',
@@ -240,7 +240,6 @@ class ProductController extends Controller
       }
     }
 
-    // Jika tidak ada kategori, arahkan ke halaman hasil global
     return view('search-result', [
       'results' => $results,
       'query' => $query,
@@ -249,11 +248,23 @@ class ProductController extends Controller
 
   public function show($id)
   {
-    $product = Product::findOrFail($id);
-    return view('procurement.detail', compact('product'));
+    try {
+      $product = Product::findOrFail($id);
+      $soldQuantity = OrderItem::where('product_id', $id)->sum('quantity');
+
+      return view('procurement.detail', compact('product', 'soldQuantity'));
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+      Log::error('Product not found: ' . $id);
+      return redirect()->route('procurement.dashboardproc')->withErrors(['error' => 'Product not found.']);
+    } catch (\Exception $e) {
+      Log::error('Product Show Error: ' . $e->getMessage(), [
+        'product_id' => $id,
+        'trace' => $e->getTraceAsString()
+      ]);
+      return redirect()->route('procurement.dashboardproc')->withErrors(['error' => 'Failed to load product details.']);
+    }
   }
 
-  // 🔍 Search per kategori
   public function searchMaterial(Request $request)
   {
     $query = strtolower($request->input('query'));
