@@ -9,6 +9,7 @@ use App\Models\Bid;
 use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Events\OrderStatusUpdated;
 
 class OrderController extends Controller
 {
@@ -146,6 +147,11 @@ class OrderController extends Controller
                     'status' => $validated['status'],
                 ]),
             ]);
+
+            // Broadcast event if status is Completed
+            if ($validated['status'] === 'Completed') {
+                event(new OrderStatusUpdated($order, $user->id));
+            }
 
             return response()->json([
                 'success' => true,

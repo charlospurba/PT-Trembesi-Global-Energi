@@ -6,32 +6,26 @@
                     'label' => 'Dashboard',
                     'icon' => '📦',
                     'route' => '/dashboard/vendor',
-                    'desc' => 'Overview & statistik'
+                    'desc' => 'Overview & statistik',
                 ],
                 [
                     'label' => 'My Products',
                     'icon' => '🛍️',
                     'route' => '/myproducts',
-                    'desc' => 'Manage product'
+                    'desc' => 'Manage product',
                 ],
                 [
                     'label' => 'Add Products',
                     'icon' => '➕',
                     'route' => route('vendor.add_product'),
-                    'desc' => 'Add new product'
+                    'desc' => 'Add new product',
                 ],
                 [
                     'label' => 'Orders',
                     'icon' => '📋',
                     'route' => route('vendor.orders'),
-                    'desc' => 'Manage orders'
+                    'desc' => 'Manage orders',
                 ],
-                [
-                    'label' => 'Review',
-                    'icon' => '💬',
-                    'route' => '/vendor/review',  // <-- Ganti '#' dengan rute valid
-                    'desc' => "Customer's Review"
-                ]
             ];
 
             $currentPath = request()->path();
@@ -44,9 +38,9 @@
             @endphp
 
             <a href="{{ $menu['route'] }}"
-               class="group flex items-start space-x-3 p-3 rounded-lg transition-all duration-200
-               {{ $isActive 
-                   ? 'bg-red-50 border-l-4 border-red-600 text-red-700' 
+                class="group flex items-start space-x-3 p-3 rounded-lg transition-all duration-200
+               {{ $isActive
+                   ? 'bg-red-50 border-l-4 border-red-600 text-red-700'
                    : 'hover:bg-gray-50 text-gray-700 hover:text-red-600' }}">
                 <div class="flex items-center justify-center w-7 h-7 bg-red-100 text-red-600 rounded-md text-base">
                     {{ $menu['icon'] }}

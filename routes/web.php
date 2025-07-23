@@ -91,8 +91,7 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.detail');
     Route::get('/search', [ProductController::class, 'search'])->name('search.products');
 
-
-    //Searching
+    // Searching
     Route::get('/material/search', [ProductController::class, 'searchMaterial'])->name('search.material');
     Route::get('/equipment/search', [ProductController::class, 'searchEquipment'])->name('search.equipment');
     Route::get('/electrical/search', [ProductController::class, 'searchElectrical'])->name('search.electrical');
@@ -132,6 +131,7 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
 
     // Vendor Routes
     Route::get('/dashboard/vendor', [VendorHomeController::class, 'index'])->name('vendor.dashboardvendor');
+    Route::get('/vendor/sales-data', [VendorHomeController::class, 'getSalesData'])->name('vendor.sales-data');
     Route::get('/myproducts', [VendorProductController::class, 'index'])->name('vendor.myproducts');
     Route::get('/add_product', [VendorProductController::class, 'create'])->name('vendor.add_product');
     Route::post('/add_product', [VendorProductController::class, 'store'])->name('vendor.store_product');
