@@ -79,8 +79,8 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 @forelse($products as $product)
                     <a href="{{ route('product.detail', $product->id) }}" class="block group">
-                        <div
-                            class="bg-white rounded-lg shadow-sm overflow-hidden max-w-[250px] w-full transition hover:shadow-md hover:-translate-y-1 border border-gray-100">
+                        
+                            <div class="bg-white rounded-lg overflow-hidden max-w-[250px] w-full transition-all duration-300 hover:shadow-[0_4px_12px_rgba(220,38,38,0.4)] hover:-translate-y-1 border border-gray-100">
                             <!-- Image -->
                             @php
     $imagePath = 'https://via.placeholder.com/300x300?text=No+Image';
@@ -114,9 +114,10 @@
                                         <span class="text-xs text-gray-500">{{ $product->rating ?? '4.5' }}</span>
                                     </div>
                                 </div>
-                                <h3 class="text-sm font-semibold text-gray-900 line-clamp-2 group-hover:text-red-600">
-                                    {{ $product->name }}
-                                </h3>
+                                <!-- Product Name -->
+                                <h3 class="text-sm font-semibold text-red-600 line-clamp-2 leading-tight group-hover:text-red-700 transition-colors">
+    {{ $product->name }}
+</h3>
                                 <div class="flex justify-between">
                                     <span class="text-base font-bold text-red-600">IDR
                                         {{ number_format($product->price ?? 0, 0, ',', '.') }}</span>
