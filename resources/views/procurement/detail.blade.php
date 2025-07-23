@@ -310,7 +310,7 @@
                                     </div>
                                     <div class="flex flex-col p-3 bg-white rounded-lg shadow-sm border border-gray-100">
                                         <span class="text-gray-600 font-medium text-xs">Unit</span>
-                                        <span class="font-semibold text-gray-900 text-sm">{{ $product->Unit ?? '-' }}
+                                        <span class="font-semibold text-gray-900 text-sm">{{ $product->unit ?? '-' }}
                                         </span>
                                     </div>
                                     <div class="flex flex-col p-3 bg-white rounded-lg shadow-sm border border-gray-100">
@@ -321,7 +321,7 @@
                                     <div class="flex flex-col p-3 bg-white rounded-lg shadow-sm border border-gray-100">
                                         <span class="text-gray-600 font-medium text-xs">Specification</span>
                                         <span
-                                            class="font-semibold text-gray-900 text-sm">{{ $product->Specification ?? '-' }}</span>
+                                            class="font-semibold text-gray-900 text-sm">{{ $product->specification ?? '-' }}</span>
                                     </div>
                                 </div>
                             </div>
