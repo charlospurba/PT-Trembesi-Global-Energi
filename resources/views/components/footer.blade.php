@@ -56,11 +56,8 @@
                 <!-- Company Info -->
                 <div class="space-y-4">
                     <div class="flex items-center space-x-3 group">
-                        <div class="p-2 bg-gradient-to-r from-white/20 to-white/10 rounded-lg group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
-                            <i class="fas fa-tools text-white text-2xl"></i>
-                        </div>
                         <h3 class="text-2xl font-bold text-white">
-                            ProcurePro
+                            Trembesi Shop
                         </h3>
                     </div>
                     <p class="text-red-100 text-sm leading-relaxed font-light">
@@ -137,52 +134,42 @@
                 </div>
 
                 <!-- Contact Info -->
-                <div class="space-y-4">
-                    <h4 class="text-lg font-semibold text-white">Contact Us</h4>
-                    <div class="space-y-3 text-sm">
-                        <div class="flex items-start space-x-3 group">
-                            <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
-                                <i class="fas fa-map-marker-alt text-white text-xs"></i>
-                            </div>
-                            <span class="text-red-100">
-                                Jl. Industri Raya No. 123<br>Jakarta Selatan, DKI Jakarta<br>Indonesia 12345
-                            </span>
-                        </div>
-                        <div class="flex items-start space-x-3 group">
-                            <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
-                                <i class="fas fa-phone text-white text-xs"></i>
-                            </div>
-                            <span class="text-red-100">+62 21 1234 5678</span>
-                        </div>
-                        <div class="flex items-start space-x-3 group">
-                            <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
-                                <i class="fas fa-envelope text-white text-xs"></i>
-                            </div>
-                            <span class="text-red-100">info@procurepro.com</span>
-                        </div>
-                        <div class="flex items-start space-x-3 group">
-                            <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
-                                <i class="fas fa-clock text-white text-xs"></i>
-                            </div>
-                            <span class="text-red-100">Mon - Fri: 8:00 AM - 6:00 PM</span>
-                        </div>
-                    </div>
-                </div>
+<div class="space-y-4">
+    <h4 class="text-lg font-semibold text-white">Contact Us</h4>
+    <div class="space-y-3 text-sm">
+        <div class="flex items-start space-x-3 group">
+            <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
+                <i class="fas fa-map-marker-alt text-white text-xs"></i>
             </div>
-
-            <!-- Bottom Bar -->
-            <div class="border-t border-red-500/30 pt-8">
-                <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-                    <p class="text-red-200 text-sm">
-                        © 2024 ProcurePro. All rights reserved.
-                    </p>
-                    <div class="flex space-x-6 text-sm">
-                        <a href="#" class="text-red-200 hover:text-white transition-colors">Privacy Policy</a>
-                        <a href="#" class="text-red-200 hover:text-white transition-colors">Terms of Service</a>
-                        <a href="#" class="text-red-200 hover:text-white transition-colors">Sitemap</a>
-                    </div>
-                </div>
+            <span class="text-red-100">
+                DWB Tower Building, 3rd Floor Zone B 01;<br>
+                Jl. Kebagusan 1 Kav.6 Pasar Minggu - South Jakarta<br>
+                INDONESIA 12520
+            </span>
+        </div>
+        <div class="flex items-start space-x-3 group">
+            <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
+                <i class="fas fa-phone text-white text-xs"></i>
             </div>
+            <span class="text-red-100">+62 21 29406626</span>
+        </div>
+        <div class="flex items-start space-x-3 group">
+            <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
+                <i class="fas fa-envelope text-white text-xs"></i>
+            </div>
+            <div class="flex flex-col">
+                <a href="mailto:info@trembesiglobal.com" class="text-red-100 hover:underline">info@trembesiglobal.com</a>
+                <a href="https://www.trembesiglobal.com" target="_blank" class="text-red-100 hover:underline">www.trembesiglobal.com</a>
+            </div>
+        </div>
+        <div class="flex items-start space-x-3 group">
+            <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
+                <i class="fas fa-clock text-white text-xs"></i>
+            </div>
+            <span class="text-red-100">Mon - Fri: 8:00 AM - 6:00 PM</span>
+        </div>
+    </div>
+</div>
         </div>
     </footer>
 
