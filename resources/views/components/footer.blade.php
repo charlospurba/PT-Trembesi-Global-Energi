@@ -67,13 +67,13 @@
                         <a href="#" class="group p-2 bg-gradient-to-r from-white/10 to-white/5 rounded-lg hover:from-white/20 hover:to-white/15 transition-all duration-300 shadow-glow">
                             <i class="fab fa-facebook-f text-red-200 group-hover:text-white transition-colors"></i>
                         </a>
-                        <a href="#" class="group p-2 bg-gradient-to-r from-white/10 to-white/5 rounded-lg hover:from-white/20 hover:to-white/15 transition-all duration-300 shadow-glow">
-                            <i class="fab fa-twitter text-red-200 group-hover:text-white transition-colors"></i>
+                        <a href="https://trembesiglobal.com/" class="group p-2 bg-gradient-to-r from-white/10 to-white/5 rounded-lg hover:from-white/20 hover:to-white/15 transition-all duration-300 shadow-glow">
+                            <i class="fas fa-globe text-red-200 group-hover:text-white transition-colors"></i>
                         </a>
-                        <a href="#" class="group p-2 bg-gradient-to-r from-white/10 to-white/5 rounded-lg hover:from-white/20 hover:to-white/15 transition-all duration-300 shadow-glow">
+                        <a href="https://www.linkedin.com/in/trembesi-global-energi-60a815112/" class="group p-2 bg-gradient-to-r from-white/10 to-white/5 rounded-lg hover:from-white/20 hover:to-white/15 transition-all duration-300 shadow-glow">
                             <i class="fab fa-linkedin-in text-red-200 group-hover:text-white transition-colors"></i>
                         </a>
-                        <a href="#" class="group p-2 bg-gradient-to-r from-white/10 to-white/5 rounded-lg hover:from-white/20 hover:to-white/15 transition-all duration-300 shadow-glow">
+                        <a href="https://www.instagram.com/trembesiglobalenergi/" class="group p-2 bg-gradient-to-r from-white/10 to-white/5 rounded-lg hover:from-white/20 hover:to-white/15 transition-all duration-300 shadow-glow">
                             <i class="fab fa-instagram text-red-200 group-hover:text-white transition-colors"></i>
                         </a>
                     </div>
