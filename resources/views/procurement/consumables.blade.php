@@ -40,7 +40,7 @@
             </div>
 
             <!-- Filter -->
-            <form method="GET" action="{{ route('procurement.consumeables') }}" class="bg-white rounded-lg shadow-sm p-3 mb-6">
+            <form method="GET" action="{{ route('procurement.consumables') }}" class="bg-white rounded-lg shadow-sm p-3 mb-6">
                 <div class="flex flex-wrap items-center gap-3">
                     <div class="flex items-center gap-2">
                         <span class="text-sm font-medium text-gray-700">Sort:</span>
