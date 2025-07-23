@@ -15,7 +15,8 @@
                         <i class="fas fa-home mr-1"></i>Dashboard
                     </a>
                     <i class="fas fa-chevron-right text-red-400 text-xs"></i>
-                    <span class="text-red-700 font-semibold">Cart</span>
+                    <a href="{{ route('procurement.cart') }}"><span
+                        class="text-red-600 font-semibold">Cart</span></a>
                 </nav>
                 <div class="mt-4">
                     <h1 class="text-3xl font-extrabold text-red-600">🛒 Your Shopping Cart</h1>

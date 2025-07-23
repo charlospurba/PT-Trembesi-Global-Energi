@@ -14,9 +14,8 @@
                             <i class="fas fa-home mr-1"></i> Dashboard
                         </a>
                         <i class="fas fa-chevron-right text-red-400 text-xs"></i>
-                        <span class="text-red-700 font-semibold flex items-center">
-                            <i class="fas fa-user mr-1"></i> Profile
-                        </span>
+                        <a href="{{ route('components.profile') }}"><span
+                        class="text-red-600 font-semibold">Profile</span></a>
                     </div>
                 </div>
             </div>
