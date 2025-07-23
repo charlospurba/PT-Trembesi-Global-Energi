@@ -167,4 +167,7 @@
 
         </div>
     </div>
+
+    <!-- Footer Harus Di Sini -->
+    @include('components.footer')
 @endsection

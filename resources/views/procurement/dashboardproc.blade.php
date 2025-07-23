@@ -4,6 +4,7 @@
     <!-- Include Navbar Component -->
     @include('components.navbar')
 
+
     <!-- Main Content -->
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Categories Section -->
@@ -90,4 +91,8 @@
             @endforeach
         </div>
     </div>
+
+
+    <!-- Footer Harus Di Sini -->
+    @include('components.footer')
 @endsection
