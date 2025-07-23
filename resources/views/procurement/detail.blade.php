@@ -544,14 +544,17 @@
                 .then(data => {
                     if (data.success) {
                         Swal.fire({
-                            icon: 'success',
-                            title: 'Added to Cart!',
-                            text: data.message,
-                            timer: 2000,
-                            confirmButtonColor: '#dc2626'
-                        });
-                        updateCartBadge(data.cart_count);
-                    } else {
+                        icon: 'success',
+                        title: 'Added to Cart!',
+                        text: data.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                }).then(() => {
+                        window.location.href = '/cart';
+                });
+                // update badge jika ingin tetap jalankan sebelum redirect
+                updateCartBadge(data.cart_count);
+                } else {
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops!',
