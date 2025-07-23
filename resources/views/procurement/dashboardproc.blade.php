@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('content')
@@ -17,7 +16,7 @@
                 ['href' => '/consumables', 'icon' => 'fas fa-shopping-bag', 'label' => 'Consumables'],
                 ['href' => '/personal', 'icon' => 'fas fa-hard-hat', 'label' => 'Personal Protective Equipment']
             ] as $category)
-                <a href="{{ $category['href'] }}" class="category-card bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center transition-all duration-300 hover:shadow-lg hover:scale-105 hover:bg-red-50">
+                <a href="{{ $category['href'] }}" class="category-card bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center hover:shadow-lg">
                     <i class="{{ $category['icon'] }} text-3xl text-red-600 mb-2"></i>
                     <span class="text-sm font-medium text-gray-700 text-center">{{ $category['label'] }}</span>
                 </a>
@@ -38,12 +37,12 @@
                 <div class="collection mb-12">
                     <div class="collection-header flex justify-between items-center mb-4">
                         <h3 class="text-lg font-semibold text-gray-800">{{ $collection['title'] }}</h3>
-                        <a href="{{ route($collection['route']) }}" class="text-sm text-red-600 hover:underline transition-colors duration-300">See all ></a>
+                        <a href="{{ route($collection['route']) }}" class="text-sm text-red-600 hover:underline">See all ></a>
                     </div>
                     <div class="products-grid grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         @forelse($collection['products'] as $product)
                             <a href="{{ route('product.detail', $product->id) }}" class="block">
-                                <div class="bg-white rounded-xl shadow-md overflow-hidden max-w-[280px] w-full transition-all duration-300 hover:shadow-xl hover:scale-105">
+                                <div class="bg-white rounded-xl shadow-md overflow-hidden max-w-[280px] w-full hover:shadow-xl">
                                     <!-- Image -->
                                     <div class="bg-red-600 p-3 flex justify-center items-center h-32">
                                         <img src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0
@@ -81,335 +80,144 @@
                     </div>
                 </div>
             @endforeach
+        </div>
+    </div>
 
-            <!-- Purchase Deadlines Chart -->
-            <div class="mt-12">
-                <div class="section-title text-2xl font-bold text-gray-800 mb-6">Purchase Deadlines</div>
-                <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200/50 bg-gradient-to-br from-white to-red-50/50">
-                    <canvas id="deadlineChart" class="max-w-full h-80"></canvas>
+    <!-- Simple Footer -->
+<footer class="bg-red-600 text-white mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <!-- Main Footer Content -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+            
+            <!-- Company Info -->
+            <div class="space-y-4">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2 bg-white/20 rounded-lg">
+                        <i class="fas fa-tools text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white">ProcurePro</h3>
+                </div>
+                <p class="text-red-100 text-sm leading-relaxed">
+                    Your trusted partner for industrial procurement solutions, delivering high-quality materials, equipment, and supplies for construction and industrial needs.
+                </p>
+                
+                <!-- Social Media Links -->
+                <div class="flex space-x-4">
+                    <a href="#" class="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors duration-200">
+                        <i class="fab fa-facebook-f text-red-200 hover:text-white"></i>
+                    </a>
+                    <a href="#" class="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors duration-200">
+                        <i class="fab fa-twitter text-red-200 hover:text-white"></i>
+                    </a>
+                    <a href="#" class="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors duration-200">
+                        <i class="fab fa-linkedin-in text-red-200 hover:text-white"></i>
+                    </a>
+                    <a href="#" class="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors duration-200">
+                        <i class="fab fa-instagram text-red-200 hover:text-white"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="space-y-4">
+                <h4 class="text-lg font-semibold text-white">Quick Links</h4>
+                <div class="space-y-2">
+                    <a href="/material" class="text-red-100 hover:text-white flex items-center space-x-2 transition-colors duration-200">
+                        <i class="fas fa-cube text-xs"></i>
+                        <span>Materials</span>
+                    </a>
+                    <a href="/equipment" class="text-red-100 hover:text-white flex items-center space-x-2 transition-colors duration-200">
+                        <i class="fas fa-tools text-xs"></i>
+                        <span>Equipment</span>
+                    </a>
+                    <a href="/electrical" class="text-red-100 hover:text-white flex items-center space-x-2 transition-colors duration-200">
+                        <i class="fas fa-bolt text-xs"></i>
+                        <span>Electrical Tools</span>
+                    </a>
+                    <a href="/consumables" class="text-red-100 hover:text-white flex items-center space-x-2 transition-colors duration-200">
+                        <i class="fas fa-shopping-bag text-xs"></i>
+                        <span>Consumables</span>
+                    </a>
+                    <a href="/personal" class="text-red-100 hover:text-white flex items-center space-x-2 transition-colors duration-200">
+                        <i class="fas fa-hard-hat text-xs"></i>
+                        <span>PPE</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Services -->
+            <div class="space-y-4">
+                <h4 class="text-lg font-semibold text-white">Services</h4>
+                <div class="space-y-2 text-sm">
+                    <a href="#" class="text-red-100 hover:text-white block transition-colors duration-200">Bulk Orders</a>
+                    <a href="#" class="text-red-100 hover:text-white block transition-colors duration-200">Custom Quotes</a>
+                    <a href="#" class="text-red-100 hover:text-white block transition-colors duration-200">Delivery Service</a>
+                    <a href="#" class="text-red-100 hover:text-white block transition-colors duration-200">Technical Support</a>
+                    <a href="#" class="text-red-100 hover:text-white block transition-colors duration-200">Warranty Service</a>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="space-y-4">
+                <h4 class="text-lg font-semibold text-white">Contact Us</h4>
+                <div class="space-y-3 text-sm">
+                    
+                    <!-- Address -->
+                    <div class="flex items-start space-x-3">
+                        <div class="p-1 bg-white/20 rounded flex-shrink-0 mt-0.5">
+                            <i class="fas fa-map-marker-alt text-white text-xs"></i>
+                        </div>
+                        <div class="text-red-100">
+                            <div>Jl. Industri Raya No. 123</div>
+                            <div>Jakarta Selatan, DKI Jakarta</div>
+                            <div>Indonesia 12345</div>
+                        </div>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="flex items-center space-x-3">
+                        <div class="p-1 bg-white/20 rounded">
+                            <i class="fas fa-phone text-white text-xs"></i>
+                        </div>
+                        <a href="tel:+622112345678" class="text-red-100 hover:text-white transition-colors duration-200">
+                            +62 21 1234 5678
+                        </a>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="flex items-center space-x-3">
+                        <div class="p-1 bg-white/20 rounded">
+                            <i class="fas fa-envelope text-white text-xs"></i>
+                        </div>
+                        <a href="mailto:info@procurepro.com" class="text-red-100 hover:text-white transition-colors duration-200">
+                            info@procurepro.com
+                        </a>
+                    </div>
+
+                    <!-- Business Hours -->
+                    <div class="flex items-center space-x-3">
+                        <div class="p-1 bg-white/20 rounded">
+                            <i class="fas fa-clock text-white text-xs"></i>
+                        </div>
+                        <span class="text-red-100">Mon - Fri: 8:00 AM - 6:00 PM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="border-t border-red-500 pt-8">
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <div class="text-red-100 text-sm">
+                    © {{ date('Y') }} ProcurePro. All rights reserved.
+                </div>
+                <div class="flex space-x-6 text-sm">
+                    <a href="#" class="text-red-100 hover:text-white transition-colors duration-200">Privacy Policy</a>
+                    <a href="#" class="text-red-100 hover:text-white transition-colors duration-200">Terms of Service</a>
+                    <a href="#" class="text-red-100 hover:text-white transition-colors duration-200">Support</a>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Modern Animated Footer -->
-    <footer class="relative bg-gradient-to-br from-red-600 via-red-700 to-red-800 text-white overflow-hidden mt-16">
-        <!-- Animated Wave Background -->
-        <div class="absolute inset-0 opacity-20">
-            <svg class="absolute bottom-0 w-full h-32 animate-wave-smooth" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M0,60 C300,120 600,0 900,60 C1050,90 1150,30 1200,60 L1200,120 L0,120 Z" fill="currentColor"></path>
-            </svg>
-            <svg class="absolute bottom-0 w-full h-28 opacity-60 animate-wave-smooth" viewBox="0 0 1200 120" preserveAspectRatio="none" style="animation-delay: -2s;">
-                <path d="M0,80 C400,20 800,100 1200,40 L1200,120 L0,120 Z" fill="currentColor"></path>
-            </svg>
-        </div>
-
-        <!-- Floating Particles -->
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute w-2 h-2 bg-white rounded-full opacity-30 animate-float" style="top: 15%; left: 10%; animation-delay: 0s;"></div>
-            <div class="absolute w-1.5 h-1.5 bg-white rounded-full opacity-40 animate-float" style="top: 35%; left: 25%; animation-delay: 1s;"></div>
-            <div class="absolute w-2.5 h-2.5 bg-white rounded-full opacity-25 animate-float" style="top: 55%; left: 65%; animation-delay: 2s;"></div>
-            <div class="absolute w-1 h-1 bg-white rounded-full opacity-35 animate-float" style="top: 75%; left: 85%; animation-delay: 3s;"></div>
-            <div class="absolute w-2 h-2 bg-white rounded-full opacity-30 animate-float" style="top: 25%; left: 75%; animation-delay: 4s;"></div>
-        </div>
-
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <!-- Main Footer Content -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-                <!-- Company Info -->
-                <div class="space-y-4 transform transition-all duration-300 hover:scale-105">
-                    <div class="flex items-center space-x-3 group">
-                        <div class="p-2 bg-gradient-to-r from-white/20 to-white/10 rounded-lg group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
-                            <i class="fas fa-tools text-white text-2xl"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold bg-gradient-to-r from-white to-red-100 bg-clip-text text-transparent gradient-text">
-                            ProcurePro
-                        </h3>
-                    </div>
-                    <p class="text-red-100 text-sm leading-relaxed font-light">
-                        Your trusted partner for industrial procurement solutions, delivering high-quality materials, equipment, and supplies for construction and industrial needs.
-                    </p>
-                    <div class="flex space-x-4">
-                        @foreach(['facebook-f', 'twitter', 'linkedin-in', 'instagram'] as $social)
-                            <a href="#" class="group p-2 bg-gradient-to-r from-white/10 to-white/5 rounded-lg hover:from-white/20 hover:to-white/15 transition-all duration-300 shadow-glow">
-                                <i class="fab fa-{{ $social }} text-red-200 group-hover:text-white transition-colors"></i>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- Quick Links -->
-                <div class="space-y-4 transform transition-all duration-300 hover:scale-105">
-                    <h4 class="text-lg font-semibold text-white">Quick Links</h4>
-                    <div class="grid grid-cols-1 gap-2 text-sm">
-                        @foreach([
-                            ['href' => '/material', 'icon' => 'fas fa-cube', 'label' => 'Materials'],
-                            ['href' => '/equipment', 'icon' => 'fas fa-tools', 'label' => 'Equipment'],
-                            ['href' => '/electrical', 'icon' => 'fas fa-bolt', 'label' => 'Electrical Tools'],
-                            ['href' => '/consumables', 'icon' => 'fas fa-shopping-bag', 'label' => 'Consumables'],
-                            ['href' => '/personal', 'icon' => 'fas fa-hard-hat', 'label' => 'PPE']
-                        ] as $link)
-                            <a href="{{ $link['href'] }}" class="text-red-100 hover:text-white hover:translate-x-2 transition-all duration-300 flex items-center space-x-2 group">
-                                <i class="{{ $link['icon'] }} text-xs group-hover:text-white"></i>
-                                <span>{{ $link['label'] }}</span>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- Services -->
-                <div class="space-y-4 transform transition-all duration-300 hover:scale-105">
-                    <h4 class="text-lg font-semibold text-white">Services</h4>
-                    <div class="grid grid-cols-1 gap-2 text-sm">
-                        @foreach([
-                            ['icon' => 'fas fa-boxes', 'label' => 'Bulk Orders'],
-                            ['icon' => 'fas fa-cog', 'label' => 'Custom Solutions'],
-                            ['icon' => 'fas fa-headset', 'label' => 'Technical Support'],
-                            ['icon' => 'fas fa-truck', 'label' => 'Delivery Services'],
-                            ['icon' => 'fas fa-shield-alt', 'label' => 'Warranty']
-                        ] as $service)
-                            <a href="#" class="text-red-100 hover:text-white hover:translate-x-2 transition-all duration-300 flex items-center space-x-2 group">
-                                <i class="{{ $service['icon'] }} text-xs group-hover:text-white"></i>
-                                <span>{{ $service['label'] }}</span>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- Contact Info -->
-                <div class="space-y-4 transform transition-all duration-300 hover:scale-105">
-                    <h4 class="text-lg font-semibold text-white">Contact Us</h4>
-                    <div class="space-y-3 text-sm">
-                        @foreach([
-                            ['icon' => 'fas fa-map-marker-alt', 'text' => "Jl. Industri Raya No. 123<br>Jakarta Selatan, DKI Jakarta<br>Indonesia 12345"],
-                            ['icon' => 'fas fa-phone', 'text' => '+62 21 1234 5678'],
-                            ['icon' => 'fas fa-envelope', 'text' => 'info@procurepro.com'],
-                            ['icon' => 'fas fa-clock', 'text' => 'Mon - Fri: 8:00 AM - 6:00 PM']
-                        ] as $contact)
-                            <div class="flex items-start space-x-3 group">
-                                <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
-                                    <i class="{{ $contact['icon'] }} text-white text-xs"></i>
-                                </div>
-                                <span class="text-red-100 group-hover:text-white transition-colors">{!! $contact['text'] !!}</span>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- JavaScript for Dynamic Styles, Year, and Chart -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Inject CSS for animations
-            const styleElement = document.createElement('style');
-            const cssStyles = `
-                /* Smooth wave animation */
-                @keyframes wave-smooth {
-                    0%, 100% { transform: translateX(0); }
-                    50% { transform: translateX(-20px); }
-                }
-
-                /* Float animation for particles */
-                @keyframes float {
-                    0%, 100% { transform: translateY(0); }
-                    50% { transform: translateY(-15px); }
-                }
-
-                /* Subtle glow effect */
-                .shadow-glow {
-                    transition: box-shadow 0.3s ease;
-                }
-                .shadow-glow:hover {
-                    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-                }
-
-                /* Gradient text animation */
-                @keyframes gradient-shift {
-                    0% { background-position: 0% 50%; }
-                    50% { background-position: 100% 50%; }
-                    100% { background-position: 0% 50%; }
-                }
-
-                .gradient-text {
-                    background: linear-gradient(-45deg, #ffffff, #fecaca, #ffffff, #fca5a5);
-                    background-size: 400% 400%;
-                    animation: gradient-shift 4s ease infinite;
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                    background-clip: text;
-                }
-
-                .animate-wave-smooth {
-                    animation: wave-smooth 5s ease-in-out infinite;
-                }
-
-                .animate-float {
-                    animation: float 4s ease-in-out infinite;
-                }
-            `;
-            styleElement.textContent = cssStyles;
-            document.head.appendChild(styleElement);
-
-            // Set dynamic copyright year
-            document.querySelector('.copyright-year').innerHTML = `© ${new Date().getFullYear()} ProcurePro. All rights reserved.`;
-
-            // Initialize Chart.js with Stacked Bar Chart
-            const ctx = document.getElementById('deadlineChart').getContext('2d');
-
-            // Create gradients for each category
-            const gradients = {
-                urgent: [
-                    ctx.createLinearGradient(0, 0, 0, 400),
-                    ctx.createLinearGradient(0, 0, 0, 400),
-                    ctx.createLinearGradient(0, 0, 0, 400),
-                    ctx.createLinearGradient(0, 0, 0, 400),
-                    ctx.createLinearGradient(0, 0, 0, 400)
-                ],
-                upcoming: [
-                    ctx.createLinearGradient(0, 0, 0, 400),
-                    ctx.createLinearGradient(0, 0, 0, 400),
-                    ctx.createLinearGradient(0, 0, 0, 400),
-                    ctx.createLinearGradient(0, 0, 0, 400),
-                    ctx.createLinearGradient(0, 0, 0, 400)
-                ]
-            };
-
-            // Define gradient colors
-            gradients.urgent[0].addColorStop(0, '#dc2626'); // red-600
-            gradients.urgent[0].addColorStop(1, '#b91c1c'); // red-700
-            gradients.urgent[1].addColorStop(0, '#f87171'); // red-400
-            gradients.urgent[1].addColorStop(1, '#dc2626'); // red-600
-            gradients.urgent[2].addColorStop(0, '#ef4444'); // red-500
-            gradients.urgent[2].addColorStop(1, '#b91c1c'); // red-700
-            gradients.urgent[3].addColorStop(0, '#f87171'); // red-400
-            gradients.urgent[3].addColorStop(1, '#dc2626'); // red-600
-            gradients.urgent[4].addColorStop(0, '#ef4444'); // red-500
-            gradients.urgent[4].addColorStop(1, '#b91c1c'); // red-700
-
-            gradients.upcoming[0].addColorStop(0, '#991b1b'); // red-800
-            gradients.upcoming[0].addColorStop(1, '#7f1d1d'); // red-900
-            gradients.upcoming[1].addColorStop(0, '#b91c1c'); // red-700
-            gradients.upcoming[1].addColorStop(1, '#991b1b'); // red-800
-            gradients.upcoming[2].addColorStop(0, '#991b1b'); // red-800
-            gradients.upcoming[2].addColorStop(1, '#7f1d1d'); // red-900
-            gradients.upcoming[3].addColorStop(0, '#b91c1c'); // red-700
-            gradients.upcoming[3].addColorStop(1, '#991b1b'); // red-800
-            gradients.upcoming[4].addColorStop(0, '#991b1b'); // red-800
-            gradients.upcoming[4].addColorStop(1, '#7f1d1d'); // red-900
-
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Material', 'Equipment', 'Electrical', 'Consumables', 'PPE'],
-                    datasets: [
-                        {
-                            label: 'Urgent (Within 1 Week)',
-                            data: [
-                                {{ $deadlines['urgent']['material'] ?? 0 }},
-                                {{ $deadlines['urgent']['equipment'] ?? 0 }},
-                                {{ $deadlines['urgent']['electrical'] ?? 0 }},
-                                {{ $deadlines['urgent']['consumables'] ?? 0 }},
-                                {{ $deadlines['urgent']['ppe'] ?? 0 }}
-                            ],
-                            backgroundColor: gradients.urgent,
-                            borderColor: '#ffffff',
-                            borderWidth: 1,
-                            borderRadius: 8,
-                            barThickness: 20
-                        },
-                        {
-                            label: 'Upcoming (2–4 Weeks)',
-                            data: [
-                                {{ $deadlines['upcoming']['material'] ?? 0 }},
-                                {{ $deadlines['upcoming']['equipment'] ?? 0 }},
-                                {{ $deadlines['upcoming']['electrical'] ?? 0 }},
-                                {{ $deadlines['upcoming']['consumables'] ?? 0 }},
-                                {{ $deadlines['upcoming']['ppe'] ?? 0 }}
-                            ],
-                            backgroundColor: gradients.upcoming,
-                            borderColor: '#ffffff',
-                            borderWidth: 1,
-                            borderRadius: 8,
-                            barThickness: 20
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: {
-                        duration: 1200,
-                        easing: 'easeOutQuart'
-                    },
-                    scales: {
-                        x: {
-                            stacked: true,
-                            title: {
-                                display: true,
-                                text: 'Product Categories',
-                                font: { size: 14, weight: 'bold' },
-                                color: '#1f2937' // gray-800
-                            },
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                color: '#1f2937', // gray-800
-                                font: { size: 12 }
-                            }
-                        },
-                        y: {
-                            stacked: true,
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Number of Items',
-                                font: { size: 14, weight: 'bold' },
-                                color: '#1f2937' // gray-800
-                            },
-                            grid: {
-                                color: '#e5e7eb' // gray-200
-                            },
-                            ticks: {
-                                color: '#1f2937', // gray-800
-                                font: { size: 12 }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                            labels: {
-                                color: '#1f2937', // gray-800
-                                font: { size: 14, weight: 'bold' },
-                                padding: 20
-                            }
-                        },
-                        tooltip: {
-                            enabled: true,
-                            backgroundColor: '#1f2937', // gray-800
-                            titleColor: '#ffffff',
-                            bodyColor: '#ffffff',
-                            borderColor: '#dc2626', // red-600
-                            borderWidth: 1,
-                            callbacks: {
-                                label: (context) => {
-                                    const label = context.dataset.label || '';
-                                    const value = context.raw;
-                                    const category = context.label;
-                                    return `${label}: ${value} items in ${category}`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        });
-    </script>
+</footer>
 @endsection
