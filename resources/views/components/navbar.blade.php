@@ -1,9 +1,9 @@
 <!-- Navbar Component -->
-<nav class="navbar bg-red-600 p-2 px-5 w-full shadow-md z-50">
-    <div class="flex items-center justify-between w-full">
+<nav class="navbar bg-red-600 p-2 px-5 w-full shadow-md z-50 relative">
+    <div class="flex items-center justify-between w-full relative z-10">
 
         <!-- Logo -->
-        <div class="mr-4">
+        <div class="mr-4 z-10">
             @php
                 $role = Auth::check() ? Auth::user()->role : null;
                 $dashboardLink = match ($role) {
@@ -18,33 +18,36 @@
             </a>
         </div>
 
+        <!-- Search Form Centered Absolutely -->
         @php
             $currentRoute = request()->route()->getName();
-
             $searchRoute = match ($currentRoute) {
                 'procurement.material' => route('search.material'),
                 'procurement.equipment' => route('search.equipment'),
                 'procurement.electrical' => route('search.electrical'),
                 'procurement.consumables' => route('search.consumables'),
                 'procurement.personal' => route('search.personal'),
-                default => route('search.products') // untuk dashboard umum
+                default => route('search.products')
             };
         @endphp
 
-        <form id="searchForm" action="{{ url()->current() }}" method="GET" class="flex-grow max-w-xl mx-4">
-            <input type="hidden" name="category" value="{{ request()->segment(1) }}"> {{-- auto detect category --}}
-            <div class="flex items-center h-11 border border-white rounded-full overflow-hidden">
-                <div class="px-4 text-white">
-                    <i class="fas fa-search text-lg"></i>
+        <div class="absolute left-1/2 -translate-x-1/2 w-full max-w-xl z-0">
+            <form id="searchForm" action="{{ $searchRoute }}" method="GET">
+                <input type="hidden" name="category" value="{{ request()->segment(1) }}">
+                <div class="flex items-center h-11 border border-white rounded-full overflow-hidden">
+                    <div class="px-4 text-white">
+                        <i class="fas fa-search text-lg"></i>
+                    </div>
+                    <input type="search" name="query" placeholder="Search for products or vendors"
+                        class="flex-grow bg-transparent text-white placeholder-white text-sm focus:outline-none px-2">
+                    <button type="submit" class="bg-white text-black font-semibold px-5 h-full text-sm">Search</button>
                 </div>
-                <input type="search" name="query" placeholder="Search for products or vendors"
-                    class="flex-grow bg-transparent text-white placeholder-white text-sm focus:outline-none px-2">
-                <button type="submit" class="bg-white text-black font-semibold px-5 h-full text-sm">Search</button>
-            </div>
-        </form>
+            </form>
+        </div>
 
-        <!-- Icons + Auth Buttons (Right Aligned) -->
-        <div class="flex items-center gap-3">
+        <!-- Right Side Icons & Auth -->
+        <div class="flex items-center gap-3 z-10">
+
             <!-- Notes -->
             <a href="{{ route('procurement.notes') }}"
                 class="relative w-9 h-9 flex items-center justify-center text-white hover:text-white/80 transition">
@@ -55,35 +58,32 @@
             <a href="/cart"
                 class="relative w-9 h-9 flex items-center justify-center text-white hover:text-white/80 transition">
                 <i class="fas fa-shopping-cart text-base"></i>
-                <span id="cartBadge"
-                    class="absolute -top-1 -right-1 bg-white text-red-600 text-xs px-1.5 rounded-full hidden">0</span>
+                <span id="cartBadge" class="absolute -top-1 -right-1 bg-white text-red-600 text-xs px-1.5 rounded-full hidden">0</span>
             </a>
 
             <!-- Notification -->
-            <div class="notification-dropdown" style="position: relative; display: inline-block;">
+            <div class="notification-dropdown relative inline-block">
                 <a href="#" class="nav-icon" onclick="toggleNotificationDropdown(event)">
-                    <i class="fas fa-bell"></i>
-                    <span class="badge notification-badge" id="notificationBadge" style="display: none;">0</span>
+                    <i class="fas fa-bell text-white text-base"></i>
+                    <span id="notificationBadge" class="absolute -top-1 -right-1 bg-white text-red-600 text-xs px-1.5 rounded-full hidden">0</span>
                 </a>
-                <div id="notificationDropdown" class="dropdown-menu"
-                    style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; min-width: 250px; z-index: 999;">
-                    <div id="notificationList" style="max-height: 300px; overflow-y: auto;"></div>
+                <div id="notificationDropdown"
+                    class="dropdown-menu absolute top-full right-0 bg-white text-black rounded-md shadow-md hidden min-w-[250px] z-50 mt-2">
+                    <div id="notificationList" class="max-h-72 overflow-y-auto"></div>
                 </div>
             </div>
 
-            <!-- Sign In / Sign Up -->
+            <!-- Guest: Sign In / Up -->
             @guest
                 <a href="/signin"
-                    class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign
-                    In</a>
+                    class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign In</a>
                 <a href="/signup"
-                    class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign
-                    Up</a>
+                    class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign Up</a>
             @endguest
 
-            <!-- Profile (Jika Sudah Login) -->
+            <!-- Auth: Profile -->
             @auth
-                <div class="relative">
+                <div class="relative profile-trigger">
                     <div onclick="toggleProfileDropdown()"
                         class="flex items-center gap-2 text-white cursor-pointer hover:opacity-90">
                         @php
@@ -96,7 +96,7 @@
                         <span class="font-medium max-w-[120px] truncate">{{ Auth::user()->name }}</span>
                         <i class="fas fa-caret-down text-sm"></i>
                     </div>
-
+                    
                     <div id="profileDropdown"
                         class="absolute top-full right-0 mt-2 w-40 bg-white text-black rounded-md shadow-md hidden z-50">
                         <a href="/dashboard/profile" class="block px-4 py-2 hover:bg-gray-100 text-sm">My Profile</a>
