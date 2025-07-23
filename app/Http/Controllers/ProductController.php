@@ -135,7 +135,7 @@ class ProductController extends Controller
   {
     $query = strtolower($request->input('query'));
 
-    $products = Product::where('category', 'electrical')
+    $products = Product::where('category', 'electrical tools')
       ->when($query, function ($q) use ($query) {
         $q->where(function ($inner) use ($query) {
           $inner->where(DB::raw('LOWER(name)'), 'like', "%$query%")
@@ -152,7 +152,7 @@ class ProductController extends Controller
   {
     $query = strtolower($request->input('query'));
 
-    $products = Product::where('category', 'personal')
+    $products = Product::where('category', 'personal protective equipment')
       ->when($query, function ($q) use ($query) {
         $q->where(function ($inner) use ($query) {
           $inner->where(DB::raw('LOWER(name)'), 'like', "%$query%")
