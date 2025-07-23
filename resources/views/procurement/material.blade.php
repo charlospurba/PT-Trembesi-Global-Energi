@@ -82,8 +82,7 @@
                         <div
                             class="bg-white rounded-lg shadow-sm overflow-hidden max-w-[250px] w-full transition-all duration-300 hover:shadow-md hover:-translate-y-1 border border-gray-100">
                             <!-- Product Image -->
-                            <div
-                                class="relative bg-gradient-to-br from-red-600 to-red-700 p-3 flex justify-center items-center h-32">
+                            <div class="relative aspect-square overflow-hidden rounded-t-lg bg-gray-100">
                                 @php
                                     $imagePath = 'https://via.placeholder.com/200';
                                     if (!empty($product->image_paths)) {
@@ -95,7 +94,7 @@
                                     }
                                 @endphp
                                 <img src="{{ $imagePath }}" alt="{{ $product->name }}"
-                                    class="object-contain h-full rounded-md transition-transform duration-300 group-hover:scale-105" />
+                                    class="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105" />
                             </div>
 
                             <!-- Product Information -->
@@ -109,7 +108,7 @@
                                     <div class="flex items-center gap-1">
                                         <svg class="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
                                             <path
-                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00 .175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                         </svg>
                                         <span class="text-xs text-gray-500">{{ $product->rating ?? '4.5' }}</span>
                                     </div>
@@ -158,7 +157,7 @@
                                 <svg class="w-8 h-8 text-gray-400 mx-auto" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v2-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                                 </svg>
                             </div>
                             <h3 class="text-base font-semibold text-gray-800 mb-2">No Products Available</h3>

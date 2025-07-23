@@ -82,21 +82,22 @@
                         <div
                             class="bg-white rounded-lg shadow-sm overflow-hidden max-w-[250px] w-full transition hover:shadow-md hover:-translate-y-1 border border-gray-100">
                             <!-- Image -->
-                            <div
-                                class="relative bg-gradient-to-br from-red-600 to-red-700 p-3 flex justify-center items-center h-32">
-                                @php
-                                    $imagePath = 'https://via.placeholder.com/200';
-                                    if (!empty($product->image_paths)) {
-                                        if (is_array($product->image_paths) && count($product->image_paths) > 0) {
-                                            $imagePath = asset('storage/' . $product->image_paths[0] . '?' . time());
-                                        } elseif (is_string($product->image_paths)) {
-                                            $imagePath = asset('storage/' . $product->image_paths . '?' . time());
-                                        }
-                                    }
-                                @endphp
-                                <img src="{{ $imagePath }}" alt="{{ $product->name }}"
-                                    class="object-contain h-full rounded-md transition-transform duration-300 group-hover:scale-105" />
-                            </div>
+                            @php
+    $imagePath = 'https://via.placeholder.com/300x300?text=No+Image';
+    if (!empty($product->image_paths)) {
+        if (is_array($product->image_paths) && count($product->image_paths) > 0) {
+            $imagePath = asset('storage/' . ltrim($product->image_paths[0], '/') . '?' . time());
+        } elseif (is_string($product->image_paths)) {
+            $imagePath = asset('storage/' . ltrim($product->image_paths, '/') . '?' . time());
+        }
+    }
+@endphp
+
+<div class="relative aspect-square overflow-hidden">
+    <img src="{{ $imagePath }}" alt="{{ $product->name }}"
+        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+</div>
+
 
                             <!-- Information -->
                             <div class="p-3 space-y-2">
