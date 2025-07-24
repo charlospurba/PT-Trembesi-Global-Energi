@@ -57,12 +57,7 @@ class PMRequestController extends Controller
 
     public function downloadTemplate()
     {
-        $path = storage_path('app/templates/template-pm-request.xlsx');
-
-        if (!file_exists($path)) {
-            abort(404, 'Template not found.');
-        }
-
+        $path = public_path('templates/pm_template.xlsx');
         return response()->download($path, 'Template_Request_Barang.xlsx');
     }
 
