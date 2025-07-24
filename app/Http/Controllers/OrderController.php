@@ -239,4 +239,31 @@ class OrderController extends Controller
             'rejected' => Bid::where('vendor_id', $vendorId)->where('status', 'Rejected')->count(),
         ];
     }
+
+    public function orderHistory(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            if (!$user) {
+                return redirect()->route('login.form')->withErrors(['login' => 'Please log in to view your order history.']);
+            }
+
+            // Fetch orders for the authenticated user, grouped by status
+            $orders = Order::where('user_id', $user->id)
+                ->with(['orderItems.product'])
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->groupBy('status');
+
+            return view('procurement.order_history', compact('orders'));
+        } catch (\Exception $e) {
+            Log::error('Order History Error: ' . $e->getMessage(), [
+                'user_id' => Auth::id() ?? 'guest',
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->route('procurement.dashboardproc')->withErrors([
+                'error' => 'Failed to load order history: ' . $e->getMessage()
+            ]);
+        }
+    }
 }

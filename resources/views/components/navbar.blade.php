@@ -9,7 +9,7 @@
                 $dashboardLink = match ($role) {
                     'procurement' => route('procurement.dashboardproc'),
                     'superadmin' => route('superadmin.dashboard'),
-                    'product_manager' => route('dashboard.productmanager'),
+                    'product_manager' => route('dashboard.projectmanager'),
                     default => route('dashboard'),
                 };
             @endphp
@@ -27,7 +27,7 @@
                 'procurement.electrical' => route('search.electrical'),
                 'procurement.consumables' => route('search.consumables'),
                 'procurement.personal' => route('search.personal'),
-                default => route('search.products')
+                default => route('search.products'),
             };
         @endphp
 
@@ -58,14 +58,16 @@
             <a href="/cart"
                 class="relative w-9 h-9 flex items-center justify-center text-white hover:text-white/80 transition">
                 <i class="fas fa-shopping-cart text-base"></i>
-                <span id="cartBadge" class="absolute -top-1 -right-1 bg-white text-red-600 text-xs px-1.5 rounded-full hidden">0</span>
+                <span id="cartBadge"
+                    class="absolute -top-1 -right-1 bg-white text-red-600 text-xs px-1.5 rounded-full hidden">0</span>
             </a>
 
             <!-- Notification -->
             <div class="notification-dropdown relative inline-block">
                 <a href="#" class="nav-icon" onclick="toggleNotificationDropdown(event)">
                     <i class="fas fa-bell text-white text-base"></i>
-                    <span id="notificationBadge" class="absolute -top-1 -right-1 bg-white text-red-600 text-xs px-1.5 rounded-full hidden">0</span>
+                    <span id="notificationBadge"
+                        class="absolute -top-1 -right-1 bg-white text-red-600 text-xs px-1.5 rounded-full hidden">0</span>
                 </a>
                 <div id="notificationDropdown"
                     class="dropdown-menu absolute top-full right-0 bg-white text-black rounded-md shadow-md hidden min-w-[250px] z-50 mt-2">
@@ -76,9 +78,11 @@
             <!-- Guest: Sign In / Up -->
             @guest
                 <a href="/signin"
-                    class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign In</a>
+                    class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign
+                    In</a>
                 <a href="/signup"
-                    class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign Up</a>
+                    class="border border-white text-white px-3 py-1 rounded hover:bg-white hover:text-red-600 transition text-sm">Sign
+                    Up</a>
             @endguest
 
             <!-- Auth: Profile -->
@@ -96,10 +100,14 @@
                         <span class="font-medium max-w-[120px] truncate">{{ Auth::user()->name }}</span>
                         <i class="fas fa-caret-down text-sm"></i>
                     </div>
-                    
+
                     <div id="profileDropdown"
                         class="absolute top-full right-0 mt-2 w-40 bg-white text-black rounded-md shadow-md hidden z-50">
                         <a href="/dashboard/profile" class="block px-4 py-2 hover:bg-gray-100 text-sm">My Profile</a>
+                        @if (Auth::user()->role === 'procurement')
+                            <a href="{{ route('procurement.order_history') }}"
+                                class="block px-4 py-2 hover:bg-gray-100 text-sm">Order History</a>
+                        @endif
                         <form id="logoutForm" method="POST" action="/logout">
                             @csrf
                             <button type="button" id="logoutBtn"
@@ -142,8 +150,7 @@
         }
     }
 
-
-    window.addEventListener("click", function (e) {
+    window.addEventListener("click", function(e) {
         const profileTrigger = document.querySelector(".profile-trigger");
         const profileDropdown = document.getElementById("profileDropdown");
         const notificationTrigger = document.querySelector(".notification-dropdown .nav-icon");
@@ -158,11 +165,11 @@
 
     function loadNotifications(updateBadge = true) {
         fetch('/notifications', {
-            method: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        })
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
             .then(response => response.json())
             .then(data => {
                 const notificationList = document.getElementById('notificationList');
@@ -202,12 +209,12 @@
 
     function markAsRead(notificationId, element) {
         fetch(`/notifications/${notificationId}/read`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
             .then(response => response.json())
             .then(() => {
                 // Ubah style bold menjadi normal saat sudah dibaca
@@ -227,7 +234,7 @@
             });
     }
 
-    document.getElementById('logoutBtn').addEventListener('click', function (e) {
+    document.getElementById('logoutBtn').addEventListener('click', function(e) {
         e.preventDefault();
         Swal.fire({
             title: 'Are you sure?',
@@ -245,13 +252,13 @@
         });
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         fetch('/cart/count', {
-            method: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        })
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
             .then(response => response.json())
             .then(data => {
                 const badge = document.getElementById('cartBadge');

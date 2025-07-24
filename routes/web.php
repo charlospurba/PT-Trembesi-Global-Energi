@@ -123,6 +123,9 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     Route::post('/checkout/e-billing', [CheckoutController::class, 'generateEBilling'])->name('checkout.e-billing');
     Route::get('/e-billing/view/{notificationId}', [CheckoutController::class, 'viewEBilling'])->name('ebilling.view');
 
+    // Order History Route
+    Route::get('/procurement/order-history', [OrderController::class, 'orderHistory'])->name('procurement.order_history');
+
     // Notification Routes
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
     Route::get('/notifications/count', [NotificationController::class, 'count'])->name('notifications.count');
