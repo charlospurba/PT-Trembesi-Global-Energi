@@ -57,7 +57,7 @@ class PMRequestController extends Controller
 
     public function downloadTemplate()
     {
-        $path = public_path('templates/pm_template.xlsx');
+        $path = public_path('templates/template-pm-request.xlsx');
         return response()->download($path, 'Template_Request_Barang.xlsx');
     }
 
