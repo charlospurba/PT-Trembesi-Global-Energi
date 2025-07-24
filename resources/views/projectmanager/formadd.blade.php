@@ -1,7 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="max-w-4xl mx-auto mt-10 bg-white p-8 rounded-xl shadow-md">
+@include('components.navpm')
+
+<div class="flex min-h-screen bg-gradient-to-r from-slate-100 via-white to-slate-100">
+    @include('components.sidepm')
+    <div class="flex-1 p-6">
+        <div class="max-w-4xl mx-auto mt-10 bg-white p-8 rounded-xl shadow-md">
         <h1 class="text-3xl font-bold text-gray-800 mb-6">Tambah PM Request</h1>
 
         {{-- Error Alert --}}
@@ -61,4 +66,5 @@
             </div>
         </form>
     </div>
+</div>
 @endsection
