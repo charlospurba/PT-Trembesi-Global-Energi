@@ -40,53 +40,52 @@
                         <h3 class="text-lg font-semibold text-gray-800">{{ $collection['title'] }}</h3>
                         <a href="{{ route($collection['route']) }}" class="text-sm text-red-600 hover:underline">See all ></a>
                     </div>
-                    <div class="products-grid grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-    @forelse($collection['products'] as $product)
-        <a href="{{ route('product.detail', $product->id) }}" class="block">
-            <div class="bg-white rounded-xl overflow-hidden max-w-[280px] w-full transition-all duration-300 hover:shadow-[0_4px_12px_rgba(220,38,38,0.4)] hover:-translate-y-1 border border-gray-100">
-                
-                <!-- Full Image without Padding -->
-                <div class="w-full h-36 bg-white flex items-center justify-center">
-                    <img src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0
-                        ? asset('storage/' . $product->image_paths[0] . '?' . time())
-                        : 'https://via.placeholder.com/300' }}"
-                        alt="{{ $product->name }}"
-                        class="w-full h-full object-cover" />
-                </div>
+                    <div class="products-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                        @forelse($collection['products'] as $product)
+                            <a href="{{ route('product.detail', $product->id) }}" class="block group">
+                                <div class="bg-white rounded-lg overflow-hidden w-full transition-all duration-300 shadow-[0_1px_4px_rgba(220,38,38,0.2)] hover:shadow-[0_4px_12px_rgba(220,38,38,0.3)] hover:-translate-y-1 border border-gray-100">
+                                    
+                                    <!-- Responsive Image Container -->
+                                    <div class="w-full aspect-square bg-gray-50 overflow-hidden">
+                                        <img src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0
+                                            ? asset('storage/' . $product->image_paths[0] . '?' . time())
+                                            : 'https://via.placeholder.com/200' }}"
+                                            alt="{{ $product->name }}"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                    </div>
 
-                <!-- Content -->
-                <div class="px-4 py-3 space-y-1.5 text-xs">
-                    <!-- Supplier -->
-                    <span class="inline-block px-2 py-0.5 bg-gray-200 text-gray-800 text-[11px] rounded-full">
-                        {{ $product->supplier }}
-                    </span>
-                    
-                    <!-- Product Name (Red) -->
-                    <h3 class="text-sm font-semibold text-red-600">{{ $product->name }}</h3>
+                                    <!-- Content -->
+                                    <div class="p-2 space-y-1">
+                                        <!-- Supplier -->
+                                        <span class="inline-block px-1.5 py-0.5 bg-gray-100 text-gray-700 text-xs rounded font-medium">
+                                            {{ $product->supplier }}
+                                        </span>
+                                        
+                                        <!-- Product Name (Red) -->
+                                        <h3 class="text-xs font-semibold text-red-600 line-clamp-2 leading-tight">{{ $product->name }}</h3>
 
-                    <!-- Price -->
-                    <p class="text-black font-bold text-sm">Rp{{ number_format($product->price, 0, ',', '.') }}</p>
+                                        <!-- Price -->
+                                        <p class="text-gray-900 font-bold text-sm">Rp{{ number_format($product->price, 0, ',', '.') }}</p>
 
-                    <!-- Address -->
-                    <div class="flex items-start text-[11px] text-gray-600">
-                        <svg class="w-4 h-4 text-red-500 mr-1 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 2a6 6 0 016 6c0 4.418-6 10-6 10S4 12.418 4 8a6 6 0 016-6zM8 8a2 2 0 114 0 2 2 0 01-4 0z" />
-                        </svg>
-                        {{ $product->address ?? '-' }}
+                                        <!-- Address -->
+                                        <div class="flex items-start text-xs text-gray-600">
+                                            <svg class="w-2.5 h-2.5 text-red-500 mr-1 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 2a6 6 0 016 6c0 4.418-6 10-6 10S4 12.418 4 8a6 6 0 016-6zM8 8a2 2 0 114 0 2 2 0 01-4 0z" />
+                                            </svg>
+                                            <span class="line-clamp-1 text-xs">{{ $product->address ?? '-' }}</span>
+                                        </div>
+
+                                        <!-- Stock -->
+                                        <div class="text-xs text-red-600 font-medium">
+                                            Stock: {{ $product->quantity }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        @empty
+                            <p class="text-center text-gray-500 text-sm col-span-full py-8">There are no {{ $collection['title'] }} products available.</p>
+                        @endforelse
                     </div>
-
-                    <!-- Stock -->
-                    <div class="text-[11px] text-red-600 font-medium">
-                        Stock: {{ $product->quantity }}
-                    </div>
-                </div>
-            </div>
-        </a>
-    @empty
-        <p class="text-center text-gray-500 text-sm col-span-full">There are no {{ $collection['title'] }} products available.</p>
-    @endforelse
-</div>
-
                 </div>
             @endforeach
         </div>
