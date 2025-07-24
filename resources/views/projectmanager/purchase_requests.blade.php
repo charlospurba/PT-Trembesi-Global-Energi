@@ -10,10 +10,10 @@
         @include('components.sidepm')
         <div class="bg-gray-100 min-h-screen p-6 flex-1">
             <div class="mb-6">
-                <div class="mt-4">
-                    <h1 class="text-3xl font-extrabold text-red-600">📋 Purchase Requests</h1>
-                    <p class="text-red-400">Review and manage purchase requests from procurement team</p>
-                </div>
+            <div class="bg-red-500 text-white px-6 py-4 rounded-md shadow">
+                <h2 class="text-xl font-bold">Purchase Requests </h2>
+                <p class="text-sm">Review and manage purchase requests from procurement team</p>
+            </div>
             </div>
 
             @if ($purchaseRequests->isEmpty())
