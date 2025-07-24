@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-@include('components.navbar')
+@include('components.procnav')
 
 <!-- Header Section -->
 <section class="bg-red-600 text-white py-6 px-6 rounded-b-xl mt-4">

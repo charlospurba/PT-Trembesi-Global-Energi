@@ -3,7 +3,7 @@
 @section('content')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    @include('components.navbar')
+    @include('components.procnav')
 
     <div class="min-h-screen bg-[#F6F3F2] py-10">
         <div class="w-full max-w-[1000px] mx-auto px-4">

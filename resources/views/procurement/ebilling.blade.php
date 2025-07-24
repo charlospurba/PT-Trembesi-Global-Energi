@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    @include('components.navbar')
+    @include('components.procnav')
 
     <div class="min-h-screen bg-gray-100 py-10 px-4 md:px-10">
         <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-lg p-6">
