@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\PMRequest;
 use Illuminate\Http\Request;
+use App\Imports\PMRequestImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PMRequestController extends Controller
 {
@@ -41,4 +43,27 @@ class PMRequestController extends Controller
         $requests = PMRequest::all();
         return view('projectmanager.addrequest', compact('requests'));
     }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        Excel::import(new PMRequestImport, $request->file('file'));
+
+        return redirect()->route('projectmanager.addrequest')->with('success', 'Data berhasil diimport dari Excel.');
+    }
+
+    public function downloadTemplate()
+    {
+        $path = storage_path('app/templates/template-pm-request.xlsx');
+
+        if (!file_exists($path)) {
+            abort(404, 'Template not found.');
+        }
+
+        return response()->download($path, 'Template_Request_Barang.xlsx');
+    }
+
 }

@@ -120,6 +120,8 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
     Route::post('/cart/bid/{productId}', [CartController::class, 'submitBid'])->name('cart.bid');
     Route::post('/cart/request-purchase', [CartController::class, 'requestPurchase'])->name('cart.request-purchase');
+    Route::post('/pmrequest/import', [PMRequestController::class, 'import'])->name('pmrequest.import');
+    Route::get('/pmrequest/template', [PMRequestController::class, 'downloadTemplate'])->name('pmrequest.downloadTemplate');
 
     // Checkout Routes
     Route::match(['get', 'post'], '/procurement/checkout', [CheckoutController::class, 'checkout'])->name('procurement.checkout');
