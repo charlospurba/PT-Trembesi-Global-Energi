@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- Include Navbar Component -->
-    @include('components.navbar')
+    @include('components.procnav')
 
     <div class="p-5">
         <div class="container mx-auto max-w-5xl px-4 py-6">

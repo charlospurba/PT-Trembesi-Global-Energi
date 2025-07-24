@@ -4,7 +4,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    @include('components.navbar')
+    @include('components.procnav')
 
     <div class="min-h-screen bg-white pb-24">
         <div class="container mx-auto max-w-5xl px-4 py-6">
