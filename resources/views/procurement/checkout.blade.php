@@ -136,8 +136,10 @@
 
                     <div class="flex flex-col gap-2">
                         <button type="button" id="print-ebilling-btn" onclick="printEBilling()"
-                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 rounded text-sm"
-                            disabled>Print E-Billing</button>
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 rounded text-sm hidden"
+                            disabled>
+                            Print E-Billing
+                        </button>
                         <button type="button" onclick="cancelCheckout()"
                             class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-1.5 rounded text-sm">Cancel</button>
                     </div>

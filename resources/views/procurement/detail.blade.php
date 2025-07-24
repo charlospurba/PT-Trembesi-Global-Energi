@@ -218,19 +218,11 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <!-- Action Buttons -->
-                                        <div class="space-y-3">
-                                            <button type="button" id="buyNowBtn" onclick="buyNow({{ $product->id }})"
-                                                class="w-full text-white py-3 px-4 rounded-xl font-semibold transition-all duration-300 transform shadow-lg">
-                                                <i class="fas fa-bolt mr-2"></i>Buy Now
-                                            </button>
-                                            <button type="button" id="addToCartBtn"
+                                        <button type="button" id="addToCartBtn"
                                                 onclick="addToCart({{ $product->id }})"
                                                 class="w-full border-2 border-red-500 text-red-600 py-3 px-4 rounded-xl font-semibold hover:bg-red-500 hover:text-white transition-all duration-300 transform">
                                                 <i class="fas fa-cart-plus mr-2"></i>Add to Cart
-                                            </button>
-                                        </div>
+                                        </button>
                                     </div>
                                 </form>
                             </div>
@@ -382,11 +374,6 @@
                 totalPriceSection.style.borderColor = '#fecaca';
             }
 
-            // Apply buy now button styling
-            const buyNowBtn = document.getElementById('buyNowBtn');
-            if (buyNowBtn) {
-                buyNowBtn.style.background = 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)';
-            }
 
             // Apply vendor icon styling
             const vendorIcon = document.getElementById('vendorIcon');
