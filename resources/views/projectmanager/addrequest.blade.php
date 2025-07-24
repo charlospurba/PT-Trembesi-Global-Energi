@@ -1,188 +1,74 @@
 @extends('layouts.app')
 
 @section('content')
-    @include('components.navpm')
+@include('components.navpm')
 
-    <div class="flex min-h-screen">
-          @include('components.sidepm')
-          <div class="bg-gray-100 min-h-screen p-6 flex-1">
-             <div class="bg-red-500 text-white px-6 py-4 rounded-md shadow">
-                <h2 class="text-xl font-bold">Procurement Request </h2>
-                <p class="text-sm">Manage your team's procurement needs</p>
-            </div>
+<div class="flex min-h-screen">
+    @include('components.sidepm')
 
-      <div class="max-w-7xl mx-auto mt-6">
+    <div class="bg-gray-50 min-h-screen p-6 flex-1">
+        <div class="max-w-5xl mx-auto">
 
-        <!-- Header -->
-       <div class="flex justify-end items-center mb-6">
-          <a href="{{ route('projectmanager.formadd') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ml-auto">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-              </svg>  
-              Add Request
-          </a>
-      </div>
+            @if(session('success'))
+                <div class="bg-green-500 text-white px-6 py-4 rounded-md shadow mb-6">
+                    <h2 class="text-xl font-bold">Request Berhasil Ditambahkan</h2>
+                    <p class="text-sm">Berikut adalah daftar permintaan Anda:</p>
+                </div>
+            @endif
 
+            @if(isset($requests) && $requests->count())
+                @foreach($requests as $pmRequest)
+                    <div class="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+                        <h1 class="text-2xl font-bold text-gray-800 mb-4">{{ $pmRequest->description ?? '-' }}</h1>
 
-        <!-- Genset Cards Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Card 1 -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div class="mb-4">
-                    <div class="flex-1">
-                      <h1 class="text-3xl font-bold text-gray-800">Genset</h1>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">High</span>
-                            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">Pending</span>
-                        </div>
-                        
-                        <div class="space-y-4">
-                            <!-- Basic Info -->
-                            <div class="space-y-3">
-                                <div>
-                                    <span class="text-gray-600 text-sm font-medium">Category:</span>
-                                    <p class="font-semibold text-gray-800">EQUIPMENT</p>
-                                </div>
-                                
-                                <div>
-                                    <span class="text-gray-600 text-sm font-medium">Budget:</span>
-                                    <p class="font-semibold text-gray-800">Rp. 840.000.000</p>
-                                </div>
-                                
-                                <div>
-                                    <span class="text-gray-600 text-sm font-medium">Date Of Request:</span>
-                                    <p class="font-semibold text-gray-800">12/06/2025</p>
-                                </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <p class="text-sm text-gray-500">Qty</p>
+                                <p class="font-semibold text-gray-800">{{ $pmRequest->qty ?? '-' }}</p>
                             </div>
-                            
-                            <!-- Detail Items -->
-                            <div class="space-y-3">
-                                <div>
-                                    <span class="text-gray-600 text-sm font-medium">Detail Items:</span>
-                                </div>
-                                
-                                <div class="space-y-3 bg-gray-50 p-3 rounded-lg">
-                                    <div class="flex flex-col space-y-2">
-                                        <div class="flex justify-between items-start">
-                                            <div class="flex-1">
-                                                <p class="text-sm text-gray-600">Model: HG 250 CDG</p>
-                                                <p class="text-sm text-gray-600">Engine: CUMMINS 6LTAA8.9-G2</p>
-                                                <p class="text-sm text-gray-600">Generator: DAIGENKO DGK274K</p>
-                                            </div>
-                                            <span class="text-red-600 font-semibold text-sm">Rp. 400.000.000</span>
-                                        </div>
-                                        
-                                        <div class="flex justify-between items-start">
-                                            <div class="flex-1">
-                                                <p class="text-sm text-gray-600">Model: HG 250 CD [6LT]</p>
-                                                <p class="text-sm text-gray-600">Engine: CUMMINS 6LTAA8.9-G2</p>
-                                                <p class="text-sm text-gray-600">Generator: STAMFORD UC0274K14</p>
-                                            </div>
-                                            <span class="text-red-600 font-semibold text-sm">Rp. 480.000.000</span>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Unit</p>
+                                <p class="font-semibold text-gray-800">{{ $pmRequest->unit ?? '-' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Commcode</p>
+                                <p class="font-semibold text-gray-800">{{ $pmRequest->commcode ?? '-' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Required Delivery Date</p>
+                                <p class="font-semibold text-gray-800">{{ $pmRequest->required_delivery_date ?? '-' }}</p>
                             </div>
                         </div>
-                        
-                        <!-- Action Buttons -->
-                        <div class="flex gap-3 mt-6 justify-end">
-                            <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm">
-                                Delete
-                            </button>
-                            <button type="button" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm inline-block">
-                                Edit
-                            </button>
+
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-500">Specification</p>
+                            <p class="text-gray-800">{{ $pmRequest->specification ?? '-' }}</p>
+                        </div>
+
+                        <div>
+                            <p class="text-sm text-gray-500">Remarks</p>
+                            <p class="text-gray-800">{{ $pmRequest->remarks ?? '-' }}</p>
                         </div>
                     </div>
-                </div>
-            </div>
+                @endforeach
 
-            <!-- Card 2 -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div class="mb-4">
-                    <div class="flex-1">
-                        <h1 class="text-3xl font-bold text-gray-800">Excavator</h1>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">Medium</span>
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">In Process</span>
-                        </div>
-                        
-                        <div class="space-y-4">
-                            <!-- Basic Info -->
-                            <div class="space-y-3">
-                                <div>
-                                    <span class="text-gray-600 text-sm font-medium">Category:</span>
-                                    <p class="font-semibold text-gray-800">EQUIPMENT</p>
-                                </div>
-                                
-                                <div>
-                                    <span class="text-gray-600 text-sm font-medium">Budget:</span>
-                                    <p class="font-semibold text-gray-800">Rp. 840.000.000</p>
-                                </div>
-                                
-                                <div>
-                                    <span class="text-gray-600 text-sm font-medium">Date Of Request:</span>
-                                    <p class="font-semibold text-gray-800">12/06/2025</p>
-                                </div>
-                            </div>
-                            
-                            <!-- Detail Items -->
-                            <div class="space-y-3">
-                                <div>
-                                    <span class="text-gray-600 text-sm font-medium">Detail Items:</span>
-                                </div>
-                                
-                                <div class="space-y-3 bg-gray-50 p-3 rounded-lg">
-                                    <div class="flex flex-col space-y-2">
-                                        <div class="flex justify-between items-start">
-                                            <div class="flex-1">
-                                                <p class="text-sm text-gray-600">Model: HG 250 CDG</p>
-                                                <p class="text-sm text-gray-600">Engine: CUMMINS 6LTAA8.9-G2</p>
-                                                <p class="text-sm text-gray-600">Generator: DAIGENKO DGK274K</p>
-                                            </div>
-                                            <span class="text-red-600 font-semibold text-sm">Rp. 400.000.000</span>
-                                        </div>
-                                        
-                                        <div class="flex justify-between items-start">
-                                            <div class="flex-1">
-                                                <p class="text-sm text-gray-600">Model: HG 250 CD [6LT]</p>
-                                                <p class="text-sm text-gray-600">Engine: CUMMINS 6LTAA8.9-G2</p>
-                                                <p class="text-sm text-gray-600">Generator: STAMFORD UC0274K14</p>
-                                            </div>
-                                            <span class="text-red-600 font-semibold text-sm">Rp. 480.000.000</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Action Buttons -->
-                        <div class="flex gap-3 mt-6 justify-end">
-                            <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm">
-                                Delete
-                            </button>
-                            <button type="button" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm inline-block">
-                                Edit
-                            </button>
-                        </div>
-                    </div>
+                <div class="text-right">
+                    <a href="{{ route('projectmanager.formadd') }}"
+                       class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-all">
+                        Tambah Request Lain
+                    </a>
                 </div>
-            </div>
+            @else
+                <div class="bg-yellow-100 text-yellow-800 px-6 py-4 rounded-md text-center mt-10 shadow">
+                    <p class="mb-2 font-semibold">Belum ada data request.</p>
+                    <p class="mb-4">Silakan tambahkan request terlebih dahulu.</p>
+                    <a href="{{ route('projectmanager.formadd') }}"
+                       class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                        Tambah Request
+                    </a>
+                </div>
+            @endif
         </div>
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-    // Optional: Add any JavaScript functionality here
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add event listeners for buttons
-        const deleteButtons = document.querySelectorAll('button:contains("Delete")');
-        const editButtons = document.querySelectorAll('button:contains("Edit")');
-        
-        // You can add confirmation dialogs or other functionality here
-    });
-</script>
-@endpush

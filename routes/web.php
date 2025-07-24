@@ -18,6 +18,7 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\VendorApprovalController;
 use App\Http\Controllers\PurchaseRequestController;
+use App\Http\Controllers\PMRequestController;
 use Illuminate\Support\Facades\Route;
 
 // 🏠 Default Routes
@@ -74,12 +75,15 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
 
     // Project Manager Routes
     Route::view('/dashboard/projectmanager', 'projectmanager.dashboardpm')->name('dashboard.projectmanager');
-    Route::view('/projectmanager/addrequest', 'projectmanager.addrequest')->name('projectmanager.addrequest');
+    Route::get('/projectmanager/addrequest', [PMRequestController::class, 'showAll'])->name('projectmanager.addrequest'); // <- ganti ini
     Route::view('/projectmanager/formadd', 'projectmanager.formadd')->name('projectmanager.formadd');
+
     Route::get('/projectmanager/purchase-requests', [PurchaseRequestController::class, 'index'])->name('projectmanager.purchase_requests');
     Route::get('/projectmanager/purchase-requests/{id}', [PurchaseRequestController::class, 'showDetail'])->name('projectmanager.purchase_requests.detail');
     Route::post('/projectmanager/purchase-requests/{id}/approve', [PurchaseRequestController::class, 'approve'])->name('projectmanager.purchase.approve');
     Route::post('/projectmanager/purchase-requests/{id}/reject', [PurchaseRequestController::class, 'reject'])->name('projectmanager.purchase.reject');
+
+    Route::resource('pm-requests', PMRequestController::class);
 
     // Procurement Routes
     Route::get('/dashboard/procurement', [ProductController::class, 'dashboard'])->name('procurement.dashboardproc');
