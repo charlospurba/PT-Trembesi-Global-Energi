@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\OrderItem; // Added import for OrderItem
 use App\Imports\ProductsImport;
 use App\Imports\ProductBulkWithImagesImport;
 use ZipArchive;
@@ -304,7 +305,26 @@ class VendorProductController extends Controller
 
   public function show($id)
   {
-    $product = Product::where('id', $id)->where('vendor_id', Auth::id())->firstOrFail();
-    return view('vendor.product_detail', compact('product'));
+    try {
+      $product = Product::where('id', $id)->where('vendor_id', Auth::id())->firstOrFail();
+      $sold_quantity = OrderItem::where('product_id', $id)->sum('quantity');
+
+      Log::info('Product details loaded', [
+        'product_id' => $id,
+        'vendor_id' => Auth::id(),
+        'sold_quantity' => $sold_quantity,
+      ]);
+
+      return view('vendor.product_detail', compact('product', 'sold_quantity'));
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+      Log::error('Product not found: ' . $id, ['vendor_id' => Auth::id()]);
+      return redirect()->route('vendor.myproducts')->withErrors(['error' => 'Product not found.']);
+    } catch (\Exception $e) {
+      Log::error('Product show error: ' . $e->getMessage(), [
+        'product_id' => $id,
+        'trace' => $e->getTraceAsString(),
+      ]);
+      return redirect()->route('vendor.myproducts')->withErrors(['error' => 'Failed to load product details.']);
+    }
   }
 }

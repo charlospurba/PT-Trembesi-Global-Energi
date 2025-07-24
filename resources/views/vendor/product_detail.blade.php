@@ -14,14 +14,40 @@
 
             {{-- Product Detail --}}
             <div class="bg-white p-6 rounded shadow flex flex-col md:flex-row gap-6">
-                {{-- Product Image --}}
+                {{-- Product Image Carousel --}}
                 <div class="flex-1">
                     @if ($product->image_paths && is_array($product->image_paths) && count($product->image_paths) > 0)
-                        <img src="{{ asset('storage/' . $product->image_paths[0]) }}" alt="{{ $product->name }}"
-                            class="w-full h-[400px] object-cover rounded-xl shadow" />
+                        <div
+                            class="relative overflow-x-auto flex space-x-4 snap-x snap-mandatory scrollbar scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+                            @foreach ($product->image_paths as $index => $image)
+                                <div class="flex-shrink-0 snap-center w-full">
+                                    <img src="{{ asset('storage/' . $image) }}"
+                                        alt="{{ $product->name }} Image {{ $index + 1 }}"
+                                        class="w-full h-auto object-contain rounded-xl shadow" />
+                                </div>
+                            @endforeach
+                        </div>
+                        @if (count($product->image_paths) > 1)
+                            <div class="flex justify-between mt-4">
+                                <button id="scrollLeft"
+                                    class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                </button>
+                                <button id="scrollRight"
+                                    class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
+                            </div>
+                        @endif
                     @else
                         <img src="https://via.placeholder.com/400" alt="{{ $product->name }}"
-                            class="w-full h-[400px] object-cover rounded-xl shadow" />
+                            class="w-full h-auto object-contain rounded-xl shadow" />
                     @endif
                 </div>
 
@@ -29,7 +55,7 @@
                 <div class="flex-1 space-y-4">
                     <h2 class="text-3xl font-bold text-gray-800">{{ $product->name }}</h2>
                     <p class="text-red-600 text-2xl font-bold">Rp {{ number_format($product->price ?? 0, 0, ',', '.') }}</p>
-                    <p class="text-gray-600">Sold: {{ $product->sold_quantity ?? 0 }}</p>
+                    <p class="text-gray-600">Sold: {{ $sold_quantity ?? 0 }}</p>
 
                     <hr class="my-4">
 
@@ -37,7 +63,7 @@
                     <div class="grid grid-cols-2 gap-4 text-gray-700 text-sm">
                         <div><span class="font-semibold">Category:</span> {{ $product->category ?? 'N/A' }}</div>
                         <div><span class="font-semibold">Minimum Order:</span> 1 pcs</div>
-                        <div><span class="font-semibold">Unit:</span> {{ $product->unit ?? '-' }} </div>
+                        <div><span class="font-semibold">Unit:</span> {{ $product->unit ?? '-' }}</div>
                         <div><span class="font-semibold">Specification:</span> {{ $product->specification ?? '-' }}</div>
                         <div><span class="font-semibold">Brand:</span> {{ $product->brand ?? 'N/A' }}</div>
                         <div><span class="font-semibold">Quantity:</span> {{ $product->quantity ?? 'N/A' }}</div>
@@ -80,3 +106,51 @@
         © 2025 Trembesi Shop
     </footer>
 @endsection
+
+@push('scripts')
+    <script>
+        const scrollContainer = document.querySelector('.overflow-x-auto');
+        const scrollLeftBtn = document.getElementById('scrollLeft');
+        const scrollRightBtn = document.getElementById('scrollRight');
+
+        if (scrollContainer && scrollLeftBtn && scrollRightBtn) {
+            scrollLeftBtn.addEventListener('click', () => {
+                scrollContainer.scrollBy({
+                    left: -scrollContainer.offsetWidth,
+                    behavior: 'smooth'
+                });
+            });
+
+            scrollRightBtn.addEventListener('click', () => {
+                scrollContainer.scrollBy({
+                    left: scrollContainer.offsetWidth,
+                    behavior: 'smooth'
+                });
+            });
+        }
+    </script>
+
+    <style>
+        /* Custom scrollbar styling for Tailwind */
+        .scrollbar::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .scrollbar::-webkit-scrollbar-track {
+            background: #e5e7eb;
+            /* Tailwind gray-200 */
+            border-radius: 4px;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb {
+            background: #9ca3af;
+            /* Tailwind gray-400 */
+            border-radius: 4px;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+            /* Tailwind gray-500 */
+        }
+    </style>
+@endpush

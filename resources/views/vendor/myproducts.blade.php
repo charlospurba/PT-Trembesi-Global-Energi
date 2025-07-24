@@ -27,8 +27,6 @@
                         <select id="sortSelect"
                             class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 min-w-48">
                             <option value="">All Products</option>
-                            <option value="newest">Newest First</option>
-                            <option value="oldest">Oldest First</option>
                             <option value="material">Material</option>
                             <option value="equipment">Equipment</option>
                             <option value="electrical tools">Electrical Tools</option>
@@ -63,11 +61,13 @@
                             <a href="{{ route('vendor.product_detail', $product->id) }}"
                                 class="text-lg font-semibold text-red-600 hover:text-red-800">{{ $product->name }}</a>
                             <p class="text-gray-600">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
-                            <div class="mt-4 flex justify-between">
+                            <div class="mt-4 flex justify-between gap-4">
                                 <a href="{{ route('vendor.edit_product', $product->id) }}"
-                                    class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">Edit</a>
+                                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-1 py-1 rounded-md transition-colors duration-200 text-center">
+                                    Edit
+                                </a>
                                 <button type="button"
-                                    class="delete-product bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded"
+                                    class="delete-product flex-1 bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-1 py-1 rounded-md transition-colors duration-200"
                                     data-id="{{ $product->id }}"
                                     data-url="{{ route('vendor.destroy_product', $product->id) }}">
                                     Delete
