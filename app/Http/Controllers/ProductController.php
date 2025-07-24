@@ -83,7 +83,7 @@ class ProductController extends Controller
   public function materialProducts(Request $request)
   {
     $query = strtolower($request->input('query'));
-    $sort = $request->input('sort'); // ambil filter harga
+    $sort = $request->input('sort');
 
     $products = Product::where('category', 'material')
       ->when($query, function ($q) use ($query) {
@@ -107,7 +107,7 @@ class ProductController extends Controller
   public function equipmentProducts(Request $request)
   {
     $query = strtolower($request->input('query'));
-    $sort = $request->input('sort'); // ambil filter harga
+    $sort = $request->input('sort');
 
     $products = Product::where('category', 'equipment')
       ->when($query, function ($q) use ($query) {
@@ -131,7 +131,7 @@ class ProductController extends Controller
   public function consumablesProducts(Request $request)
   {
     $query = strtolower($request->input('query'));
-    $sort = $request->input('sort'); // ambil filter harga
+    $sort = $request->input('sort');
 
     $products = Product::where('category', 'consumables')
       ->when($query, function ($q) use ($query) {
@@ -155,7 +155,7 @@ class ProductController extends Controller
   public function electricalProducts(Request $request)
   {
     $query = strtolower($request->input('query'));
-    $sort = $request->input('sort'); // ambil filter harga
+    $sort = $request->input('sort');
 
     $products = Product::where('category', 'electrical tools')
       ->when($query, function ($q) use ($query) {
@@ -179,7 +179,7 @@ class ProductController extends Controller
   public function personalProducts(Request $request)
   {
     $query = strtolower($request->input('query'));
-    $sort = $request->input('sort'); // ambil filter harga
+    $sort = $request->input('sort');
 
     $products = Product::where('category', 'personal protective equipment')
       ->when($query, function ($q) use ($query) {
@@ -284,7 +284,7 @@ class ProductController extends Controller
   public function show($id)
   {
     try {
-      $product = Product::findOrFail($id);
+      $product = Product::with('ratings')->findOrFail($id);
       $soldQuantity = OrderItem::where('product_id', $id)->sum('quantity');
 
       return view('procurement.detail', compact('product', 'soldQuantity'));

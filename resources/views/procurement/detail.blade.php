@@ -24,53 +24,49 @@
 
             <!-- Main Product Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
+
                 <!-- Image Section -->
                 <div class="lg:col-span-4 equal-height" id="imageSection">
                     <div class="relative floating-card h-full">
                         <div id="imageCard" class="rounded-2xl shadow-xl overflow-hidden h-full flex flex-col">
-                            
+
                             <!-- Main Image Container -->
                             <div class="relative group flex-1" id="productImageContainer">
-                                <div id="imageLoader" class="absolute inset-0 bg-gray-50 hidden items-center justify-center z-10">
+                                <div id="imageLoader"
+                                    class="absolute inset-0 bg-gray-50 hidden items-center justify-center z-10">
                                     <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-red-600"></div>
                                 </div>
-                                
+
                                 <img id="mainImage"
                                     src="{{ !empty($product->image_paths) && is_array($product->image_paths) && count($product->image_paths) > 0 ? asset('storage/' . $product->image_paths[0] . '?' . time()) : 'https://via.placeholder.com/400x300/dc2626/ffffff?text=Premium+Product' }}"
                                     alt="{{ $product->name }}"
                                     class="w-full h-full object-contain transition-all duration-500"
-                                    onload="hideImageLoader()"
-                                    onerror="handleImageError(this)" />
+                                    onload="hideImageLoader()" onerror="handleImageError(this)" />
 
                                 <!-- Subtle overlay -->
-                                <div id="imageOverlay" class="absolute inset-0 opacity-0 transition-all duration-300">
-                                </div>
+                                <div id="imageOverlay" class="absolute inset-0 opacity-0 transition-all duration-300"></div>
                             </div>
 
                             <!-- Thumbnail Gallery Section -->
                             <div id="thumbnailSection" class="flex-shrink-0">
                                 <div id="thumbnailGallery" class="flex gap-2 overflow-x-auto p-3">
                                     @php
-                                        $images = [];
-                                        if (!empty($product->image_paths) && is_array($product->image_paths)) {
-                                            $images = $product->image_paths;
-                                        } else {
-                                            $images = [
-                                                'https://via.placeholder.com/400x300/dc2626/ffffff?text=Image+1',
-                                                'https://via.placeholder.com/400x300/991b1b/ffffff?text=Image+2',
-                                                'https://via.placeholder.com/400x300/b91c1c/ffffff?text=Image+3',
-                                                'https://via.placeholder.com/400x300/7f1d1d/ffffff?text=Image+4',
-                                            ];
-                                        }
+                                        $images =
+                                            !empty($product->image_paths) && is_array($product->image_paths)
+                                                ? $product->image_paths
+                                                : [
+                                                    'https://via.placeholder.com/400x300/dc2626/ffffff?text=Image+1',
+                                                    'https://via.placeholder.com/400x300/991b1b/ffffff?text=Image+2',
+                                                    'https://via.placeholder.com/400x300/b91c1c/ffffff?text=Image+3',
+                                                    'https://via.placeholder.com/400x300/7f1d1d/ffffff?text=Image+4',
+                                                ];
                                     @endphp
 
                                     @foreach ($images as $index => $image)
                                         <div class="thumbnail-item {{ $index === 0 ? 'active' : '' }}"
                                             onclick="changeMainImage('{{ is_string($image) && str_starts_with($image, 'http') ? $image : asset('storage/' . $image . '?' . time()) }}', this)">
                                             <img src="{{ is_string($image) && str_starts_with($image, 'http') ? $image : asset('storage/' . $image . '?' . time()) }}"
-                                                alt="Product Image {{ $index + 1 }}"
-                                                loading="lazy" />
+                                                alt="Product Image {{ $index + 1 }}" loading="lazy" />
                                         </div>
                                     @endforeach
 
@@ -91,7 +87,7 @@
                 <div class="lg:col-span-4 equal-height" id="productDetailsSection">
                     <div id="productDetailsCard" class="rounded-2xl shadow-xl h-full p-5">
                         <div class="h-full flex flex-col">
-                            
+
                             <!-- Product Title -->
                             <h1 class="text-2xl font-bold text-gray-900 leading-tight mb-4">
                                 {{ $product->name }}
@@ -109,13 +105,27 @@
                                 <div class="flex items-center gap-3">
                                     <div class="flex items-center bg-white px-3 py-2 rounded-full shadow-sm">
                                         <div class="flex text-yellow-400 mr-2 text-sm">
-                                            @for($i = 1; $i <= 5; $i++)
-                                                <i class="fas fa-star"></i>
+                                            @php
+                                                $averageRating = $product->average_rating ?? 0;
+                                                $fullStars = floor($averageRating);
+                                                $halfStar = $averageRating - $fullStars >= 0.5;
+                                            @endphp
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                @if ($i <= $fullStars)
+                                                    <i class="fas fa-star"></i>
+                                                @elseif ($halfStar && $i == $fullStars + 1)
+                                                    <i class="fas fa-star-half-alt"></i>
+                                                @else
+                                                    <i class="far fa-star"></i>
+                                                @endif
                                             @endfor
                                         </div>
-                                        <span class="font-medium text-gray-700 text-sm">5.0</span>
+                                        <span class="font-medium text-gray-700 text-sm">
+                                            {{ $averageRating > 0 ? number_format($averageRating, 1) : 'No Ratings' }}
+                                        </span>
                                     </div>
-                                    <div class="bg-white text-gray-700 px-3 py-2 rounded-full text-sm font-medium shadow-sm">
+                                    <div
+                                        class="bg-white text-gray-700 px-3 py-2 rounded-full text-sm font-medium shadow-sm">
                                         <i class="fas fa-shopping-bag mr-2 text-red-500"></i>
                                         {{ $soldQuantity > 100 ? '100+ Sold' : $soldQuantity . ' Sold' }}
                                     </div>
@@ -143,7 +153,8 @@
                                     </div>
                                     <div class="info-item p-3 bg-white rounded-lg shadow-sm border">
                                         <div class="text-xs text-gray-600 font-medium mb-1 uppercase">Specification</div>
-                                        <div class="text-sm text-gray-900 font-semibold">{{ $product->specification ?? '-' }}</div>
+                                        <div class="text-sm text-gray-900 font-semibold">
+                                            {{ $product->specification ?? '-' }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -155,7 +166,7 @@
                 <div class="lg:col-span-4 equal-height" id="purchaseSection">
                     <div id="purchaseCard" class="rounded-2xl shadow-xl overflow-hidden h-full">
                         <div class="h-full flex flex-col">
-                            
+
                             <!-- Header -->
                             <div id="purchaseHeader" class="text-white p-4 flex-shrink-0">
                                 <h3 class="font-semibold text-lg flex items-center">
@@ -214,7 +225,8 @@
                                                 class="w-full text-white py-3 px-4 rounded-xl font-semibold transition-all duration-300 transform shadow-lg">
                                                 <i class="fas fa-bolt mr-2"></i>Buy Now
                                             </button>
-                                            <button type="button" id="addToCartBtn" onclick="addToCart({{ $product->id }})"
+                                            <button type="button" id="addToCartBtn"
+                                                onclick="addToCart({{ $product->id }})"
                                                 class="w-full border-2 border-red-500 text-red-600 py-3 px-4 rounded-xl font-semibold hover:bg-red-500 hover:text-white transition-all duration-300 transform">
                                                 <i class="fas fa-cart-plus mr-2"></i>Add to Cart
                                             </button>
@@ -226,7 +238,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Vendor Section -->
             <div id="vendorSection" class="mt-6">
                 <div id="vendorCard" class="rounded-2xl shadow-xl p-6">
@@ -244,13 +256,18 @@
                                 {{ $product->supplier ?? 'Premium Store' }}
                             </a>
                             <div class="flex items-center gap-4 mt-2">
-                                <div class="flex items-center bg-yellow-50 px-4 py-2 rounded-full border border-yellow-200">
+                                <div
+                                    class="flex items-center bg-yellow-50 px-4 py-2 rounded-full border border-yellow-200">
                                     <div class="flex text-yellow-500 mr-2">
-                                        @for($i = 1; $i <= 5; $i++)
+                                        @php
+                                            $storeRating = 5.0; // Placeholder; replace with actual store rating logic if available
+                                        @endphp
+                                        @for ($i = 1; $i <= 5; $i++)
                                             <i class="fas fa-star"></i>
                                         @endfor
                                     </div>
-                                    <span class="font-medium text-gray-700">5.0 Store Rating</span>
+                                    <span class="font-medium text-gray-700">{{ number_format($storeRating, 1) }} Store
+                                        Rating</span>
                                 </div>
                             </div>
                         </div>
@@ -311,7 +328,7 @@
             const thumbnailGallery = document.getElementById('thumbnailGallery');
             if (thumbnailGallery) {
                 thumbnailGallery.style.cursor = 'grab';
-                
+
                 // Custom scrollbar
                 const style = document.createElement('style');
                 style.textContent = `
@@ -340,7 +357,7 @@
                 priceSection.style.border = '1px solid #f3c6c6';
                 priceSection.style.position = 'relative';
                 priceSection.style.overflow = 'hidden';
-                
+
                 // Add top border effect
                 const topBorder = document.createElement('div');
                 topBorder.style.position = 'absolute';
@@ -442,7 +459,7 @@
             floatingCards.forEach(card => {
                 let direction = 1;
                 let position = 0;
-                
+
                 setInterval(() => {
                     position += direction * 0.5;
                     if (position >= 5 || position <= -5) {
@@ -519,10 +536,10 @@
             // Image overlay effect
             const productImageContainer = document.getElementById('productImageContainer');
             const imageOverlay = document.getElementById('imageOverlay');
-            
+
             if (productImageContainer && imageOverlay) {
                 imageOverlay.style.background = 'linear-gradient(to top, rgba(0,0,0,0.05), transparent, transparent)';
-                
+
                 productImageContainer.addEventListener('mouseenter', () => {
                     imageOverlay.style.opacity = '1';
                 });
@@ -598,7 +615,7 @@
                         item.style.height = '55px';
                     });
                 } else {
-                    // Desktop styles (default)
+                    // Desktop styles
                     if (productImageContainer) {
                         productImageContainer.style.height = '320px';
                         productImageContainer.style.maxHeight = '340px';
@@ -629,13 +646,14 @@
             if (buyNowBtn) {
                 let glowIntensity = 0.2;
                 let direction = 1;
-                
+
                 setInterval(() => {
                     glowIntensity += direction * 0.01;
                     if (glowIntensity >= 0.4 || glowIntensity <= 0.2) {
                         direction *= -1;
                     }
-                    buyNowBtn.style.boxShadow = `0 0 ${15 + (glowIntensity - 0.2) * 50}px rgba(220, 38, 38, ${glowIntensity})`;
+                    buyNowBtn.style.boxShadow =
+                        `0 0 ${15 + (glowIntensity - 0.2) * 50}px rgba(220, 38, 38, ${glowIntensity})`;
                 }, 50);
             }
 
@@ -645,7 +663,7 @@
                 let bouncePosition = 0;
                 let bounceDirection = 1;
                 let bounceSpeed = 0.1;
-                
+
                 setInterval(() => {
                     bouncePosition += bounceDirection * bounceSpeed;
                     if (bouncePosition >= 2) {
@@ -660,19 +678,33 @@
         }
 
         function applySlideInAnimation() {
-            const sections = [
-                { element: document.getElementById('imageSection'), delay: 0 },
-                { element: document.getElementById('productDetailsSection'), delay: 200 },
-                { element: document.getElementById('purchaseSection'), delay: 400 },
-                { element: document.getElementById('vendorSection'), delay: 600 }
+            const sections = [{
+                    element: document.getElementById('imageSection'),
+                    delay: 0
+                },
+                {
+                    element: document.getElementById('productDetailsSection'),
+                    delay: 200
+                },
+                {
+                    element: document.getElementById('purchaseSection'),
+                    delay: 400
+                },
+                {
+                    element: document.getElementById('vendorSection'),
+                    delay: 600
+                }
             ];
 
-            sections.forEach(({ element, delay }) => {
+            sections.forEach(({
+                element,
+                delay
+            }) => {
                 if (element) {
                     element.style.opacity = '0';
                     element.style.transform = 'translateX(30px)';
                     element.style.transition = 'all 0.8s ease-out';
-                    
+
                     setTimeout(() => {
                         element.style.opacity = '1';
                         element.style.transform = 'translateX(0)';
@@ -703,9 +735,9 @@
 
         function changeMainImage(imageSrc, thumbnailElement) {
             const mainImage = document.getElementById('mainImage');
-            
+
             showImageLoader();
-            
+
             const newImg = new Image();
             newImg.onload = function() {
                 mainImage.style.opacity = '0.7';
@@ -727,7 +759,7 @@
                 item.style.boxShadow = 'none';
                 item.style.transform = 'scale(1)';
             });
-            
+
             thumbnailElement.classList.add('active');
             thumbnailElement.style.borderColor = '#dc2626';
             thumbnailElement.style.boxShadow = '0 0 12px rgba(220, 38, 38, 0.3)';
@@ -797,49 +829,52 @@
                 showConfirmButton: false
             });
 
-            fetch('/cart/add/' + productId, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('#add-to-cart-form input[name="_token"]').value
-                },
-                body: JSON.stringify({ quantity: quantity })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Added to Cart!',
-                        text: data.message,
-                        timer: 1500,
-                        showConfirmButton: false
-                    }).then(() => {
-                        window.location.href = '/cart';
-                    });
-                    updateCartBadge(data.cart_count);
-                } else {
+            fetch('{{ route('cart.add', ['id' => ':id']) }}'.replace(':id', productId), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('#add-to-cart-form input[name="_token"]').value,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        quantity: quantity
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Added to Cart!',
+                            text: data.message,
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.href = '{{ route('procurement.cart') }}';
+                        });
+                        updateCartBadge(data.cart_count);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops!',
+                            text: data.message || 'Failed to add product to cart',
+                            confirmButtonColor: '#dc2626'
+                        });
+                    }
+                })
+                .catch(error => {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Oops!',
-                        text: data.message || 'Failed to add product to cart',
+                        title: 'Connection Error',
+                        text: 'Failed to add product to cart: ' + error.message,
                         confirmButtonColor: '#dc2626'
                     });
-                }
-            })
-            .catch(error => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Connection Error',
-                    text: 'Failed to add product to cart: ' + error.message,
-                    confirmButtonColor: '#dc2626'
                 });
-            });
         }
 
         function buyNow(productId) {
@@ -852,39 +887,42 @@
                 showConfirmButton: false
             });
 
-            fetch('/cart/buy-now/' + productId, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('#add-to-cart-form input[name="_token"]').value
-                },
-                body: JSON.stringify({ quantity: quantity })
-            })
-            .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                    return;
-                }
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.message || 'Network response was not ok: ' + response.status);
+            fetch('{{ route('cart.buy-now', ['id' => ':id']) }}'.replace(':id', productId), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('#add-to-cart-form input[name="_token"]').value,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        quantity: quantity
+                    })
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                        return;
+                    }
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.message || 'Network response was not ok: ' + response.status);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.success) {
+                        updateCartBadge(data.cart_count);
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Process Failed',
+                        text: 'Failed to process order: ' + error.message,
+                        confirmButtonColor: '#dc2626'
                     });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data && data.success) {
-                    updateCartBadge(data.cart_count);
-                }
-            })
-            .catch(error => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Process Failed',
-                    text: 'Failed to process order: ' + error.message,
-                    confirmButtonColor: '#dc2626'
                 });
-            });
         }
 
         function updateCartBadge(count) {
@@ -939,17 +977,17 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Apply all styling
             applyStyles();
-            
+
             // Apply animations
             applySlideInAnimation();
             applyGlowingAnimation();
-            
+
             // Setup interactions
             setupThumbnailScrolling();
-            
+
             // Hide initial loader
             hideImageLoader();
-            
+
             console.log('Product detail page initialized with JavaScript styling!');
         });
     </script>

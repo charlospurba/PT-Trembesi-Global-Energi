@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Bid;
 use App\Models\Notification;
+use App\Models\Rating;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Events\OrderStatusUpdated;
@@ -17,17 +18,14 @@ class OrderController extends Controller
     {
         $user = Auth::user();
 
-        // Base query for vendor orders
         $query = Order::whereHas('orderItems.product', function ($q) use ($user) {
             $q->where('vendor_id', $user->id);
         })->with('orderItems.product');
 
-        // Apply status filter for orders
         if ($request->has('status') && $request->status) {
             $query->where('status', $request->status);
         }
 
-        // Apply search filter for orders
         if ($request->has('search') && $request->search) {
             $searchTerm = $request->search;
             $query->where(function ($q) use ($searchTerm) {
@@ -43,21 +41,15 @@ class OrderController extends Controller
             });
         }
 
-        // Get filtered orders with pagination
         $orders = $query->latest()->paginate(10);
-
-        // Get order counts for each status
         $orderCounts = $this->getOrderCounts($user->id);
 
-        // Base query for vendor bids
         $bidQuery = Bid::where('vendor_id', $user->id)->with('product', 'user');
 
-        // Apply status filter for bids
         if ($request->has('bid_status') && $request->bid_status) {
             $bidQuery->where('status', $request->bid_status);
         }
 
-        // Apply search filter for bids
         if ($request->has('search') && $request->search) {
             $searchTerm = $request->search;
             $bidQuery->where(function ($q) use ($searchTerm) {
@@ -70,10 +62,7 @@ class OrderController extends Controller
             });
         }
 
-        // Get filtered bids with pagination
         $bids = $bidQuery->latest()->paginate(10);
-
-        // Get bid counts for each status
         $bidCounts = $this->getBidCounts($user->id);
 
         Log::info('Vendor Orders and Bids Retrieved', [
@@ -137,7 +126,6 @@ class OrderController extends Controller
 
             $order->update(['status' => $validated['status']]);
 
-            // Notify the procurement user
             Notification::create([
                 'user_id' => $order->user_id,
                 'type' => 'order_status',
@@ -148,7 +136,6 @@ class OrderController extends Controller
                 ]),
             ]);
 
-            // Broadcast event if status is Completed
             if ($validated['status'] === 'Completed') {
                 event(new OrderStatusUpdated($order, $user->id));
             }
@@ -179,7 +166,6 @@ class OrderController extends Controller
             ]);
 
             if ($validated['status'] === 'Accepted') {
-                // Reject other accepted bids for the same product and user
                 Bid::where('product_id', $bid->product_id)
                     ->where('user_id', $bid->user_id)
                     ->where('id', '!=', $bid->id)
@@ -189,7 +175,6 @@ class OrderController extends Controller
 
             $bid->update(['status' => $validated['status']]);
 
-            // Notify the user who submitted the bid
             Notification::create([
                 'user_id' => $bid->user_id,
                 'type' => 'bid_status',
@@ -209,6 +194,68 @@ class OrderController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update bid status: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function submitRating(Request $request, $orderId)
+    {
+        try {
+            $user = Auth::user();
+            $order = Order::where('id', $orderId)
+                ->where('user_id', $user->id)
+                ->where('status', 'Completed')
+                ->with('orderItems.product')
+                ->firstOrFail();
+
+            $validated = $request->validate([
+                'ratings' => 'required|array',
+                'ratings.*.product_id' => 'required|exists:products,id',
+                'ratings.*.rating' => 'required|integer|min:1|max:5',
+            ]);
+
+            foreach ($validated['ratings'] as $ratingData) {
+                $product = $order->orderItems->where('product_id', $ratingData['product_id'])->first()->product;
+
+                $existingRating = Rating::where([
+                    'order_id' => $order->id,
+                    'product_id' => $ratingData['product_id'],
+                    'user_id' => $user->id,
+                ])->first();
+
+                if ($existingRating) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "You have already rated the product: {$product->name} for this order.",
+                    ], 400);
+                }
+
+                Rating::create([
+                    'order_id' => $order->id,
+                    'product_id' => $ratingData['product_id'],
+                    'user_id' => $user->id,
+                    'rating' => $ratingData['rating'],
+                ]);
+
+                $product->updateAverageRating();
+
+                Log::info('Rating submitted', [
+                    'order_id' => $order->id,
+                    'product_id' => $ratingData['product_id'],
+                    'user_id' => $user->id,
+                    'rating' => $ratingData['rating'],
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Ratings submitted successfully!',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Rating Submission Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to submit ratings: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -248,9 +295,8 @@ class OrderController extends Controller
                 return redirect()->route('login.form')->withErrors(['login' => 'Please log in to view your order history.']);
             }
 
-            // Fetch orders for the authenticated user, grouped by status
             $orders = Order::where('user_id', $user->id)
-                ->with(['orderItems.product'])
+                ->with(['orderItems.product', 'ratings'])
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->groupBy('status');

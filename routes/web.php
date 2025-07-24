@@ -125,6 +125,7 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
 
     // Order History Route
     Route::get('/procurement/order-history', [OrderController::class, 'orderHistory'])->name('procurement.order_history');
+    Route::post('/orders/{orderId}/rate', [OrderController::class, 'submitRating'])->name('orders.rate');
 
     // Notification Routes
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');

@@ -23,11 +23,13 @@ class Product extends Model
     'address',
     'image_paths',
     'status',
+    'average_rating',
   ];
 
   protected $casts = [
     'image_paths' => 'array',
     'price' => 'decimal:2',
+    'average_rating' => 'decimal:1',
   ];
 
   public function vendor()
@@ -38,5 +40,16 @@ class Product extends Model
   public function orderItems()
   {
     return $this->hasMany(OrderItem::class);
+  }
+
+  public function ratings()
+  {
+    return $this->hasMany(Rating::class);
+  }
+
+  public function updateAverageRating()
+  {
+    $average = $this->ratings()->avg('rating');
+    $this->update(['average_rating' => $average ? round($average, 1) : null]);
   }
 }
