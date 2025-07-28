@@ -46,7 +46,7 @@
                             <option value="100">100</option>
                         </select>
                     </div>
-                    <button onclick="addNewItem()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium">
+                    <button onclick="openModal()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium">
                         + Add Product
                     </button>
                 </div>
@@ -166,87 +166,145 @@
     </div>
 
     <!-- Modal for Adding New Item -->
-<div id="addItemModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Add New Construction Material</h3>
-                <form id="addItemForm">
-                    <div class="space-y-4">
-                        <!-- Quantity -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Quantity <span class="text-red-500">*</span>
-                            </label>
-                            <input type="number" id="qty" name="qty" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter quantity" required min="1">
-                            <div class="text-red-500 text-sm mt-1 hidden" id="qty-error">Quantity is required and must be a valid number</div>
+    <div id="addItemModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Add New Construction Material</h3>
+                    <form id="addItemForm">
+                        <div class="space-y-4">
+                            <!-- Quantity -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Quantity <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" id="qty" name="qty" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter quantity" required min="1">
+                                <div class="text-red-500 text-sm mt-1 hidden" id="qty-error">Quantity is required and must be a valid number</div>
+                            </div>
+
+                            <!-- Unit -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Unit <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="unit" name="unit" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., sak, m³, kg, pcs" required>
+                                <div class="text-red-500 text-sm mt-1 hidden" id="unit-error">Unit is required</div>
+                            </div>
+
+                            <!-- Category -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Category <span class="text-red-500">*</span>
+                                </label>
+                                <select id="category" name="category" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Material">Material</option>
+                                    <option value="Equipment">Equipment</option>
+                                    <option value="Electrical Tools">Electrical Tools</option>
+                                    <option value="Consumables">Consumables</option>
+                                    <option value="Personal Protective Equipment">Personal Protective Equipment</option>
+                                </select>
+                                <div class="text-red-500 text-sm mt-1 hidden" id="category-error">Category is required</div>
+                            </div>
+
+                            <!-- Supplier -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Supplier <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="supplier" name="supplier" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter supplier name" required>
+                                <div class="text-red-500 text-sm mt-1 hidden" id="supplier-error">Supplier is required</div>
+                            </div>
+
+                            <!-- Budget -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Budget (IDR) <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" id="budget" name="budget" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter budget amount" required min="0">
+                                <div class="text-red-500 text-sm mt-1 hidden" id="budget-error">Budget is required</div>
+                            </div>
+
+                            <!-- Commodity Code -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Commodity Code
+                                </label>
+                                <input type="text" id="commcode" name="commcode" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter commodity code (optional)">
+                            </div>
+
+                            <!-- Description -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Description <span class="text-red-500">*</span>
+                                </label>
+                                <textarea id="description" name="description" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter material description" required></textarea>
+                                <div class="text-red-500 text-sm mt-1 hidden" id="description-error">Description is required</div>
+                            </div>
+
+                            <!-- Specification -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Specification
+                                </label>
+                                <textarea id="specification" name="specification" rows="2" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter material specification (optional)"></textarea>
+                            </div>
+
+                            <!-- Start Date -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Start Date <span class="text-red-500">*</span>
+                                </label>
+                                <input type="date" id="startDate" name="startDate" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                <div class="text-red-500 text-sm mt-1 hidden" id="startDate-error">Start date is required</div>
+                            </div>
+
+                            <!-- End Date -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    End Date <span class="text-red-500">*</span>
+                                </label>
+                                <input type="date" id="endDate" name="endDate" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                <div class="text-red-500 text-sm mt-1 hidden" id="endDate-error">End date is required and must be after start date</div>
+                            </div>
+
+                            <!-- Status -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Status <span class="text-red-500">*</span>
+                                </label>
+                                <select id="status" name="status" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                    <option value="">Select Status</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="in-progress">In Progress</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="delayed">Delayed</option>
+                                </select>
+                                <div class="text-red-500 text-sm mt-1 hidden" id="status-error">Status is required</div>
+                            </div>
+
+                            <!-- Remarks -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Remarks
+                                </label>
+                                <textarea id="remarks" name="remarks" rows="2" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Additional remarks (optional)"></textarea>
+                            </div>
                         </div>
 
-                        <!-- Unit -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Unit <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="unit" name="unit" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., sak, m³, kg, pcs" required>
-                            <div class="text-red-500 text-sm mt-1 hidden" id="unit-error">Unit is required</div>
+                        <div class="flex justify-end space-x-3 mt-6">
+                            <button type="button" onclick="closeModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md transition-colors">
+                                Add Product
+                            </button>
                         </div>
-
-                        <!-- Commodity Code -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Commodity Code
-                            </label>
-                            <input type="text" id="commcode" name="commcode" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter commodity code (optional)">
-                        </div>
-
-                        <!-- Description -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Description <span class="text-red-500">*</span>
-                            </label>
-                            <textarea id="description" name="description" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter material description" required></textarea>
-                            <div class="text-red-500 text-sm mt-1 hidden" id="description-error">Description is required</div>
-                        </div>
-
-                        <!-- Specification -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Specification
-                            </label>
-                            <textarea id="specification" name="specification" rows="2" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter material specification (optional)"></textarea>
-                        </div>
-
-                        <!-- Required Delivery Date -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Required Delivery Date
-                            </label>
-                            <input type="date" id="required_delivery_date" name="required_delivery_date" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-
-                        <!-- Remarks -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Remarks
-                            </label>
-                            <textarea id="remarks" name="remarks" rows="2" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Additional remarks (optional)"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-end space-x-3 mt-6">
-                        <button type="button" onclick="closeModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors">
-                            Cancel
-                        </button>
-                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md transition-colors">
-                            Add Product
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
 
     <!-- Scripts -->
     <script>
@@ -270,7 +328,7 @@
 
             generateSampleData() {
                 const data = [];
-                const categories = ["Struktur", "Material Dasar", "Agregat", "Finishing", "Dinding", "Plumbing", "Atap", "Aksesoris"];
+                const categories = ["Material", "Equipment", "Electrical Tools", "Consumables", "Personal Protective Equipment"];
                 const statuses = ["pending", "in-progress", "completed", "delayed"];
                 const suppliers = [
                     "PT Krakatau Steel", "PT Semen Indonesia", "CV Sumber Alam Jaya", "PT Roman Ceramics",
@@ -279,12 +337,33 @@
                     "CV Baja Ringan", "PT Keramika Indonesia", "UD Pasir Bangunan", "PT Pipa Prima"
                 ];
                 
-                const materials = [
-                    "Besi Beton SNI", "Semen Portland", "Pasir Beton", "Keramik Lantai", "Cat Tembok",
-                    "Bata Merah Press", "Pipa PVC", "Genteng Beton", "Kayu Balok", "Kawat Bendrat",
-                    "Baja Ringan", "Kaca Jendela", "Pintu Panel", "Atap Spandek", "Lem Keramik",
-                    "Plester Dinding", "Rangka Hollow", "Engsel Pintu", "Handle Jendela", "Kran Air"
-                ];
+                const materialsByCategory = {
+                    "Material": [
+                        "Besi Beton SNI", "Semen Portland", "Pasir Beton", "Keramik Lantai", 
+                        "Bata Merah Press", "Pipa PVC", "Genteng Beton", "Kayu Balok", 
+                        "Baja Ringan", "Kaca Jendela", "Pintu Panel", "Atap Spandek"
+                    ],
+                    "Equipment": [
+                        "Excavator", "Concrete Mixer", "Tower Crane", "Bulldozer",
+                        "Compactor", "Generator Set", "Welding Machine", "Air Compressor",
+                        "Concrete Pump", "Scaffolding System", "Formwork Panel", "Hoist"
+                    ],
+                    "Electrical Tools": [
+                        "Power Drill", "Angle Grinder", "Circular Saw", "Impact Driver",
+                        "Multimeter", "Cable Tester", "Electrical Pliers", "Wire Stripper",
+                        "Voltage Tester", "Soldering Iron", "Heat Gun", "Electric Hammer"
+                    ],
+                    "Consumables": [
+                        "Welding Rod", "Cutting Disc", "Drill Bits", "Screws & Bolts",
+                        "Sandpaper", "Adhesive Tape", "Cable Ties", "Fuses",
+                        "Electrical Wire", "Conduit Pipe", "Junction Box", "Cable Clamps"
+                    ],
+                    "Personal Protective Equipment": [
+                        "Safety Helmet", "Safety Boots", "Work Gloves", "Safety Goggles",
+                        "Reflective Vest", "Ear Plugs", "Face Mask", "Safety Harness",
+                        "Hard Hat", "Steel Toe Boots", "Cut Resistant Gloves", "Safety Glasses"
+                    ]
+                };
 
                 // Generate 100 sample items
                 for (let i = 1; i <= 100; i++) {
@@ -292,10 +371,34 @@
                     const endDate = new Date(startDate.getTime() + (Math.random() * 60 + 7) * 24 * 60 * 60 * 1000);
                     const status = statuses[Math.floor(Math.random() * statuses.length)];
                     const category = categories[Math.floor(Math.random() * categories.length)];
+                    const categoryMaterials = materialsByCategory[category];
+                    const material = categoryMaterials[Math.floor(Math.random() * categoryMaterials.length)];
+                    
+                    // Define units based on category
+                    let unit;
+                    switch(category) {
+                        case "Material":
+                            unit = ['m³', 'sak', 'batang', 'lembar', 'unit'][Math.floor(Math.random() * 5)];
+                            break;
+                        case "Equipment":
+                            unit = ['unit', 'set'][Math.floor(Math.random() * 2)];
+                            break;
+                        case "Electrical Tools":
+                            unit = ['unit', 'pcs'][Math.floor(Math.random() * 2)];
+                            break;
+                        case "Consumables":
+                            unit = ['pcs', 'kg', 'meter', 'roll', 'box'][Math.floor(Math.random() * 5)];
+                            break;
+                        case "Personal Protective Equipment":
+                            unit = ['pcs', 'pair', 'unit'][Math.floor(Math.random() * 3)];
+                            break;
+                        default:
+                            unit = 'unit';
+                    }
                     
                     data.push({
                         id: i,
-                        name: `${materials[Math.floor(Math.random() * materials.length)]} ${Math.floor(Math.random() * 100) + 10}${category === 'Agregat' ? ' m³' : category === 'Material Dasar' ? ' sak' : ' unit'}`,
+                        name: `${material} ${Math.floor(Math.random() * 100) + 10} ${unit}`,
                         supplier: suppliers[Math.floor(Math.random() * suppliers.length)],
                         startDate,
                         endDate,
@@ -305,9 +408,7 @@
                                  status === 'in-progress' ? Math.floor(Math.random() * 80) + 20 :
                                  status === 'delayed' ? Math.floor(Math.random() * 30) + 10 : 0,
                         category,
-                        unit: category === 'Agregat' ? 'm³' : 
-                              category === 'Material Dasar' ? 'sak' : 
-                              category === 'Struktur' ? 'batang' : 'unit'
+                        unit
                     });
                 }
                 
@@ -329,7 +430,7 @@
             }
 
             applyFilters() {
-                this.cache.clear(); // Clear cache when filters change
+                this.cache.clear();
                 
                 this.filteredData = this.allData.filter(item => {
                     const matchesSearch = this.searchQuery === '' || 
@@ -342,7 +443,7 @@
                     return matchesSearch && matchesStatus && matchesCategory;
                 });
                 
-                this.currentPage = 1; // Reset to first page
+                this.currentPage = 1;
             }
 
             getPaginatedData() {
@@ -411,7 +512,6 @@
             const today = new Date();
             const months = [];
             
-            // Generate 6 months timeline
             for (let i = -2; i <= 3; i++) {
                 const date = new Date(today.getFullYear(), today.getMonth() + i, 1);
                 months.push({
@@ -434,80 +534,73 @@
             `;
         }
 
+        // Modal functions
         function openModal() {
-    document.getElementById('addItemModal').classList.remove('hidden');
-}
+            document.getElementById('addItemModal').classList.remove('hidden');
+        }
 
-function closeModal() {
-    document.getElementById('addItemModal').classList.add('hidden');
-    document.getElementById('addItemForm').reset();
-    // Hide all error messages
-    document.querySelectorAll('[id$="-error"]').forEach(error => {
-        error.classList.add('hidden');
-    });
-}
+        function closeModal() {
+            document.getElementById('addItemModal').classList.add('hidden');
+            document.getElementById('addItemForm').reset();
+            document.querySelectorAll('[id$="-error"]').forEach(error => {
+                error.classList.add('hidden');
+            });
+        }
 
-// Form validation
-document.getElementById('addItemForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    let isValid = true;
-    
-    // Validate quantity
-    const qty = document.getElementById('qty');
-    const qtyError = document.getElementById('qty-error');
-    if (!qty.value || parseInt(qty.value) < 1) {
-        qtyError.classList.remove('hidden');
-        isValid = false;
-    } else {
-        qtyError.classList.add('hidden');
-    }
-    
-    // Validate unit
-    const unit = document.getElementById('unit');
-    const unitError = document.getElementById('unit-error');
-    if (!unit.value.trim()) {
-        unitError.classList.remove('hidden');
-        isValid = false;
-    } else {
-        unitError.classList.add('hidden');
-    }
-    
-    // Validate description
-    const description = document.getElementById('description');
-    const descriptionError = document.getElementById('description-error');
-    if (!description.value.trim()) {
-        descriptionError.classList.remove('hidden');
-        isValid = false;
-    } else {
-        descriptionError.classList.add('hidden');
-    }
-    
-    if (isValid) {
-        // Form is valid, you can process the data here
-        const formData = {
-            qty: parseInt(qty.value),
-            unit: unit.value.trim(),
-            commcode: document.getElementById('commcode').value.trim() || null,
-            description: description.value.trim(),
-            specification: document.getElementById('specification').value.trim() || null,
-            required_delivery_date: document.getElementById('required_delivery_date').value || null,
-            remarks: document.getElementById('remarks').value.trim() || null
-        };
-        
-        console.log('Form Data:', formData);
-        alert('Material added successfully!');
-        closeModal();
-    }
-});
+        // Form validation
+        function validateForm() {
+            let isValid = true;
+            
+            // Validate all required fields
+            const requiredFields = ['qty', 'unit', 'category', 'supplier', 'budget', 'description', 'startDate', 'endDate', 'status'];
+            
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                const errorElement = document.getElementById(`${fieldId}-error`);
+                
+                if (!field.value.trim()) {
+                    errorElement.classList.remove('hidden');
+                    isValid = false;
+                } else {
+                    errorElement.classList.add('hidden');
+                }
+            });
 
-// Close modal when clicking outside
-document.getElementById('addItemModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeModal();
-    }
-});
+            // Validate date order
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            const endDateError = document.getElementById('endDate-error');
+            
+            if (startDate && endDate && endDate <= startDate) {
+                endDateError.textContent = 'End date must be after start date';
+                endDateError.classList.remove('hidden');
+                isValid = false;
+            } else if (document.getElementById('endDate').value) {
+                endDateError.classList.add('hidden');
+            }
 
+            // Validate quantity
+            const qty = document.getElementById('qty');
+            const qtyError = document.getElementById('qty-error');
+            if (!qty.value || parseInt(qty.value) < 1) {
+                qtyError.classList.remove('hidden');
+                isValid = false;
+            } else {
+                qtyError.classList.add('hidden');
+            }
+
+            // Validate budget
+            const budget = document.getElementById('budget');
+            const budgetError = document.getElementById('budget-error');
+            if (!budget.value || parseInt(budget.value) < 0) {
+                budgetError.classList.remove('hidden');
+                isValid = false;
+            } else {
+                budgetError.classList.add('hidden');
+            }
+
+            return isValid;
+        }
 
         // Calculate position and width for timeline bars
         function calculateTimelinePosition(startDate, endDate) {
@@ -553,7 +646,6 @@ document.getElementById('addItemModal').addEventListener('click', function(e) {
                 }).format(amount);
             };
 
-            // Use DocumentFragment for better performance
             const fragment = document.createDocumentFragment();
             
             data.forEach(item => {
@@ -658,26 +750,27 @@ document.getElementById('addItemModal').addEventListener('click', function(e) {
             updateStatistics();
         }
 
-        // Show loading indicator
-        function showLoading() {
-            document.getElementById('loadingIndicator').classList.remove('hidden');
-            document.getElementById('timelineContent').classList.add('opacity-50');
-        }
-
-        // Hide loading indicator
-        function hideLoading() {
-            document.getElementById('loadingIndicator').classList.add('hidden');
-            document.getElementById('timelineContent').classList.remove('opacity-50');
-        }
-
-        // Add new item modal functions
-        function addNewItem() {
-            document.getElementById('addItemModal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('addItemModal').classList.add('hidden');
-            document.getElementById('addItemForm').reset();
+        // Show success toast
+        function showSuccessToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Animate out and remove
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
         }
 
         // Initialize dashboard
@@ -705,32 +798,29 @@ document.getElementById('addItemModal').addEventListener('click', function(e) {
             document.getElementById('addItemForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 
+                if (!validateForm()) {
+                    return;
+                }
+                
+                const formData = new FormData(e.target);
                 const newItem = {
-                    name: document.getElementById('itemName').value,
-                    supplier: document.getElementById('supplier').value,
-                    startDate: new Date(document.getElementById('startDate').value),
-                    endDate: new Date(document.getElementById('endDate').value),
-                    status: document.getElementById('status').value,
-                    budget: parseInt(document.getElementById('budget').value) || 0,
-                    progress: document.getElementById('status').value === 'completed' ? 100 : 
-                             document.getElementById('status').value === 'in-progress' ? 50 : 0,
-                    category: document.getElementById('category').value,
-                    unit: document.getElementById('unit').value
+                    name: `${formData.get('description')} ${formData.get('qty')} ${formData.get('unit')}`,
+                    supplier: formData.get('supplier'),
+                    startDate: new Date(formData.get('startDate')),
+                    endDate: new Date(formData.get('endDate')),
+                    status: formData.get('status'),
+                    budget: parseInt(formData.get('budget')) || 0,
+                    progress: formData.get('status') === 'completed' ? 100 : 
+                             formData.get('status') === 'in-progress' ? 50 : 
+                             formData.get('status') === 'delayed' ? 25 : 0,
+                    category: formData.get('category'),
+                    unit: formData.get('unit')
                 };
                 
                 dataManager.addItem(newItem);
                 applyFiltersAndUpdate();
                 closeModal();
-                
-                // Show success message
-                const toast = document.createElement('div');
-                toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
-                toast.textContent = 'Material added successfully!';
-                document.body.appendChild(toast);
-                
-                setTimeout(() => {
-                    toast.remove();
-                }, 3000);
+                showSuccessToast('Material added successfully!');
             });
 
             // Close modal when clicking outside
@@ -740,7 +830,7 @@ document.getElementById('addItemModal').addEventListener('click', function(e) {
                 }
             });
 
-            // Keyboard shortcuts for pagination
+            // Keyboard shortcuts
             document.addEventListener('keydown', function(e) {
                 if (e.ctrlKey || e.metaKey) {
                     switch(e.key) {
@@ -758,6 +848,11 @@ document.getElementById('addItemModal').addEventListener('click', function(e) {
                             break;
                     }
                 }
+                
+                // ESC to close modal
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
             });
 
             // Add tooltips for keyboard shortcuts
@@ -768,6 +863,33 @@ document.getElementById('addItemModal').addEventListener('click', function(e) {
             const nextButton = document.getElementById('nextPage');
             prevButton.setAttribute('title', 'Previous page (Ctrl+←)');
             nextButton.setAttribute('title', 'Next page (Ctrl+→)');
+
+            // Real-time validation for form fields
+            const formFields = document.querySelectorAll('#addItemForm input, #addItemForm select, #addItemForm textarea');
+            formFields.forEach(field => {
+                field.addEventListener('blur', function() {
+                    const errorElement = document.getElementById(`${this.id}-error`);
+                    if (this.hasAttribute('required') && !this.value.trim()) {
+                        errorElement?.classList.remove('hidden');
+                    } else {
+                        errorElement?.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Date validation
+            document.getElementById('endDate').addEventListener('change', function() {
+                const startDate = new Date(document.getElementById('startDate').value);
+                const endDate = new Date(this.value);
+                const errorElement = document.getElementById('endDate-error');
+                
+                if (startDate && endDate && endDate <= startDate) {
+                    errorElement.textContent = 'End date must be after start date';
+                    errorElement.classList.remove('hidden');
+                } else {
+                    errorElement.classList.add('hidden');
+                }
+            });
         });
     </script>
 
