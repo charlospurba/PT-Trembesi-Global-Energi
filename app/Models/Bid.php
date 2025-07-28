@@ -13,6 +13,7 @@ class Bid extends Model
     'user_id',
     'product_id',
     'vendor_id',
+    'cart_id',
     'bid_price',
     'status',
   ];
@@ -34,5 +35,10 @@ class Bid extends Model
   public function vendor()
   {
     return $this->belongsTo(User::class, 'vendor_id');
+  }
+
+  public function cart()
+  {
+    return $this->belongsTo(Cart::class);
   }
 }

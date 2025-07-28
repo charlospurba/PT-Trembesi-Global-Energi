@@ -55,33 +55,33 @@ class CartController extends Controller
       if ($cartItem) {
         $cartItem->update(['quantity' => $totalQuantity]);
       } else {
-        Cart::create([
+        $cartItem = Cart::create([
           'user_id' => $user->id,
           'product_id' => $product->id,
           'quantity' => $quantity,
           'variant' => $request->input('variant', 'default'),
           'status' => 'Pending',
         ]);
+      }
 
-        // Notify Project Manager
-        $projectManagers = User::where('role', 'project_manager')->get();
-        foreach ($projectManagers as $pm) {
-          Notification::create([
-            'user_id' => $pm->id,
-            'type' => 'cart_pending',
-            'message' => 'New cart item pending approval from ' . $user->name . ' for product: ' . $product->name,
-            'data' => json_encode([
-              'cart_item' => [
-                'product_id' => $product->id,
-                'product_name' => $product->name,
-                'quantity' => $quantity,
-                'variant' => $request->input('variant', 'default'),
-                'user_id' => $user->id,
-                'user_name' => $user->name,
-              ],
-            ]),
-          ]);
-        }
+      // Notify Project Manager
+      $projectManagers = User::where('role', 'project_manager')->get();
+      foreach ($projectManagers as $pm) {
+        Notification::create([
+          'user_id' => $pm->id,
+          'type' => 'cart_pending',
+          'message' => 'New cart item pending approval from ' . $user->name . ' for product: ' . $product->name,
+          'data' => json_encode([
+            'cart_item' => [
+              'product_id' => $product->id,
+              'product_name' => $product->name,
+              'quantity' => $quantity,
+              'variant' => $request->input('variant', 'default'),
+              'user_id' => $user->id,
+              'user_name' => $user->name,
+            ],
+          ]),
+        ]);
       }
 
       $cartCount = Cart::where('user_id', $user->id)->count();
@@ -287,6 +287,7 @@ class CartController extends Controller
       ->map(function ($cartItem) {
         $acceptedBid = Bid::where('product_id', $cartItem->product_id)
           ->where('user_id', Auth::id())
+          ->where('cart_id', $cartItem->id) // Scope by cart_id
           ->where('status', 'Accepted')
           ->latest()
           ->first();
@@ -334,6 +335,16 @@ class CartController extends Controller
 
       $product = Product::findOrFail($productId);
       $bidPrice = (float) $request->input('bid_price');
+      $cartItem = Cart::where('user_id', $user->id)
+        ->where('product_id', $productId)
+        ->first();
+
+      if (!$cartItem) {
+        return response()->json([
+          'success' => false,
+          'message' => 'Product not found in cart'
+        ], 404);
+      }
 
       if ($bidPrice <= 0) {
         return response()->json([
@@ -342,15 +353,16 @@ class CartController extends Controller
         ], 422);
       }
 
-      // Check bid count limit
+      // Check bid count limit for this cart item
       $bidCount = Bid::where('user_id', $user->id)
         ->where('product_id', $productId)
+        ->where('cart_id', $cartItem->id)
         ->count();
 
       if ($bidCount >= 3) {
         return response()->json([
           'success' => false,
-          'message' => 'You have reached the maximum of 3 bids for this product'
+          'message' => 'You have reached the maximum of 3 bids for this product in this cart'
         ], 422);
       }
 
@@ -359,6 +371,7 @@ class CartController extends Controller
         'product_id' => $productId,
         'vendor_id' => $product->vendor_id,
         'bid_price' => $bidPrice,
+        'cart_id' => $cartItem->id, // Store cart_id
         'status' => 'Pending',
       ]);
 
@@ -371,6 +384,7 @@ class CartController extends Controller
           'bid_id' => $bid->id,
           'product_id' => $productId,
           'bid_price' => $bidPrice,
+          'cart_id' => $cartItem->id,
         ]),
       ]);
 
@@ -470,6 +484,7 @@ class CartController extends Controller
       foreach ($cartItems as $cartItem) {
         $acceptedBid = Bid::where('product_id', $cartItem->product_id)
           ->where('user_id', $user->id)
+          ->where('cart_id', $cartItem->id)
           ->where('status', 'Accepted')
           ->latest()
           ->first();

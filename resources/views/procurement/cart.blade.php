@@ -15,8 +15,7 @@
                         <i class="fas fa-home mr-1"></i>Dashboard
                     </a>
                     <i class="fas fa-chevron-right text-red-400 text-xs"></i>
-                    <a href="{{ route('procurement.cart') }}"><span
-                        class="text-red-600 font-semibold">Cart</span></a>
+                    <a href="{{ route('procurement.cart') }}"><span class="text-red-600 font-semibold">Cart</span></a>
                 </nav>
                 <div class="mt-4">
                     <h1 class="text-3xl font-extrabold text-red-600">🛒 Your Shopping Cart</h1>
@@ -42,16 +41,27 @@
                         <div class="divide-y">
                             @foreach ($items as $item)
                                 @php
+                                    // Fetch the current cart item
+                                    $cartItem = App\Models\Cart::where('user_id', Auth::id())
+                                        ->where('product_id', $item['id'])
+                                        ->first();
+
+                                    // Fetch bids for the current cart item
                                     $bids = App\Models\Bid::where('product_id', $item['id'])
                                         ->where('user_id', Auth::id())
+                                        ->where('cart_id', $cartItem->id)
                                         ->latest()
                                         ->take(3)
                                         ->get();
-                                    $acceptedBid = $bids->where('status', 'Accepted')->first();
+
+                                    // Fetch purchase requests for the current cart item
                                     $purchaseRequests = App\Models\PurchaseRequest::where('product_id', $item['id'])
                                         ->where('user_id', Auth::id())
+                                        ->where('cart_id', $cartItem->id)
                                         ->latest()
                                         ->get();
+
+                                    $acceptedBid = $bids->where('status', 'Accepted')->first();
                                 @endphp
                                 <div class="p-4" data-item-id="{{ $item['id'] }}">
                                     <div class="flex items-center space-x-4">
@@ -636,7 +646,7 @@
                             itemCb.checked = checked;
                             console.log(
                                 `Item ID: ${itemCb.getAttribute('data-id')} checked: ${itemCb.checked}`
-                                );
+                            );
                         });
                     updateParentCheckboxes();
                     updateTotals();
@@ -648,7 +658,7 @@
                 cb.addEventListener('change', function() {
                     console.log(
                         `Item ID: ${cb.getAttribute('data-id')} changed, checked: ${cb.checked}`
-                        );
+                    );
                     updateParentCheckboxes();
                     updateTotals();
                 });
