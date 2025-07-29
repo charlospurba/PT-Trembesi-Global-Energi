@@ -5,13 +5,13 @@
                 [
                     'label' => 'Dashboard',
                     'icon' => '📦',
-                    'route' => 'vendor.dashboardvendor',
+                    'route' => '/dashboard/vendor',
                     'desc' => 'Overview & statistik',
                 ],
                 [
                     'label' => 'My Products',
                     'icon' => '🛍️',
-                    'route' => 'vendor.myproducts',
+                    'route' => '/myproducts',
                     'desc' => 'Manage product',
                 ],
                 [
