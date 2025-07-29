@@ -7,7 +7,7 @@
     @include('components.sidepm')
 
     <div class="flex-1 p-6">
-        <div class="max-w-5xl mx-auto space-y-6">
+        <div class="max-w-7xl mx-auto space-y-6">
 
             @if(session('success'))
                 <div class="bg-green-100 border border-green-300 text-green-800 px-6 py-4 rounded-lg shadow-md animate-fade-in">
@@ -17,45 +17,79 @@
             @endif
 
             @if(isset($requests) && $requests->count())
-                @foreach($requests as $pmRequest)
-                    <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 hover:shadow-lg transition duration-300 ease-in-out">
-                        <h1 class="text-2xl font-bold text-blue-800 mb-4">{{ $pmRequest->description ?? '-' }}</h1>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    @foreach($requests as $pmRequest)
+                        <div class="bg-white rounded-xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition duration-300 ease-in-out">
+                            <!-- Header with Title and Status -->
+                            <div class="flex justify-between items-start mb-4">
+                                <h1 class="text-lg font-bold text-blue-800 flex-1 pr-3">{{ $pmRequest->description ?? '-' }}</h1>
+                                    <div class="flex-shrink-0">
+                                        @if(isset($pmRequest->status) && $pmRequest->status === 'completed')
+                                            <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                Completed
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                On Progress
+                                            </span>
+                                        @endif
+                                    </div>
+                            </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                            <div>
-                                <p class="text-xs uppercase tracking-wide text-gray-500">Qty</p>
-                                <p class="text-lg font-semibold text-gray-900">{{ $pmRequest->qty ?? '-' }}</p>
+                            <!-- Main Info Grid -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                {{-- Qty --}}
+                                <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border-l-4 border-red-400 shadow-sm">
+                                    <div>
+                                        <p class="text-xs font-semibold text-gray-500 uppercase">Qty</p>
+                                        <p class="text-sm text-gray-800 font-bold">{{ $pmRequest->qty ?? '-' }}</p>
+                                    </div>
+                                </div>
+
+                                {{-- Unit --}}
+                                <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border-l-4 border-red-400 shadow-sm">
+                                    <div>
+                                        <p class="text-xs font-semibold text-gray-500 uppercase">Unit</p>
+                                        <p class="text-sm text-gray-800 font-bold">{{ $pmRequest->unit ?? '-' }}</p>
+                                    </div>
+                                </div>
+
+                                {{-- Commcode --}}
+                                <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border-l-4 border-red-400 shadow-sm">
+                                    <div>
+                                        <p class="text-xs font-semibold text-gray-500 uppercase">Commcode</p>
+                                        <p class="text-sm text-gray-800 font-bold">{{ $pmRequest->commcode ?? '-' }}</p>
+                                    </div>
+                                </div>
+
+                                {{-- Delivery Date --}}
+                                <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border-l-4 border-red-400 shadow-sm">
+                                    <div>
+                                        <p class="text-xs font-semibold text-gray-500 uppercase">Delivery Date</p>
+                                        <p class="text-sm text-gray-800 font-bold">{{ $pmRequest->required_delivery_date ?? '-' }}</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <p class="text-xs uppercase tracking-wide text-gray-500">Unit</p>
-                                <p class="text-lg font-semibold text-gray-900">{{ $pmRequest->unit ?? '-' }}</p>
+                            <!-- Specification -->
+                            <div class="mb-3 p-4 bg-gray-50 rounded-lg shadow-sm border-l-4 border-red-400">
+                                <p class="text-xs font-semibold text-gray-500 uppercase">Specification</p>
+                                <p class="text-sm text-gray-800 line-clamp-2">{{ $pmRequest->specification ?? '-' }}</p>
                             </div>
-                            <div>
-                                <p class="text-xs uppercase tracking-wide text-gray-500">Commcode</p>
-                                <p class="text-lg font-semibold text-gray-900">{{ $pmRequest->commcode ?? '-' }}</p>
+
+                            <!-- Remarks -->
+                            <div class="mb-3 p-4 bg-gray-50 rounded-lg shadow-sm border-l-4 border-red-400">
+                                <p class="text-xs font-semibold text-gray-500 uppercase">Remarks</p>
+                                <p class="text-sm text-gray-800 line-clamp-2">{{ $pmRequest->remarks ?? '-' }}</p>
                             </div>
-                            <div>
-                                <p class="text-xs uppercase tracking-wide text-gray-500">Required Delivery Date</p>
-                                <p class="text-lg font-semibold text-gray-900">{{ $pmRequest->required_delivery_date ?? '-' }}</p>
+
+                            <!-- Project Name -->
+                            <div class="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm border-l-4 border-red-400">
+                                <p class="text-xs font-semibold text-gray-500 uppercase">Project Name</p>
+                                <p class="text-sm text-gray-900 font-semibold">{{ $pmRequest->project_name ?? '-' }}</p>
                             </div>
                         </div>
-
-                        <div class="mb-4">
-                            <p class="text-xs uppercase tracking-wide text-gray-500">Specification</p>
-                            <p class="text-gray-800">{{ $pmRequest->specification ?? '-' }}</p>
-                        </div>
-
-                        <div class="mb-4">
-                            <p class="text-xs uppercase tracking-wide text-gray-500">Remarks</p>
-                            <p class="text-gray-800">{{ $pmRequest->remarks ?? '-' }}</p>
-                        </div>
-
-                        <div class="mb-4">
-                            <p class="text-xs uppercase tracking-wide text-gray-500">Project Name</p>
-                            <p class="text-gray-800">{{ $pmRequest->project_name ?? '-' }}</p>
-                        </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
 
                 <div class="text-right pt-6">
                     <a href="{{ route('projectmanager.formadd') }}"
@@ -80,4 +114,5 @@
         </div>
     </div>
 </div>
+
 @endsection
