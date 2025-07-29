@@ -13,61 +13,57 @@
                 <p class="text-sm">Track construction material deliveries and manage project supply chain</p>
             </div>
 
-            <!-- Controls -->
-            <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
-                <div class="flex flex-wrap items-center gap-4 mb-4">
-                    <div class="flex items-center space-x-2">
-                        <label class="text-sm font-medium text-gray-700">Search:</label>
-                        <input type="text" id="searchInput" placeholder="Search materials, suppliers..." 
-                               class="border border-gray-300 rounded-md px-3 py-1 text-sm w-64">
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <label class="text-sm font-medium text-gray-700">Status:</label>
-                        <select id="statusFilter" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
-                            <option value="all">All Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="in-progress">In Progress</option>
-                            <option value="completed">Completed</option>
-                            <option value="delayed">Delayed</option>
-                        </select>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <label class="text-sm font-medium text-gray-700">Category:</label>
-                        <select id="categoryFilter" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
-                            <option value="all">All Categories</option>
-                        </select>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <label class="text-sm font-medium text-gray-700">Items per page:</label>
-                        <select id="itemsPerPage" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
-                            <option value="10">10</option>
-                            <option value="25" selected>25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
-                    </div>
-                    <button onclick="openModal()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium">
-                        + Add Product
-                    </button>
-                </div>
+           <!-- Controls -->
+<div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+    <div class="grid grid-cols-4 gap-4 mb-4">
+        <div class="flex flex-col space-y-1">
+            <label class="text-xs font-medium text-gray-700 uppercase tracking-wide">Search</label>
+            <input type="text" id="searchInput" placeholder="Search materials, suppliers..." 
+                   class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+        </div>
+        <div class="flex flex-col space-y-1">
+            <label class="text-xs font-medium text-gray-700 uppercase tracking-wide">Status</label>
+            <select id="statusFilter" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="in-progress">In Progress</option>
+                <option value="completed">Completed</option>
+                <option value="delayed">Delayed</option>
+            </select>
+        </div>
+        <div class="flex flex-col space-y-1">
+            <label class="text-xs font-medium text-gray-700 uppercase tracking-wide">Category</label>
+            <select id="categoryFilter" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                <option value="all">All Categories</option>
+            </select>
+        </div>
+        <div class="flex flex-col space-y-1">
+            <label class="text-xs font-medium text-gray-700 uppercase tracking-wide">Items per page</label>
+            <select id="itemsPerPage" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                <option value="10">10</option>
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+    </div>
 
-                <!-- Pagination Info -->
-                <div class="flex items-center justify-between">
-                    <div class="text-sm text-gray-600">
-                        Showing <span id="showingStart">1</span>-<span id="showingEnd">25</span> of <span id="totalItems">0</span> items
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button id="prevPage" onclick="changePage(-1)" class="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                            Previous
-                        </button>
-                        <span id="pageInfo" class="text-sm text-gray-600">Page 1 of 1</span>
-                        <button id="nextPage" onclick="changePage(1)" class="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                            Next
-                        </button>
-                    </div>
-                </div>
-            </div>
-
+    <!-- Pagination Info -->
+    <div class="flex items-center justify-between">
+        <div class="text-sm text-gray-600">
+            Showing <span id="showingStart">1</span>-<span id="showingEnd">25</span> of <span id="totalItems">0</span> items
+        </div>
+        <div class="flex items-center space-x-2">
+            <button id="prevPage" onclick="changePage(-1)" class="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                Previous
+            </button>
+            <span id="pageInfo" class="text-sm text-gray-600">Page 1 of 1</span>
+            <button id="nextPage" onclick="changePage(1)" class="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                Next
+            </button>
+        </div>
+    </div>
+</div>
             <!-- Timeline Container -->
             <div class="bg-white rounded-lg shadow-sm overflow-hidden">
                 <div class="p-6">
@@ -295,9 +291,6 @@
                         <div class="flex justify-end space-x-3 mt-6">
                             <button type="button" onclick="closeModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors">
                                 Cancel
-                            </button>
-                            <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md transition-colors">
-                                Add Product
                             </button>
                         </div>
                     </form>
