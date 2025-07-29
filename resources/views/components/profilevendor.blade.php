@@ -3,9 +3,14 @@
 @section('content')
     @include('components.navvendor')
 
-    <div style="padding: 20px;">
-        <div style="font-size: 14px; color: #6B7280; margin-bottom: 10px;">
-            Dashboard &gt; <span style="color: red;">Profile</span>
+        <div class="min-h-screen bg-gray-100">
+            <div class="max-w-5xl mx-auto px-4 py-8">
+        <!-- Back to Dashboard Button -->
+        <div class="mb-6">
+            <a href="{{ route('vendor.dashboardvendor') }}"
+            class="inline-flex items-center bg-red-500 text-white text-sm font-medium px-4 py-2 rounded-lg shadow hover:bg-red-600 transition">
+                ← Back to Dashboard
+            </a>
         </div>
 
         {{-- Success Message --}}

@@ -4,21 +4,15 @@
     <!-- Include Navbar Component -->
     @include('components.procnav')
 
-    <div class="p-5">
-        <div class="container mx-auto max-w-5xl px-4 py-6">
-            <!-- Breadcrumb -->
-            <div class="mb-6">
-                <div class="glass-effect px-4 py-2 rounded-xl shadow-lg text-sm">
-                    <div class="flex items-center space-x-2">
-                        <a href="{{ route('procurement.dashboardproc') }}" class="text-red-600 hover:text-red-700 transition font-medium flex items-center">
-                            <i class="fas fa-home mr-1"></i> Dashboard
-                        </a>
-                        <i class="fas fa-chevron-right text-red-400 text-xs"></i>
-                        <a href="{{ route('components.profile') }}"><span
-                        class="text-red-600 font-semibold">Profile</span></a>
-                    </div>
-                </div>
-            </div>
+        <div class="min-h-screen bg-gray-100">
+            <div class="max-w-5xl mx-auto px-4 py-8">
+        <!-- Back to Dashboard Button -->
+        <div class="mb-6">
+            <a href="{{ route('dashboard') }}"
+            class="inline-flex items-center bg-red-500 text-white text-sm font-medium px-4 py-2 rounded-lg shadow hover:bg-red-600 transition">
+                ← Back to Dashboard
+            </a>
+        </div>
 
             <!-- General Information Card -->
             <div class="bg-white p-8 rounded-xl shadow-sm mb-8">
