@@ -177,13 +177,6 @@
                                         <div class="text-xs text-red-600 font-medium">
                                             Stock: {{ $product->quantity ?? 'Available' }}
                                         </div>
-
-                                        <!-- Product ID -->
-                                        @if ($product->id)
-                                            <div class="text-xs text-gray-400">
-                                                #{{ $product->id }}
-                                            </div>
-                                        @endif
                                     </div>
                                 </div>
                             </div>

@@ -219,9 +219,9 @@
                                             </div>
                                         </div>
                                         <button type="button" id="addToCartBtn"
-                                                onclick="addToCart({{ $product->id }})"
-                                                class="w-full border-2 border-red-500 text-red-600 py-3 px-4 rounded-xl font-semibold hover:bg-red-500 hover:text-white transition-all duration-300 transform">
-                                                <i class="fas fa-cart-plus mr-2"></i>Add to Cart
+                                            onclick="addToCart({{ $product->id }})"
+                                            class="w-full border-2 border-red-500 text-red-600 py-3 px-4 rounded-xl font-semibold hover:bg-red-500 hover:text-white transition-all duration-300 transform">
+                                            <i class="fas fa-cart-plus mr-2"></i>Add to Cart
                                         </button>
                                     </div>
                                 </form>
@@ -250,16 +250,25 @@
                             <div class="flex items-center gap-4 mt-2">
                                 <div
                                     class="flex items-center bg-yellow-50 px-4 py-2 rounded-full border border-yellow-200">
-                                    <div class="flex text-yellow-500 mr-2">
+                                    <div class="flex text-yellow-500 mr-2" id="vendor-rating-stars">
                                         @php
-                                            $storeRating = 5.0; // Placeholder; replace with actual store rating logic if available
+                                            $storeRating = 5.0; // Initial placeholder
+                                            $fullStars = floor($storeRating);
+                                            $halfStar = $storeRating - $fullStars >= 0.5;
                                         @endphp
                                         @for ($i = 1; $i <= 5; $i++)
-                                            <i class="fas fa-star"></i>
+                                            @if ($i <= $fullStars)
+                                                <i class="fas fa-star"></i>
+                                            @elseif ($halfStar && $i == $fullStars + 1)
+                                                <i class="fas fa-star-half-alt"></i>
+                                            @else
+                                                <i class="far fa-star"></i>
+                                            @endif
                                         @endfor
                                     </div>
-                                    <span class="font-medium text-gray-700">{{ number_format($storeRating, 1) }} Store
-                                        Rating</span>
+                                    <span class="font-medium text-gray-700" id="vendor-rating-text">
+                                        {{ number_format($storeRating, 1) }} Store Rating
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -373,7 +382,6 @@
                 totalPriceSection.style.background = 'linear-gradient(to right, #f9fafb, #fef2f2)';
                 totalPriceSection.style.borderColor = '#fecaca';
             }
-
 
             // Apply vendor icon styling
             const vendorIcon = document.getElementById('vendorIcon');
@@ -504,7 +512,6 @@
             const buttons = [
                 document.getElementById('decreaseBtn'),
                 document.getElementById('increaseBtn'),
-                document.getElementById('buyNowBtn'),
                 document.getElementById('addToCartBtn')
             ];
 
@@ -629,21 +636,6 @@
         }
 
         function applyGlowingAnimation() {
-            const buyNowBtn = document.getElementById('buyNowBtn');
-            if (buyNowBtn) {
-                let glowIntensity = 0.2;
-                let direction = 1;
-
-                setInterval(() => {
-                    glowIntensity += direction * 0.01;
-                    if (glowIntensity >= 0.4 || glowIntensity <= 0.2) {
-                        direction *= -1;
-                    }
-                    buyNowBtn.style.boxShadow =
-                        `0 0 ${15 + (glowIntensity - 0.2) * 50}px rgba(220, 38, 38, ${glowIntensity})`;
-                }, 50);
-            }
-
             // Apply bounce animation to cart icon
             const cartIcon = document.getElementById('cartIcon');
             if (cartIcon) {
@@ -864,54 +856,6 @@
                 });
         }
 
-        function buyNow(productId) {
-            let quantity = document.getElementById('quantity').value;
-
-            Swal.fire({
-                title: 'Processing Order...',
-                html: '<div class="animate-pulse text-center"><i class="fas fa-shopping-bag text-4xl text-red-600 mb-4"></i><br>Preparing your order...</div>',
-                allowOutsideClick: false,
-                showConfirmButton: false
-            });
-
-            fetch('{{ route('cart.buy-now', ['id' => ':id']) }}'.replace(':id', productId), {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('#add-to-cart-form input[name="_token"]').value,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        quantity: quantity
-                    })
-                })
-                .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                        return;
-                    }
-                    if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(data.message || 'Network response was not ok: ' + response.status);
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data && data.success) {
-                        updateCartBadge(data.cart_count);
-                    }
-                })
-                .catch(error => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Process Failed',
-                        text: 'Failed to process order: ' + error.message,
-                        confirmButtonColor: '#dc2626'
-                    });
-                });
-        }
-
         function updateCartBadge(count) {
             let badge = document.getElementById('cartBadge');
             if (badge) {
@@ -960,6 +904,44 @@
             }
         }
 
+        // Real-time rating update function
+        function updateVendorRating() {
+            const supplier = '{{ urlencode($product->supplier ?? 'Premium Store') }}';
+            fetch('{{ route('store.reviews', ':supplier') }}'.replace(':supplier', supplier))
+                .then(response => response.json())
+                .then(data => {
+                    const ratingStarsElement = document.getElementById('vendor-rating-stars');
+                    const ratingTextElement = document.getElementById('vendor-rating-text');
+                    if (ratingStarsElement && ratingTextElement) {
+                        // Calculate star display
+                        const averageRating = data.averageRating;
+                        const fullStars = Math.floor(averageRating);
+                        const halfStar = averageRating - fullStars >= 0.5;
+                        let starsHtml = '';
+                        for (let i = 1; i <= 5; i++) {
+                            if (i <= fullStars) {
+                                starsHtml += '<i class="fas fa-star"></i>';
+                            } else if (halfStar && i === fullStars + 1) {
+                                starsHtml += '<i class="fas fa-star-half-alt"></i>';
+                            } else {
+                                starsHtml += '<i class="far fa-star"></i>';
+                            }
+                        }
+                        // Update stars and text with animation
+                        ratingStarsElement.style.opacity = '0.7';
+                        ratingTextElement.style.opacity = '0.7';
+                        setTimeout(() => {
+                            ratingStarsElement.innerHTML = starsHtml;
+                            ratingTextElement.textContent =
+                                `${averageRating.toFixed(1)} Store Rating (${data.totalReviews} reviews)`;
+                            ratingStarsElement.style.opacity = '1';
+                            ratingTextElement.style.opacity = '1';
+                        }, 150);
+                    }
+                })
+                .catch(error => console.error('Error fetching vendor rating:', error));
+        }
+
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             // Apply all styling
@@ -975,7 +957,11 @@
             // Hide initial loader
             hideImageLoader();
 
-            console.log('Product detail page initialized with JavaScript styling!');
+            // Initialize real-time rating updates
+            updateVendorRating();
+            setInterval(updateVendorRating, 30000); // Update every 30 seconds
+
+            console.log('Product detail page initialized with JavaScript styling and real-time rating updates!');
         });
     </script>
 @endsection
