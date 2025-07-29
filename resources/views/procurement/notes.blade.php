@@ -11,9 +11,9 @@
             <p class="text-sm md:text-base">Jakarta Pusat • Active Project</p>
         </div>
         <div class="text-right">
-            <a href="{{ route('procurement.notes') }}" 
+            <a href="{{ route('dashboard') }}" 
                class="inline-flex items-center bg-white text-red-600 px-4 py-2 text-sm rounded-full font-semibold shadow hover:bg-gray-100 transition-all duration-150">
-               ← Back to Projects
+               ← Back to Dashboard
             </a>
         </div>
     </div>

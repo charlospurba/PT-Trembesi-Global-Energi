@@ -1,13 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- Include SweetAlert -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Include Font Awesome for star icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
     <!-- Include Navbar Component -->
-    @include('components.procnav')
+    @include('components.navbar')
 
     <div class="min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-rose-50 relative overflow-hidden">
         <!-- Background Pattern -->
@@ -15,20 +10,9 @@
         <div class="absolute top-0 left-0 w-full h-80 bg-gradient-to-br from-red-600 to-rose-600 transform -skew-y-2 origin-top-left scale-110"></div>
         
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <!-- Enhanced Breadcrumb -->
-            <nav class="flex items-center space-x-3 text-sm mb-8 px-6 py-4 bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20">
-                <a href="{{ route('procurement.dashboardproc') }}"
-                    class="flex items-center text-slate-600 hover:text-red-600 transition-all duration-300 font-medium px-3 py-2 rounded-lg hover:bg-red-50">
-                    <i class="fas fa-home mr-2 text-lg"></i>Dashboard
-                </a>
-                <i class="fas fa-chevron-right text-slate-400 text-xs"></i>
-                <span class="text-red-600 font-semibold flex items-center px-3 py-2 bg-red-50 rounded-lg">
-                    <i class="fas fa-history mr-2"></i>Order History
-                </span>
-            </nav>
-
+ 
             <!-- Page Header -->
-            <div class="flex justify-between items-start mb-8 flex-wrap gap-6">
+            <div class="flex justify-between items-start mb-8 flex-wrap md:flex-nowrap gap-6">
                 <div class="flex-1">
                     <h1 class="text-4xl font-bold text-white mb-2 flex items-center gap-3">
                         <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
@@ -36,9 +20,19 @@
                         </div>
                         My Order History
                     </h1>
-                    <p class="text-white/90 text-lg font-medium">Track and manage all your orders in one place</p>
+                    <p class="text-white/90 text-lg font-medium">
+                        Track and manage all your orders in one place
+                    </p>
+                </div>
+
+                <div class="text-right mt-6 md:mt-12">
+                    <a href="{{ route('dashboard') }}" 
+                    class="inline-flex items-center bg-white text-red-600 px-4 py-2 text-sm rounded-full font-semibold shadow hover:bg-gray-100 transition-all duration-150">
+                        ← Back to Dashboard
+                    </a>
                 </div>
             </div>
+
 
             <!-- Enhanced Tabs -->
             <div class="bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl p-6 mb-8 border border-white/20">
