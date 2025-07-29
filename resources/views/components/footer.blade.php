@@ -1,38 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Footer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
-    <style>
-        .shadow-glow {
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-        }
-        
-        .floating-particle {
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-20px) rotate(120deg); }
-            66% { transform: translateY(-10px) rotate(240deg); }
-        }
-        
-        .wave-animation {
-            animation: wave 8s ease-in-out infinite;
-        }
-        
-        @keyframes wave {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(-50px); }
-        }
-    </style>
-</head>
-<body class="bg-gray-100 min-h-screen">
-
     <!-- Modern Animated Footer -->
     <footer class="relative bg-gradient-to-br from-red-600 via-red-700 to-red-800 text-white overflow-hidden mt-16">
         <!-- Animated Wave Background -->
@@ -134,42 +99,42 @@
                 </div>
 
                 <!-- Contact Info -->
-<div class="space-y-4">
-    <h4 class="text-lg font-semibold text-white">Contact Us</h4>
-    <div class="space-y-3 text-sm">
-        <div class="flex items-start space-x-3 group">
-            <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
-                <i class="fas fa-map-marker-alt text-white text-xs"></i>
+            <div class="space-y-4">
+                <h4 class="text-lg font-semibold text-white">Contact Us</h4>
+                <div class="space-y-3 text-sm">
+                    <div class="flex items-start space-x-3 group">
+                        <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
+                            <i class="fas fa-map-marker-alt text-white text-xs"></i>
+                        </div>
+                        <span class="text-red-100">
+                            DWB Tower Building, 3rd Floor Zone B 01;<br>
+                            Jl. Kebagusan 1 Kav.6 Pasar Minggu - South Jakarta<br>
+                            INDONESIA 12520
+                        </span>
+                    </div>
+                    <div class="flex items-start space-x-3 group">
+                        <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
+                            <i class="fas fa-phone text-white text-xs"></i>
+                        </div>
+                        <span class="text-red-100">+62 21 29406626</span>
+                    </div>
+                    <div class="flex items-start space-x-3 group">
+                        <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
+                            <i class="fas fa-envelope text-white text-xs"></i>
+                        </div>
+                        <div class="flex flex-col">
+                            <a href="mailto:info@trembesiglobal.com" class="text-red-100 hover:underline">info@trembesiglobal.com</a>
+                            <a href="https://www.trembesiglobal.com" target="_blank" class="text-red-100 hover:underline">www.trembesiglobal.com</a>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3 group">
+                        <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
+                            <i class="fas fa-clock text-white text-xs"></i>
+                        </div>
+                        <span class="text-red-100">Mon - Fri: 8:00 AM - 6:00 PM</span>
+                    </div>
+                </div>
             </div>
-            <span class="text-red-100">
-                DWB Tower Building, 3rd Floor Zone B 01;<br>
-                Jl. Kebagusan 1 Kav.6 Pasar Minggu - South Jakarta<br>
-                INDONESIA 12520
-            </span>
-        </div>
-        <div class="flex items-start space-x-3 group">
-            <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
-                <i class="fas fa-phone text-white text-xs"></i>
-            </div>
-            <span class="text-red-100">+62 21 29406626</span>
-        </div>
-        <div class="flex items-start space-x-3 group">
-            <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
-                <i class="fas fa-envelope text-white text-xs"></i>
-            </div>
-            <div class="flex flex-col">
-                <a href="mailto:info@trembesiglobal.com" class="text-red-100 hover:underline">info@trembesiglobal.com</a>
-                <a href="https://www.trembesiglobal.com" target="_blank" class="text-red-100 hover:underline">www.trembesiglobal.com</a>
-            </div>
-        </div>
-        <div class="flex items-start space-x-3 group">
-            <div class="p-1 bg-gradient-to-r from-white/20 to-white/10 rounded group-hover:from-white/30 group-hover:to-white/20 transition-all duration-300 shadow-glow">
-                <i class="fas fa-clock text-white text-xs"></i>
-            </div>
-            <span class="text-red-100">Mon - Fri: 8:00 AM - 6:00 PM</span>
-        </div>
-    </div>
-</div>
         </div>
     </footer>
 
@@ -265,5 +230,3 @@
             window.addEventListener('scroll', requestParallaxUpdate);
         });
     </script>
-</body>
-</html>
