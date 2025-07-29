@@ -75,7 +75,7 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
 
     // Project Manager Routes
     Route::view('/dashboard/projectmanager', 'projectmanager.dashboardpm')->name('dashboard.projectmanager');
-    Route::get('/projectmanager/addrequest', [PMRequestController::class, 'showAll'])->name('projectmanager.addrequest'); // <- ganti ini
+    Route::get('/projectmanager/addrequest', [PMRequestController::class, 'showAll'])->name('projectmanager.addrequest');
     Route::view('/projectmanager/formadd', 'projectmanager.formadd')->name('projectmanager.formadd');
 
     Route::get('/projectmanager/purchase-requests', [PurchaseRequestController::class, 'index'])->name('projectmanager.purchase_requests');
@@ -167,4 +167,5 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
 
     // Store Routes
     Route::get('/store/{store}', [StoreController::class, 'show'])->name('store.show');
+    Route::get('/store/{store}/reviews', [StoreController::class, 'getStoreReviews'])->name('store.reviews');
 });
