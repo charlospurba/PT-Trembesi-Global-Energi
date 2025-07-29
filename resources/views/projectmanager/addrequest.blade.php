@@ -45,9 +45,14 @@
                             <p class="text-gray-800">{{ $pmRequest->specification ?? '-' }}</p>
                         </div>
 
-                        <div>
+                        <div class="mb-4">
                             <p class="text-xs uppercase tracking-wide text-gray-500">Remarks</p>
                             <p class="text-gray-800">{{ $pmRequest->remarks ?? '-' }}</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <p class="text-xs uppercase tracking-wide text-gray-500">Project Name</p>
+                            <p class="text-gray-800">{{ $pmRequest->project_name ?? '-' }}</p>
                         </div>
                     </div>
                 @endforeach

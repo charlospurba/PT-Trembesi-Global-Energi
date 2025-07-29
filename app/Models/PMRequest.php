@@ -17,6 +17,7 @@ class PMRequest extends Model
         'specification',
         'required_delivery_date',
         'remarks',
+        'project_name',
     ];
 
     protected $casts = [

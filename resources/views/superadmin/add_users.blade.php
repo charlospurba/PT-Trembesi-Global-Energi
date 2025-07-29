@@ -197,6 +197,17 @@
                                 </select>
                             </div>
 
+                            <!-- Project Name -->
+                            <div class="lg:col-span-2 group transition-all duration-200 hover:-translate-y-1 focus-within:scale-[1.02]">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="fas fa-code text-gray-400 mr-2"></i>Project Name
+                                </label>
+                                <input type="text" name="project_name" value="{{ old('project_name') }}"
+                                       class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-700
+                                              focus:border-blue-500 focus:ring-0 focus:shadow-lg focus:shadow-blue-500/20"/>
+                            </div>
+
+                            
                             <!-- Procurement Code -->
                             <div class="lg:col-span-2 group transition-all duration-200 hover:-translate-y-1 focus-within:scale-[1.02]">
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">

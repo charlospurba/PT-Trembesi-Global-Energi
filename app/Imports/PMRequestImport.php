@@ -6,28 +6,41 @@ use App\Models\PMRequest;
 use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\BeforeImport;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class PMRequestImport implements OnEachRow, WithHeadingRow
+class PMRequestImport implements OnEachRow, WithHeadingRow, WithEvents
 {
+    private $projectName;
+
     public function headingRow(): int
     {
-        return 15; // karena baris 15 adalah header
+        return 15;
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            BeforeImport::class => function (BeforeImport $event) {
+                $sheet = $event->getReader()->getActiveSheet();
+                $this->projectName = $sheet->getCell('D8')->getValue();
+            },
+        ];
     }
 
     public function onRow(Row $row)
     {
         $rowData = $row->toArray();
 
-        // Jika kolom pertama (qty) kosong atau bukan angka, kita berhenti membaca
         if (!isset($rowData['qty']) || !is_numeric($rowData['qty'])) {
-            return; // atau bisa `return false;` tergantung kebutuhan
+            return;
         }
 
-        // Jika tanggal kosong atau tidak valid, atur nilai default
         $deliveryDate = null;
         if (!empty($rowData['required_delivery_date'])) {
             try {
-                $deliveryDate = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($rowData['required_delivery_date']);
+                $deliveryDate = Date::excelToDateTimeObject($rowData['required_delivery_date']);
             } catch (\Exception $e) {
                 $deliveryDate = null;
             }
@@ -41,7 +54,7 @@ class PMRequestImport implements OnEachRow, WithHeadingRow
             'specification' => $rowData['specification'] ?? '',
             'required_delivery_date' => $deliveryDate,
             'remarks' => $rowData['remarks'] ?? '',
+            'project_name' => $this->projectName ?? '',
         ]);
     }
-
 }

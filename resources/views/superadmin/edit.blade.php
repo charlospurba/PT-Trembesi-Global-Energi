@@ -98,7 +98,8 @@
                                 ['label' => 'Email Address', 'value' => $user->email],
                                 ['label' => 'Phone Number', 'value' => $user->phone_number],
                                 ['label' => 'User Role', 'value' => ucfirst($user->role)],
-                                ['label' => 'Procurement Code', 'value' => $user->procurement_kode]
+                                ['label' => 'Procurement Code', 'value' => $user->procurement_kode],
+                                ['label' => 'Project Name', 'value' => $user->project_name]
                             ] as $field)
                                 <div class="space-y-2">
                                     <label class="block text-sm font-semibold text-gray-700">{{ $field['label'] }}</label>

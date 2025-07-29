@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\PMRequest;
 use Illuminate\Http\Request;
 use App\Imports\PMRequestImport;
@@ -17,8 +18,9 @@ class PMRequestController extends Controller
 
     public function create()
     {
-        $pmRequest = null; // Supaya form tidak error saat create
-        return view('projectmanager.formadd', compact('pmRequest'));
+        $pmRequest = null;
+        $projectName = Auth::user()->project_name; // ambil dari user yang login
+        return view('projectmanager.formadd', compact('pmRequest', 'projectName'));
     }
 
     public function store(Request $request)
@@ -32,6 +34,9 @@ class PMRequestController extends Controller
             'required_delivery_date' => 'nullable|date',
             'remarks' => 'nullable|string',
         ]);
+
+         // Tambahkan project_name manual dari Auth
+         $validated['project_name'] = Auth::user()->project_name;
 
         PMRequest::create($validated);
 
