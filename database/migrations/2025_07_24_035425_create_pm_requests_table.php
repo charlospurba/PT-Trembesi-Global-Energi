@@ -17,8 +17,9 @@ return new class extends Migration {
             $table->string('specification');
             $table->string('unit');
             $table->integer('qty');
-            $table->string('eta');
+            $table->date('eta')->nullable();
             $table->text('remark');
+            $table->decimal('price');
             $table->timestamps();
         });
     }

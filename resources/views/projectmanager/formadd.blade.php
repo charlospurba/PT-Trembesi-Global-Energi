@@ -164,8 +164,7 @@
                                             <span>ETA</span>
                                         </span>
                                     </label>
-                                    <input type="date" name="eta" id="eta"
-                                        value="{{ old('eta') }}"
+                                    <input type="date" name="eta" id="eta" value="{{ old('eta') }}"
                                         class="w-full border border-gray-300 rounded-xl px-4 py-3 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent hover:border-gray-400 group-hover:shadow-sm">
                                 </div>
 
@@ -186,6 +185,26 @@
                                         class="w-full border border-gray-300 rounded-xl px-4 py-3 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent hover:border-gray-400 group-hover:shadow-sm resize-none"
                                         placeholder="Catatan tambahan (opsional)...">{{ old('remark') }}</textarea>
                                 </div>
+
+                                {{-- Price --}}
+                                <div class="group">
+                                    <label for="price" class="block text-sm font-semibold text-gray-700 mb-2">
+                                        <span class="flex items-center space-x-2">
+                                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 10c-4.41 0-8-1.79-8-4V6c0-2.21 3.59-4 8-4s8 1.79 8 4v8c0 2.21-3.59 4-8 4z" />
+                                            </svg>
+                                            <span>Price</span>
+                                            <span class="text-red-500">*</span>
+                                        </span>
+                                    </label>
+                                    <input type="number" name="price" id="price" step="0.01" min="0"
+                                        value="{{ old('price') }}"
+                                        class="w-full border border-gray-300 rounded-xl px-4 py-3 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent hover:border-gray-400 group-hover:shadow-sm"
+                                        placeholder="Masukkan harga (mis. 15000)" required>
+                                </div>
+
                             </div>
 
                             {{-- Submit Button --}}

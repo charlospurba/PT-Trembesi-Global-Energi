@@ -17,10 +17,11 @@ class PMRequest extends Model
         'qty',
         'eta',
         'remark',
+        'price',
     ];
 
     protected $casts = [
-        'eta' => 'date',
+        'eta' => 'date:Y-m-d',
     ];
 }
 

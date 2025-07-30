@@ -32,6 +32,7 @@ class PMRequestController extends Controller
             'qty' => 'required|integer',
             'eta' => 'required|date',
             'remark' => 'required|string',
+            'price' => 'required|numeric|min:0',
         ]);
 
         // Tambahkan project_name manual dari Auth

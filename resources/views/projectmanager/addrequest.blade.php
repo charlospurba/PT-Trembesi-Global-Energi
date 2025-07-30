@@ -66,11 +66,11 @@
                                 <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border-l-4 border-red-400 shadow-sm">
                                     <div>
                                         <p class="text-xs font-semibold text-gray-500 uppercase">Estimated time of arrival</p>
-                                        <p class="text-sm text-gray-800 font-bold">{{ $pmRequest->eta ?? '-' }}</p>
+                                        <p class="text-sm text-gray-800 font-bold">{{ $pmRequest->eta ? \Carbon\Carbon::parse($pmRequest->eta)->format('Y-m-d') : '-' }}</p>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Specification -->
                             <div class="mb-3 p-4 bg-gray-50 rounded-lg shadow-sm border-l-4 border-red-400">
                                 <p class="text-xs font-semibold text-gray-500 uppercase">Specification</p>
@@ -83,6 +83,11 @@
                                 <p class="text-sm text-gray-800 line-clamp-2">{{ $pmRequest->remark ?? '-' }}</p>
                             </div>
 
+                            <!-- Price -->
+                            <div class="mb-3 p-4 bg-gray-50 rounded-lg shadow-sm border-l-4 border-red-400">
+                                <p class="text-xs font-semibold text-gray-500 uppercase">Price</p>
+                                <p class="text-sm text-gray-800">Rp {{ number_format($pmRequest->price ?? 0, 0, ',', '.') }}</p>
+                            </div>
                         </div>
                     @endforeach
                 </div>

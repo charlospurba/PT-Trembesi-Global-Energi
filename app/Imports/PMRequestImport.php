@@ -6,6 +6,7 @@ use App\Models\PMRequest;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
+use Carbon\Carbon;
 
 class PMRequestImport implements ToCollection
 {
@@ -36,14 +37,26 @@ class PMRequestImport implements ToCollection
             }
 
             PMRequest::create([
-                'project_name'   => $this->projectName,
-                'item'           => $row[1],
-                'specification'  => $row[2] ?? '',
-                'unit'           => $row[3] ?? '',
-                'qty'            => (int) $row[4],
-                'eta'            => $eta,
-                'remark'         => $row[6] ?? '',
+                'project_name' => $this->projectName,
+                'item' => $row[1],
+                'specification' => $row[2] ?? '',
+                'unit' => $row[3] ?? '',
+                'qty' => (int) $row[4],
+                'eta' => $eta,
+                'remark' => $row[6] ?? '',
+                'price' => $this->convertPriceFormat($row[7] ?? ''),
             ]);
         }
     }
+
+    private function convertPriceFormat($price)
+    {
+        if (is_string($price)) {
+            $cleaned = str_replace(['Rp', '.', ' '], '', $price);
+            $cleaned = str_replace(',', '.', $cleaned);
+            return is_numeric($cleaned) ? (float) $cleaned : 0;
+        }
+        return is_numeric($price) ? (float) $price : 0;
+    }
+
 }
