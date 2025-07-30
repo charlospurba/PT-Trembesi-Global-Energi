@@ -12,6 +12,8 @@ return new class extends Migration {
     {
         Schema::create('p_m_requests', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id'); // Tambahkan kolom user_id
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade'); // Foreign key ke tabel users
             $table->string('project_name');
             $table->string('item');
             $table->string('specification');
@@ -19,7 +21,7 @@ return new class extends Migration {
             $table->integer('qty');
             $table->date('eta')->nullable();
             $table->text('remark');
-            $table->decimal('price');
+            $table->decimal('price', 15, 2); // beri precision dan scale
             $table->timestamps();
         });
     }

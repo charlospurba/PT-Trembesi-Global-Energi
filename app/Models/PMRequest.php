@@ -10,6 +10,7 @@ class PMRequest extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'project_name',
         'item',
         'specification',
@@ -23,5 +24,10 @@ class PMRequest extends Model
     protected $casts = [
         'eta' => 'date:Y-m-d',
     ];
-}
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+}

@@ -11,10 +11,12 @@ use Carbon\Carbon;
 class PMRequestImport implements ToCollection
 {
     private $projectName;
+    private $userId;
 
-    public function __construct(string $projectName)
+    public function __construct(string $projectName, $userId)
     {
         $this->projectName = $projectName;
+        $this->userId = $userId;
     }
 
     public function collection(Collection $rows)
@@ -37,6 +39,7 @@ class PMRequestImport implements ToCollection
             }
 
             PMRequest::create([
+                'user_id' => $this->userId,
                 'project_name' => $this->projectName,
                 'item' => $row[1],
                 'specification' => $row[2] ?? '',

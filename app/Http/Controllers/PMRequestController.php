@@ -12,7 +12,7 @@ class PMRequestController extends Controller
 {
     public function index()
     {
-        $requests = PMRequest::all();
+        $requests = PMRequest::where('user_id', Auth::id())->get();
         return view('projectmanager.addrequest', compact('requests'));
     }
 
@@ -35,8 +35,8 @@ class PMRequestController extends Controller
             'price' => 'required|numeric|min:0',
         ]);
 
-        // Tambahkan project_name manual dari Auth
         $validated['project_name'] = Auth::user()->project_name;
+        $validated['user_id'] = Auth::id(); // ⬅️ ini bagian pentingnya
 
         PMRequest::create($validated);
 
@@ -45,7 +45,7 @@ class PMRequestController extends Controller
 
     public function showAll()
     {
-        $requests = PMRequest::all();
+        $requests = PMRequest::where('user_id', Auth::id())->get();
         return view('projectmanager.addrequest', compact('requests'));
     }
 
@@ -58,7 +58,7 @@ class PMRequestController extends Controller
         // Ambil nama proyek dari user login, bisa disesuaikan dengan relasi user-project
         $projectName = Auth::user()->project_name ?? 'Unknown Project';
 
-        Excel::import(new PMRequestImport($projectName), $request->file('file'));
+        Excel::import(new PMRequestImport($projectName, Auth::id()), $request->file('file'));
 
         return redirect()->route('projectmanager.addrequest')->with('success', 'Data berhasil diimport dari Excel.');
     }
