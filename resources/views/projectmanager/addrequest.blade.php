@@ -38,6 +38,14 @@
 
                             <!-- Main Info Grid -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                 {{-- Item --}}
+                                <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border-l-4 border-red-400 shadow-sm">
+                                    <div>
+                                        <p class="text-xs font-semibold text-gray-500 uppercase">Item</p>
+                                        <p class="text-sm text-gray-800 font-bold">{{ $pmRequest->item ?? '-' }}</p>
+                                    </div>
+                                </div>
+
                                 {{-- Qty --}}
                                 <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border-l-4 border-red-400 shadow-sm">
                                     <div>
@@ -54,22 +62,15 @@
                                     </div>
                                 </div>
 
-                                {{-- Commcode --}}
+                                {{-- ETA --}}
                                 <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border-l-4 border-red-400 shadow-sm">
                                     <div>
-                                        <p class="text-xs font-semibold text-gray-500 uppercase">Commcode</p>
-                                        <p class="text-sm text-gray-800 font-bold">{{ $pmRequest->commcode ?? '-' }}</p>
-                                    </div>
-                                </div>
-
-                                {{-- Delivery Date --}}
-                                <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border-l-4 border-red-400 shadow-sm">
-                                    <div>
-                                        <p class="text-xs font-semibold text-gray-500 uppercase">Delivery Date</p>
-                                        <p class="text-sm text-gray-800 font-bold">{{ $pmRequest->required_delivery_date ?? '-' }}</p>
+                                        <p class="text-xs font-semibold text-gray-500 uppercase">Estimated time of arrival</p>
+                                        <p class="text-sm text-gray-800 font-bold">{{ $pmRequest->eta ?? '-' }}</p>
                                     </div>
                                 </div>
                             </div>
+                            
                             <!-- Specification -->
                             <div class="mb-3 p-4 bg-gray-50 rounded-lg shadow-sm border-l-4 border-red-400">
                                 <p class="text-xs font-semibold text-gray-500 uppercase">Specification</p>
@@ -79,14 +80,9 @@
                             <!-- Remarks -->
                             <div class="mb-3 p-4 bg-gray-50 rounded-lg shadow-sm border-l-4 border-red-400">
                                 <p class="text-xs font-semibold text-gray-500 uppercase">Remarks</p>
-                                <p class="text-sm text-gray-800 line-clamp-2">{{ $pmRequest->remarks ?? '-' }}</p>
+                                <p class="text-sm text-gray-800 line-clamp-2">{{ $pmRequest->remark ?? '-' }}</p>
                             </div>
 
-                            <!-- Project Name -->
-                            <div class="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm border-l-4 border-red-400">
-                                <p class="text-xs font-semibold text-gray-500 uppercase">Project Name</p>
-                                <p class="text-sm text-gray-900 font-semibold">{{ $pmRequest->project_name ?? '-' }}</p>
-                            </div>
                         </div>
                     @endforeach
                 </div>

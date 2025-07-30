@@ -13,13 +13,12 @@ return new class extends Migration {
         Schema::create('p_m_requests', function (Blueprint $table) {
             $table->id();
             $table->string('project_name');
-            $table->integer('qty');
+            $table->string('item');
+            $table->string('specification');
             $table->string('unit');
-            $table->string('commcode')->nullable();
-            $table->string('description');
-            $table->text('specification')->nullable();
-            $table->date('required_delivery_date')->nullable();
-            $table->text('remarks')->nullable();
+            $table->integer('qty');
+            $table->string('eta');
+            $table->text('remark');
             $table->timestamps();
         });
     }

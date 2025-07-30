@@ -26,17 +26,16 @@ class PMRequestController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'qty' => 'required|integer',
+            'item' => 'required|string',
+            'specification' => 'required|string',
             'unit' => 'required|string',
-            'commcode' => 'nullable|string',
-            'description' => 'required|string',
-            'specification' => 'nullable|string',
-            'required_delivery_date' => 'nullable|date',
-            'remarks' => 'nullable|string',
+            'qty' => 'required|integer',
+            'eta' => 'required|date',
+            'remark' => 'required|string',
         ]);
 
-         // Tambahkan project_name manual dari Auth
-         $validated['project_name'] = Auth::user()->project_name;
+        // Tambahkan project_name manual dari Auth
+        $validated['project_name'] = Auth::user()->project_name;
 
         PMRequest::create($validated);
 
@@ -52,10 +51,13 @@ class PMRequestController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls',
+            'file' => 'required|mimes:xlsx,xls,csv',
         ]);
 
-        Excel::import(new PMRequestImport, $request->file('file'));
+        // Ambil nama proyek dari user login, bisa disesuaikan dengan relasi user-project
+        $projectName = Auth::user()->project_name ?? 'Unknown Project';
+
+        Excel::import(new PMRequestImport($projectName), $request->file('file'));
 
         return redirect()->route('projectmanager.addrequest')->with('success', 'Data berhasil diimport dari Excel.');
     }

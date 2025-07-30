@@ -3,58 +3,47 @@
 namespace App\Imports;
 
 use App\Models\PMRequest;
-use Maatwebsite\Excel\Row;
-use Maatwebsite\Excel\Concerns\OnEachRow;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Events\BeforeImport;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class PMRequestImport implements OnEachRow, WithHeadingRow, WithEvents
+class PMRequestImport implements ToCollection
 {
     private $projectName;
 
-    public function headingRow(): int
+    public function __construct(string $projectName)
     {
-        return 15;
+        $this->projectName = $projectName;
     }
 
-    public function registerEvents(): array
+    public function collection(Collection $rows)
     {
-        return [
-            BeforeImport::class => function (BeforeImport $event) {
-                $sheet = $event->getReader()->getActiveSheet();
-                $this->projectName = $sheet->getCell('D8')->getValue();
-            },
-        ];
-    }
-
-    public function onRow(Row $row)
-    {
-        $rowData = $row->toArray();
-
-        if (!isset($rowData['qty']) || !is_numeric($rowData['qty'])) {
-            return;
-        }
-
-        $deliveryDate = null;
-        if (!empty($rowData['required_delivery_date'])) {
-            try {
-                $deliveryDate = Date::excelToDateTimeObject($rowData['required_delivery_date']);
-            } catch (\Exception $e) {
-                $deliveryDate = null;
+        // Skip header sampai baris ke-3 (mulai dari baris 4)
+        foreach ($rows->slice(3) as $row) {
+            if (!isset($row[1]) || !is_numeric($row[4])) {
+                continue;
             }
-        }
 
-        PMRequest::create([
-            'qty' => $rowData['qty'],
-            'unit' => $rowData['unit'] ?? '',
-            'commcode' => $rowData['commcode'] ?? '',
-            'description' => $rowData['description_of_material'] ?? '',
-            'specification' => $rowData['specification'] ?? '',
-            'required_delivery_date' => $deliveryDate,
-            'remarks' => $rowData['remarks'] ?? '',
-            'project_name' => $this->projectName ?? '',
-        ]);
+            $eta = null;
+            if (!empty($row[5])) {
+                try {
+                    $eta = is_numeric($row[5])
+                        ? Date::excelToDateTimeObject($row[5])->format('Y-m-d')
+                        : date('Y-m-d', strtotime($row[5]));
+                } catch (\Exception $e) {
+                    $eta = null;
+                }
+            }
+
+            PMRequest::create([
+                'project_name'   => $this->projectName,
+                'item'           => $row[1],
+                'specification'  => $row[2] ?? '',
+                'unit'           => $row[3] ?? '',
+                'qty'            => (int) $row[4],
+                'eta'            => $eta,
+                'remark'         => $row[6] ?? '',
+            ]);
+        }
     }
 }

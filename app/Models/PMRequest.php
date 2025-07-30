@@ -10,18 +10,17 @@ class PMRequest extends Model
     use HasFactory;
 
     protected $fillable = [
-        'qty',
-        'unit',
-        'commcode',
-        'description',
-        'specification',
-        'required_delivery_date',
-        'remarks',
         'project_name',
+        'item',
+        'specification',
+        'unit',
+        'qty',
+        'eta',
+        'remark',
     ];
 
     protected $casts = [
-        'required_delivery_date' => 'date',
+        'eta' => 'date',
     ];
 }
 
