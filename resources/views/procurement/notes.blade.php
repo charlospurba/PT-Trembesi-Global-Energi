@@ -18,15 +18,16 @@
     </div>
 </section>
 
-<!-- Timeline Chart Section -->
+<!-- Charts Section -->
 <section class="bg-white py-8 px-6 md:px-12 shadow-sm">
     <div class="max-w-7xl mx-auto">
         <div class="flex justify-between items-center mb-8">
-            <h2 class="text-2xl font-bold text-gray-800">Project Timeline </h2>
+            <h2 class="text-2xl font-bold text-gray-800">Project Timeline & Spending</h2>
             
             <!-- Project Selector Dropdown -->
             <div class="relative">
                 <select id="projectSelector" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">All Projects</option>
                     <option value="project1">Project 1 - Heavy Equipment & Materials</option>
                     <option value="project2">Project 2 - Safety & Finishing Materials</option>
                 </select>
@@ -38,95 +39,114 @@
             </div>
         </div>
         
-       <div class="mt-6">
-    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div class="p-6">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-lg font-semibold text-gray-900">ETA vs ATA Analysis</h3>
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center space-x-2 text-sm">
-                        <div class="w-3 h-3 bg-blue-500 rounded"></div>
-                        <span>ETA (Estimated Arrival)</span>
+        <!-- ETA vs ATA Chart -->
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-12">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">ETA vs ATA Analysis</h3>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2 text-sm">
+                            <div class="w-3 h-3 bg-blue-500 rounded"></div>
+                            <span>ETA (Estimated Arrival)</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm">
+                            <div class="w-3 h-3 bg-green-500 rounded"></div>
+                            <span>ATA (Actual Arrival)</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm">
+                            <div class="w-3 h-3 bg-red-500 rounded"></div>
+                            <span>Delayed</span>
+                        </div>
                     </div>
-                    <div class="flex items-center space-x-2 text-sm">
-                        <div class="w-3 h-3 bg-green-500 rounded"></div>
-                        <span>ATA (Actual Arrival)</span>
+                </div>
+                
+                <!-- Urgency Filter -->
+                <div class="mb-4">
+                    <div class="flex items-center space-x-4">
+                        <label class="text-sm font-medium text-gray-700">Filter by Urgency:</label>
+                        <div class="flex space-x-2">
+                            <button id="filterAll" class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-md transition-colors border-2 border-gray-300">
+                                All
+                            </button>
+                            <button id="filterTopUrgent" class="px-3 py-1 text-sm bg-red-50 hover:bg-red-100 text-red-700 rounded-md transition-colors border-2 border-red-200">
+                                🔴 Top Urgent
+                            </button>
+                            <button id="filterUrgent" class="px-3 py-1 text-sm bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-md transition-colors border-2 border-orange-200">
+                                🟠 Urgent
+                            </button>
+                            <button id="filterAverage" class="px-3 py-1 text-sm bg-green-50 hover:bg-green-100 text-green-700 rounded-md transition-colors border-2 border-green-200">
+                                🟢 Average
+                            </button>
+                        </div>
                     </div>
-                    <div class="flex items-center space-x-2 text-sm">
-                        <div class="w-3 h-3 bg-red-500 rounded"></div>
-                        <span>Delayed</span>
+                </div>
+                
+                <!-- Chart Container -->
+                <div class="relative" style="height: 400px;">
+                    <canvas id="etaAtaChart"></canvas>
+                </div>
+                
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-7 gap-4 mt-6">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <div class="text-sm font-medium text-blue-600">On Time Deliveries</div>
+                        <div id="onTimeCount" class="text-2xl font-bold text-blue-900">0</div>
+                        <div id="onTimePercentage" class="text-xs text-blue-600">0%</div>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <div class="text-sm font-medium text-yellow-600">Early Deliveries</div>
+                        <div id="earlyCount" class="text-2xl font-bold text-yellow-900">0</div>
+                        <div id="earlyPercentage" class="text-xs text-yellow-600">0%</div>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <div class="text-sm font-medium text-red-600">Late Deliveries</div>
+                        <div id="lateCount" class="text-2xl font-bold text-red-900">0</div>
+                        <div id="latePercentage" class="text-xs text-red-600">0%</div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="text-sm font-medium text-gray-600">Avg Delay</div>
+                        <div id="avgDelay" class="text-2xl font-bold text-gray-900">0</div>
+                        <div class="text-xs text-gray-600">days</div>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-400">
+                        <div class="text-sm font-medium text-red-600">🔴 Top Urgent</div>
+                        <div id="topUrgentCount" class="text-2xl font-bold text-red-900">0</div>
+                        <div id="topUrgentPercentage" class="text-xs text-red-600">0%</div>
+                    </div>
+                    <div class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-400">
+                        <div class="text-sm font-medium text-orange-600">🟠 Urgent</div>
+                        <div id="urgentCount" class="text-2xl font-bold text-orange-900">0</div>
+                        <div id="urgentPercentage" class="text-xs text-orange-600">0%</div>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                        <div class="text-sm font-medium text-green-600">🟢 Average</div>
+                        <div id="averageCount" class="text-2xl font-bold text-green-900">0</div>
+                        <div id="averagePercentage" class="text-xs text-green-600">0%</div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Urgency Filter -->
-            <div class="mb-4">
-                <div class="flex items-center space-x-4">
-                    <label class="text-sm font-medium text-gray-700">Filter by Urgency:</label>
-                    <div class="flex space-x-2">
-                        <button id="filterAll" class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-md transition-colors border-2 border-gray-300">
-                            All
-                        </button>
-                        <button id="filterTopUrgent" class="px-3 py-1 text-sm bg-red-50 hover:bg-red-100 text-red-700 rounded-md transition-colors border-2 border-red-200">
-                            🔴 Top Urgent
-                        </button>
-                        <button id="filterUrgent" class="px-3 py-1 text-sm bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-md transition-colors border-2 border-orange-200">
-                            🟠 Urgent
-                        </button>
-                        <button id="filterAverage" class="px-3 py-1 text-sm bg-green-50 hover:bg-green-100 text-green-700 rounded-md transition-colors border-2 border-green-200">
-                            🟢 Average
-                        </button>
+        </div>
+
+        <!-- Monthly Spending Bar Chart -->
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">Monthly Spending Analysis</h3>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2 text-sm">
+                            <div class="w-3 h-3 bg-blue-500 rounded"></div>
+                            <span>Monthly Spend (IDR)</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Chart Container -->
-            <div class="relative" style="height: 400px;">
-                <canvas id="etaAtaChart"></canvas>
-            </div>
-            
-            <!-- Summary Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-7 gap-4 mt-6">
-                <div class="bg-blue-50 p-4 rounded-lg">
-                    <div class="text-sm font-medium text-blue-600">On Time Deliveries</div>
-                    <div id="onTimeCount" class="text-2xl font-bold text-blue-900">0</div>
-                    <div id="onTimePercentage" class="text-xs text-blue-600">0%</div>
-                </div>
-                <div class="bg-yellow-50 p-4 rounded-lg">
-                    <div class="text-sm font-medium text-yellow-600">Early Deliveries</div>
-                    <div id="earlyCount" class="text-2xl font-bold text-yellow-900">0</div>
-                    <div id="earlyPercentage" class="text-xs text-yellow-600">0%</div>
-                </div>
-                <div class="bg-red-50 p-4 rounded-lg">
-                    <div class="text-sm font-medium text-red-600">Late Deliveries</div>
-                    <div id="lateCount" class="text-2xl font-bold text-red-900">0</div>
-                    <div id="latePercentage" class="text-xs text-red-600">0%</div>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <div class="text-sm font-medium text-gray-600">Avg Delay</div>
-                    <div id="avgDelay" class="text-2xl font-bold text-gray-900">0</div>
-                    <div class="text-xs text-gray-600">days</div>
-                </div>
-                <!-- New Urgency Cards -->
-                <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-400">
-                    <div class="text-sm font-medium text-red-600">🔴 Top Urgent</div>
-                    <div id="topUrgentCount" class="text-2xl font-bold text-red-900">0</div>
-                    <div id="topUrgentPercentage" class="text-xs text-red-600">0%</div>
-                </div>
-                <div class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-400">
-                    <div class="text-sm font-medium text-orange-600">🟠 Urgent</div>
-                    <div id="urgentCount" class="text-2xl font-bold text-orange-900">0</div>
-                    <div id="urgentPercentage" class="text-xs text-orange-600">0%</div>
-                </div>
-                <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
-                    <div class="text-sm font-medium text-green-600">🟢 Average</div>
-                    <div id="averageCount" class="text-2xl font-bold text-green-900">0</div>
-                    <div id="averagePercentage" class="text-xs text-green-600">0%</div>
+                
+                <!-- Chart Container -->
+                <div class="relative" style="height: 400px;">
+                    <canvas id="monthlySpendChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </section>
 
 <!-- Main Content -->
@@ -817,140 +837,310 @@
 <!-- Chart.js Script -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 <script>
- // Dummy data untuk ETA vs ATA chart
-    function generateETAATADummyData() {
-        const dummyData = [];
-        const materials = [
-            "Besi Beton 10mm", "Semen Portland", "Pasir Beton", "Keramik 40x40", 
-            "Bata Merah", "Pipa PVC 4in", "Genteng Beton", "Kayu Meranti", 
-            "Kaca Tempered", "Cat Tembok", "Keramik Granite", "Baja Ringan",
-            "Pintu Panel", "Jendela UPVC", "Atap Spandek", "Wire Mesh",
-            "Besi Hollow", "Triplek 18mm", "Plafon Gypsum", "Lantai Parket"
-        ];
-        
-        const suppliers = [
-            "PT Krakatau Steel", "PT Semen Indonesia", "CV Sumber Alam", "PT Roman Ceramics",
-            "UD Bata Mandiri", "PT Rucika", "PT Genteng Mas", "CV Kayu Jati",
-            "PT Asahimas", "PT Propan Raya", "PT Granito Tiles", "PT Baja Ringan Prima"
-        ];
-        
-        const categories = ["Material", "Equipment", "Electrical Tools", "Consumables"];
-        const urgencyLevels = ["top-urgent", "urgent", "average"];
-        
-        for (let i = 1; i <= 50; i++) {
-            // Generate ETA (2-8 weeks from now)
-            const etaDate = new Date();
-            etaDate.setDate(etaDate.getDate() + Math.floor(Math.random() * 42) + 14);
-            
-            // Generate urgency level
-            const urgencyRandom = Math.random();
-            let urgency;
-            if (urgencyRandom < 0.2) {
-                urgency = "top-urgent"; // 20%
-            } else if (urgencyRandom < 0.5) {
-                urgency = "urgent"; // 30%
-            } else {
-                urgency = "average"; // 50%
+    // Data management class
+    class ProcurementDataManager {
+        constructor() {
+            this.allData = this.generateSampleData();
+            this.filteredData = [...this.allData];
+            this.projectFilter = '';
+            this.urgencyFilter = 'all';
+        }
+
+        generateSampleData() {
+            const project1Items = [
+                {
+                    id: 1,
+                    name: "Excavator 5 unit",
+                    supplier: "PT Heavy Equipment",
+                    category: "Equipment",
+                    eta: new Date('2024-06-30'),
+                    ata: new Date('2024-06-28'),
+                    delayDays: -2,
+                    status: 'completed',
+                    urgency: 'top-urgent',
+                    budget: 840000000,
+                    unit: "Units",
+                    project: "project1"
+                },
+                {
+                    id: 2,
+                    name: "Cement 500 Bags",
+                    supplier: "PT Semen Indonesia",
+                    category: "Material",
+                    eta: new Date('2024-06-25'),
+                    ata: new Date('2024-06-25'),
+                    delayDays: 0,
+                    status: 'completed',
+                    urgency: 'top-urgent',
+                    budget: 10000000,
+                    unit: "Bags",
+                    project: "project1"
+                },
+                {
+                    id: 3,
+                    name: "Concrete Mixer 2 Units",
+                    supplier: "CV Machinery",
+                    category: "Equipment",
+                    eta: new Date('2024-06-22'),
+                    ata: new Date('2024-06-24'),
+                    delayDays: 2,
+                    status: 'completed',
+                    urgency: 'top-urgent',
+                    budget: 30000000,
+                    unit: "Units",
+                    project: "project1"
+                },
+                {
+                    id: 4,
+                    name: "Tower Crane 1 Unit",
+                    supplier: "PT Crane Solutions",
+                    category: "Equipment",
+                    eta: new Date('2024-07-10'),
+                    ata: null,
+                    delayDays: null,
+                    status: 'pending',
+                    urgency: 'top-urgent',
+                    budget: 150000000,
+                    unit: "Unit",
+                    project: "project1"
+                },
+                {
+                    id: 5,
+                    name: "Rebar Steel 3000 kg",
+                    supplier: "PT Krakatau Steel",
+                    category: "Material",
+                    eta: new Date('2024-07-05'),
+                    ata: new Date('2024-07-07'),
+                    delayDays: 2,
+                    status: 'completed',
+                    urgency: 'urgent',
+                    budget: 25500000,
+                    unit: "kg",
+                    project: "project1"
+                },
+                {
+                    id: 6,
+                    name: "Scaffolding 100 Sets",
+                    supplier: "UD Construction",
+                    category: "Equipment",
+                    eta: new Date('2024-07-15'),
+                    ata: null,
+                    delayDays: null,
+                    status: 'pending',
+                    urgency: 'urgent',
+                    budget: 39000000,
+                    unit: "Sets",
+                    project: "project1"
+                }
+            ];
+
+            const project2Items = [
+                {
+                    id: 7,
+                    name: "Safety Helmet 100 Pcs",
+                    supplier: "PT Safety Gear",
+                    category: "PPE",
+                    eta: new Date('2024-06-20'),
+                    ata: new Date('2024-06-18'),
+                    delayDays: -2,
+                    status: 'completed',
+                    urgency: 'urgent',
+                    budget: 2500000,
+                    unit: "Pcs",
+                    project: "project2"
+                },
+                {
+                    id: 8,
+                    name: "Steel Beams 200 Units",
+                    supplier: "PT Baja Prima",
+                    category: "Material",
+                    eta: new Date('2024-06-28'),
+                    ata: new Date('2024-06-28'),
+                    delayDays: 0,
+                    status: 'completed',
+                    urgency: 'average',
+                    budget: 25000000,
+                    unit: "Units",
+                    project: "project2"
+                },
+                {
+                    id: 9,
+                    name: "Safety Vest 50 Pcs",
+                    supplier: "CV Safety Supplies",
+                    category: "PPE",
+                    eta: new Date('2024-06-21'),
+                    ata: new Date('2024-06-22'),
+                    delayDays: 1,
+                    status: 'completed',
+                    urgency: 'urgent',
+                    budget: 3750000,
+                    unit: "Pcs",
+                    project: "project2"
+                },
+                {
+                    id: 10,
+                    name: "Fire Extinguisher 20 Units",
+                    supplier: "PT Fire Safety",
+                    category: "Safety",
+                    eta: new Date('2024-06-18'),
+                    ata: null,
+                    delayDays: null,
+                    status: 'pending',
+                    urgency: 'top-urgent',
+                    budget: 17000000,
+                    unit: "Units",
+                    project: "project2"
+                },
+                {
+                    id: 11,
+                    name: "Paint Materials 200 Liters",
+                    supplier: "PT Propan Raya",
+                    category: "Finishing",
+                    eta: new Date('2024-07-05'),
+                    ata: new Date('2024-07-04'),
+                    delayDays: -1,
+                    status: 'completed',
+                    urgency: 'urgent',
+                    budget: 15000000,
+                    unit: "Liters",
+                    project: "project2"
+                },
+                {
+                    id: 12,
+                    name: "First Aid Kit 50 Sets",
+                    supplier: "CV Medika",
+                    category: "Safety",
+                    eta: new Date('2024-06-17'),
+                    ata: new Date('2024-06-17'),
+                    delayDays: 0,
+                    status: 'completed',
+                    urgency: 'urgent',
+                    budget: 25500000,
+                    unit: "Sets",
+                    project: "project2"
+                }
+            ];
+
+            // Additional dummy data for more realistic charts
+            const materials = [
+                "Besi Beton 10mm", "Semen Portland", "Pasir Beton", "Keramik 40x40", 
+                "Bata Merah", "Pipa PVC 4in", "Genteng Beton", "Kayu Meranti", 
+                "Kaca Tempered", "Cat Tembok", "Keramik Granite", "Baja Ringan",
+                "Pintu Panel", "Jendela UPVC", "Atap Spandek", "Wire Mesh",
+                "Besi Hollow", "Triplek 18mm", "Plafon Gypsum", "Lantai Parket"
+            ];
+            const suppliers = [
+                "PT Krakatau Steel", "PT Semen Indonesia", "CV Sumber Alam", "PT Roman Ceramics",
+                "UD Bata Mandiri", "PT Rucika", "PT Genteng Mas", "CV Kayu Jati",
+                "PT Asahimas", "PT Propan Raya", "PT Granito Tiles", "PT Baja Ringan Prima"
+            ];
+            const categories = ["Material", "Equipment", "Electrical Tools", "Consumables", "PPE", "Safety", "Finishing"];
+            const urgencyLevels = ["top-urgent", "urgent", "average"];
+            const projects = ["project1", "project2"];
+
+            const additionalData = [];
+            for (let i = 13; i <= 50; i++) {
+                const etaDate = new Date();
+                etaDate.setDate(etaDate.getDate() + Math.floor(Math.random() * 42) + 14);
+                const urgencyRandom = Math.random();
+                let urgency = urgencyRandom < 0.2 ? "top-urgent" : urgencyRandom < 0.5 ? "urgent" : "average";
+                let ataDate, delayDays, status;
+                const random = Math.random();
+
+                if (random < 0.3) {
+                    ataDate = new Date(etaDate);
+                    delayDays = 0;
+                    status = 'completed';
+                } else if (random < 0.45) {
+                    const earlyDays = Math.floor(Math.random() * 7) + 1;
+                    ataDate = new Date(etaDate.getTime() - earlyDays * 24 * 60 * 60 * 1000);
+                    delayDays = -earlyDays;
+                    status = 'completed';
+                } else if (random < 0.75) {
+                    const lateDays = Math.floor(Math.random() * 14) + 1;
+                    ataDate = new Date(etaDate.getTime() + lateDays * 24 * 60 * 60 * 1000);
+                    delayDays = lateDays;
+                    status = 'completed';
+                } else if (random < 0.9) {
+                    const veryLateDays = Math.floor(Math.random() * 16) + 15;
+                    ataDate = new Date(etaDate.getTime() + veryLateDays * 24 * 60 * 60 * 1000);
+                    delayDays = veryLateDays;
+                    status = 'delayed';
+                } else {
+                    ataDate = null;
+                    delayDays = null;
+                    status = Math.random() < 0.5 ? 'pending' : 'in-progress';
+                }
+
+                additionalData.push({
+                    id: i,
+                    name: `${materials[Math.floor(Math.random() * materials.length)]} ${Math.floor(Math.random() * 100) + 10} unit`,
+                    supplier: suppliers[Math.floor(Math.random() * suppliers.length)],
+                    category: categories[Math.floor(Math.random() * categories.length)],
+                    eta: etaDate,
+                    ata: ataDate,
+                    delayDays: delayDays,
+                    status: status,
+                    urgency: urgency,
+                    budget: Math.floor(Math.random() * 50000000) + 5000000,
+                    unit: ['unit', 'sak', 'm³', 'lembar', 'batang'][Math.floor(Math.random() * 5)],
+                    project: projects[Math.floor(Math.random() * projects.length)]
+                });
             }
-            
-            // Generate ATA with realistic patterns
-            let ataDate, delayDays, status;
-            const random = Math.random();
-            
-            if (random < 0.3) {
-                // 30% On time (0 days delay)
-                ataDate = new Date(etaDate);
-                delayDays = 0;
-                status = 'completed';
-            } else if (random < 0.45) {
-                // 15% Early (-1 to -7 days)
-                const earlyDays = Math.floor(Math.random() * 7) + 1;
-                ataDate = new Date(etaDate.getTime() - earlyDays * 24 * 60 * 60 * 1000);
-                delayDays = -earlyDays;
-                status = 'completed';
-            } else if (random < 0.75) {
-                // 30% Late (1-14 days)
-                const lateDays = Math.floor(Math.random() * 14) + 1;
-                ataDate = new Date(etaDate.getTime() + lateDays * 24 * 60 * 60 * 1000);
-                delayDays = lateDays;
-                status = 'completed';
-            } else if (random < 0.9) {
-                // 15% Very late (15-30 days)
-                const veryLateDays = Math.floor(Math.random() * 16) + 15;
-                ataDate = new Date(etaDate.getTime() + veryLateDays * 24 * 60 * 60 * 1000);
-                delayDays = veryLateDays;
-                status = 'delayed';
-            } else {
-                // 10% Still pending/in-progress (no ATA yet)
-                ataDate = null;
-                delayDays = null;
-                status = Math.random() < 0.5 ? 'pending' : 'in-progress';
-            }
-            
-            dummyData.push({
-                id: i,
-                name: `${materials[Math.floor(Math.random() * materials.length)]} ${Math.floor(Math.random() * 100) + 10} unit`,
-                supplier: suppliers[Math.floor(Math.random() * suppliers.length)],
-                category: categories[Math.floor(Math.random() * categories.length)],
-                eta: etaDate,
-                ata: ataDate,
-                delayDays: delayDays,
-                status: status,
-                urgency: urgency,
-                budget: Math.floor(Math.random() * 50000000) + 5000000,
-                unit: ['unit', 'sak', 'm³', 'lembar', 'batang'][Math.floor(Math.random() * 5)]
+
+            return [...project1Items, ...project2Items, ...additionalData];
+        }
+
+        applyFilters() {
+            this.filteredData = this.allData.filter(item => {
+                const matchesProject = this.projectFilter === '' || item.project === this.projectFilter;
+                const matchesUrgency = this.urgencyFilter === 'all' || item.urgency === this.urgencyFilter;
+                return matchesProject && matchesUrgency;
             });
         }
-        
-        return dummyData;
     }
 
-    // ETA vs ATA Chart Manager
-    class ETAATAChartManager {
+    // Chart Manager for both ETA vs ATA and Monthly Spending
+    class ChartManager {
         constructor() {
-            this.dummyData = generateETAATADummyData();
-            this.filteredData = [...this.dummyData];
+            this.dataManager = new ProcurementDataManager();
             this.urgencyFilter = 'all';
-            this.chart = null;
-            this.initChart();
+            this.projectFilter = '';
+            this.etaAtaChart = null;
+            this.monthlySpendChart = null;
+            this.initCharts();
             this.initFilters();
         }
-        
+
         initFilters() {
-            // Setup urgency filter buttons
+            // Urgency filter buttons
             document.getElementById('filterAll').addEventListener('click', () => this.setUrgencyFilter('all'));
             document.getElementById('filterTopUrgent').addEventListener('click', () => this.setUrgencyFilter('top-urgent'));
             document.getElementById('filterUrgent').addEventListener('click', () => this.setUrgencyFilter('urgent'));
             document.getElementById('filterAverage').addEventListener('click', () => this.setUrgencyFilter('average'));
-            
-            // Set initial active state
+
+            // Project selector
+            document.getElementById('projectSelector').addEventListener('change', (e) => {
+                this.projectFilter = e.target.value;
+                this.applyFiltersAndUpdate();
+            });
+
             this.updateFilterButtons();
         }
-        
+
         setUrgencyFilter(urgency) {
             this.urgencyFilter = urgency;
-            this.applyFilters();
-            this.updateChart();
             this.updateFilterButtons();
+            this.applyFiltersAndUpdate();
         }
-        
-        applyFilters() {
-            if (this.urgencyFilter === 'all') {
-                this.filteredData = [...this.dummyData];
-            } else {
-                this.filteredData = this.dummyData.filter(item => item.urgency === this.urgencyFilter);
-            }
-        }
-        
+
         updateFilterButtons() {
-            // Reset all buttons
             const buttons = ['filterAll', 'filterTopUrgent', 'filterUrgent', 'filterAverage'];
             buttons.forEach(id => {
                 const btn = document.getElementById(id);
                 btn.classList.remove('border-blue-500', 'bg-blue-100');
             });
-            
-            // Highlight active button
+
             let activeButton;
             switch(this.urgencyFilter) {
                 case 'all': activeButton = 'filterAll'; break;
@@ -958,13 +1148,22 @@
                 case 'urgent': activeButton = 'filterUrgent'; break;
                 case 'average': activeButton = 'filterAverage'; break;
             }
-            
+
             if (activeButton) {
                 const btn = document.getElementById(activeButton);
                 btn.classList.add('border-blue-500', 'bg-blue-100');
             }
         }
-        
+
+        applyFiltersAndUpdate() {
+            this.dataManager.projectFilter = this.projectFilter;
+            this.dataManager.urgencyFilter = this.urgencyFilter;
+            this.dataManager.applyFilters();
+            this.updateETAATAChart();
+            this.updateMonthlySpendChart();
+            this.updateSummaryStats();
+        }
+
         getUrgencyPointStyle(urgency) {
             switch(urgency) {
                 case 'top-urgent':
@@ -997,11 +1196,11 @@
                     };
             }
         }
-        
-        initChart() {
-            const ctx = document.getElementById('etaAtaChart').getContext('2d');
-            
-            this.chart = new Chart(ctx, {
+
+        initCharts() {
+            // ETA vs ATA Chart
+            const etaAtaCtx = document.getElementById('etaAtaChart').getContext('2d');
+            this.etaAtaChart = new Chart(etaAtaCtx, {
                 type: 'scatter',
                 data: {
                     datasets: [
@@ -1041,21 +1240,13 @@
                         title: {
                             display: true,
                             text: 'ETA vs ATA Scatter Plot',
-                            font: {
-                                size: 16,
-                                weight: 'bold'
-                            }
+                            font: { size: 16, weight: 'bold' }
                         },
-                        legend: {
-                            display: true,
-                            position: 'top'
-                        },
+                        legend: { display: true, position: 'top' },
                         tooltip: {
                             callbacks: {
                                 title: function(context) {
-                                    const point = context[0];
-                                    const item = point.raw.item;
-                                    return item.name;
+                                    return context[0].raw.item.name;
                                 },
                                 label: function(context) {
                                     const point = context.raw;
@@ -1063,15 +1254,12 @@
                                     const ata = new Date(point.y).toLocaleDateString('id-ID');
                                     const delay = point.item.delayDays;
                                     const urgency = point.item.urgency;
-                                    
-                                    // Urgency emoji
                                     let urgencyEmoji = '';
                                     switch(urgency) {
                                         case 'top-urgent': urgencyEmoji = '🔴'; break;
                                         case 'urgent': urgencyEmoji = '🟠'; break;
                                         case 'average': urgencyEmoji = '🟢'; break;
                                     }
-                                    
                                     return [
                                         `${urgencyEmoji} ${urgency.toUpperCase().replace('-', ' ')}`,
                                         `ETA: ${eta}`,
@@ -1087,84 +1275,112 @@
                         x: {
                             type: 'linear',
                             position: 'bottom',
-                            title: {
-                                display: true,
-                                text: 'ETA (Estimated Arrival)'
-                            },
+                            title: { display: true, text: 'ETA (Estimated Arrival)' },
                             ticks: {
                                 callback: function(value) {
-                                    return new Date(value).toLocaleDateString('id-ID', { 
-                                        month: 'short', 
-                                        day: 'numeric' 
-                                    });
+                                    return new Date(value).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' });
                                 }
                             }
                         },
                         y: {
                             type: 'linear',
-                            title: {
-                                display: true,
-                                text: 'ATA (Actual Arrival)'
-                            },
+                            title: { display: true, text: 'ATA (Actual Arrival)' },
                             ticks: {
                                 callback: function(value) {
-                                    return new Date(value).toLocaleDateString('id-ID', { 
-                                        month: 'short', 
-                                        day: 'numeric' 
-                                    });
+                                    return new Date(value).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' });
                                 }
                             }
                         }
                     }
                 }
             });
-            
-            // Tambahkan garis diagonal untuk referensi "on time"
-            this.addReferenceLine();
-        }
-        
-        addReferenceLine() {
-            // Tambahkan reference line setelah chart update
-            const chart = this.chart;
-            
-            // Plugin untuk menggambar garis diagonal
+
+            // Add reference line for ETA vs ATA
             const referenceLinePlugin = {
                 id: 'referenceLine',
                 afterDraw: function(chart) {
                     const ctx = chart.ctx;
                     const xScale = chart.scales.x;
                     const yScale = chart.scales.y;
-                    
                     if (!xScale || !yScale) return;
-                    
-                    // Gambar garis diagonal (ETA = ATA)
                     ctx.save();
                     ctx.setLineDash([5, 5]);
                     ctx.strokeStyle = 'rgba(107, 114, 128, 0.5)';
                     ctx.lineWidth = 2;
                     ctx.beginPath();
-                    
                     const minTime = Math.max(xScale.min, yScale.min);
                     const maxTime = Math.min(xScale.max, yScale.max);
-                    
                     ctx.moveTo(xScale.getPixelForValue(minTime), yScale.getPixelForValue(minTime));
                     ctx.lineTo(xScale.getPixelForValue(maxTime), yScale.getPixelForValue(maxTime));
                     ctx.stroke();
                     ctx.restore();
                 }
             };
-            
             Chart.register(referenceLinePlugin);
+
+            // Monthly Spending Chart
+            const monthlySpendCtx = document.getElementById('monthlySpendChart').getContext('2d');
+            this.monthlySpendChart = new Chart(monthlySpendCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Monthly Spend (IDR)',
+                        data: [],
+                        backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Monthly Spending by Project',
+                            font: { size: 16, weight: 'bold' }
+                        },
+                        legend: { display: true, position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return new Intl.NumberFormat('id-ID', {
+                                        style: 'currency',
+                                        currency: 'IDR',
+                                        minimumFractionDigits: 0
+                                    }).format(context.parsed.y);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Month' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Spending (IDR)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return new Intl.NumberFormat('id-ID', {
+                                        style: 'currency',
+                                        currency: 'IDR',
+                                        minimumFractionDigits: 0
+                                    }).format(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
-        
-        updateChart() {
-            const data = this.filteredData.filter(item => item.ata !== null);
-            
-            // Kategorikan data
+
+        updateETAATAChart() {
+            const data = this.dataManager.filteredData.filter(item => item.ata !== null);
             const onTime = [];
             const early = [];
             const late = [];
-            
+
             data.forEach(item => {
                 const urgencyStyle = this.getUrgencyPointStyle(item.urgency);
                 const point = {
@@ -1173,7 +1389,6 @@
                     item: item,
                     ...urgencyStyle
                 };
-                
                 if (item.delayDays === 0) {
                     onTime.push(point);
                 } else if (item.delayDays < 0) {
@@ -1182,21 +1397,47 @@
                     late.push(point);
                 }
             });
-            
-            // Update chart data
-            this.chart.data.datasets[0].data = onTime;
-            this.chart.data.datasets[1].data = early;
-            this.chart.data.datasets[2].data = late;
-            
-            this.chart.update();
-            
-            // Update summary statistics
-            this.updateSummaryStats(data);
+
+            this.etaAtaChart.data.datasets[0].data = onTime;
+            this.etaAtaChart.data.datasets[1].data = early;
+            this.etaAtaChart.data.datasets[2].data = late;
+            this.etaAtaChart.update();
         }
-        
-        updateSummaryStats(data) {
+
+        updateMonthlySpendChart() {
+            const today = new Date();
+            const months = [];
+            const spendData = new Array(12).fill(0);
+
+            // Generate 12 months of labels (6 months before and after current month)
+            for (let i = -5; i <= 6; i++) {
+                const date = new Date(today.getFullYear(), today.getMonth() + i, 1);
+                months.push(date.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' }));
+            }
+
+            this.dataManager.filteredData.forEach(item => {
+                const itemMonth = new Date(item.eta).getMonth();
+                const itemYear = new Date(item.eta).getFullYear();
+                const monthIndex = months.findIndex(month => {
+                    const [monthName, year] = month.split(' ');
+                    const monthNum = new Date(Date.parse(monthName + " 1, " + year)).getMonth();
+                    return monthNum === itemMonth && parseInt(year) === itemYear;
+                });
+
+                if (monthIndex !== -1) {
+                    spendData[monthIndex] += item.budget;
+                }
+            });
+
+            this.monthlySpendChart.data.labels = months;
+            this.monthlySpendChart.data.datasets[0].data = spendData;
+            this.monthlySpendChart.update();
+        }
+
+        updateSummaryStats() {
+            const data = this.dataManager.filteredData.filter(item => item.ata !== null);
             const total = data.length;
-            
+
             if (total === 0) {
                 document.getElementById('onTimeCount').textContent = '0';
                 document.getElementById('onTimePercentage').textContent = '0%';
@@ -1205,8 +1446,6 @@
                 document.getElementById('lateCount').textContent = '0';
                 document.getElementById('latePercentage').textContent = '0%';
                 document.getElementById('avgDelay').textContent = '0';
-                
-                // Urgency stats
                 document.getElementById('topUrgentCount').textContent = '0';
                 document.getElementById('topUrgentPercentage').textContent = '0%';
                 document.getElementById('urgentCount').textContent = '0';
@@ -1215,60 +1454,46 @@
                 document.getElementById('averagePercentage').textContent = '0%';
                 return;
             }
-            
+
             const onTime = data.filter(item => item.delayDays === 0).length;
             const early = data.filter(item => item.delayDays < 0).length;
             const late = data.filter(item => item.delayDays > 0).length;
-            
             const avgDelay = data.reduce((sum, item) => sum + (item.delayDays || 0), 0) / total;
-            
-            // Performance stats
+
             document.getElementById('onTimeCount').textContent = onTime;
             document.getElementById('onTimePercentage').textContent = `${Math.round((onTime / total) * 100)}%`;
-            
             document.getElementById('earlyCount').textContent = early;
             document.getElementById('earlyPercentage').textContent = `${Math.round((early / total) * 100)}%`;
-            
             document.getElementById('lateCount').textContent = late;
             document.getElementById('latePercentage').textContent = `${Math.round((late / total) * 100)}%`;
-            
             document.getElementById('avgDelay').textContent = Math.round(avgDelay * 10) / 10;
-            
-            // Urgency stats (from all filtered data, not just completed)
-            const allFilteredData = this.filteredData;
+
+            const allFilteredData = this.dataManager.filteredData;
             const totalAll = allFilteredData.length;
-            
             const topUrgent = allFilteredData.filter(item => item.urgency === 'top-urgent').length;
             const urgent = allFilteredData.filter(item => item.urgency === 'urgent').length;
             const average = allFilteredData.filter(item => item.urgency === 'average').length;
-            
+
             document.getElementById('topUrgentCount').textContent = topUrgent;
             document.getElementById('topUrgentPercentage').textContent = totalAll > 0 ? `${Math.round((topUrgent / totalAll) * 100)}%` : '0%';
-            
             document.getElementById('urgentCount').textContent = urgent;
             document.getElementById('urgentPercentage').textContent = totalAll > 0 ? `${Math.round((urgent / totalAll) * 100)}%` : '0%';
-            
             document.getElementById('averageCount').textContent = average;
             document.getElementById('averagePercentage').textContent = totalAll > 0 ? `${Math.round((average / totalAll) * 100)}%` : '0%';
         }
     }
 
-    // Inisialisasi chart setelah DOM loaded
+    // Initialize charts
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM loaded, initializing ETA ATA chart...');
-        
-        // Tunggu sebentar untuk memastikan semua library loaded
+        console.log('DOM loaded, initializing charts...');
         setTimeout(() => {
             try {
-                window.etaAtaChart = new ETAATAChartManager();
-                console.log('Chart initialized successfully');
-                
-                // Initial update
-                window.etaAtaChart.updateChart();
-                console.log('Chart updated with data');
-                
+                window.chartManager = new ChartManager();
+                console.log('Charts initialized successfully');
+                window.chartManager.applyFiltersAndUpdate();
+                console.log('Charts updated with data');
             } catch (error) {
-                console.error('Error initializing chart:', error);
+                console.error('Error initializing charts:', error);
             }
         }, 500);
     });
