@@ -12,6 +12,7 @@ class PMRequest extends Model
     protected $fillable = [
         'user_id',
         'project_name',
+        'procurement_kode',
         'item',
         'specification',
         'unit',

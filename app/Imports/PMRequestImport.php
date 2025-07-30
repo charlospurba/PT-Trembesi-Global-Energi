@@ -12,11 +12,13 @@ class PMRequestImport implements ToCollection
 {
     private $projectName;
     private $userId;
+    private $procurementKode;
 
-    public function __construct(string $projectName, $userId)
+    public function __construct(string $projectName, $userId, $procurementKode)
     {
         $this->projectName = $projectName;
         $this->userId = $userId;
+        $this->procurementKode = $procurementKode;
     }
 
     public function collection(Collection $rows)
@@ -41,6 +43,7 @@ class PMRequestImport implements ToCollection
             PMRequest::create([
                 'user_id' => $this->userId,
                 'project_name' => $this->projectName,
+                'procurement_kode' => $this->procurementKode,
                 'item' => $row[1],
                 'specification' => $row[2] ?? '',
                 'unit' => $row[3] ?? '',

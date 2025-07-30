@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('user_id'); // Tambahkan kolom user_id
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade'); // Foreign key ke tabel users
             $table->string('project_name');
+            $table->string('procurement_kode');
             $table->string('item');
             $table->string('specification');
             $table->string('unit');
