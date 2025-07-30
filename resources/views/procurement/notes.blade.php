@@ -185,24 +185,32 @@
                         
                         <div class="space-y-3">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Category:</span>
-                                <span class="font-medium">Equipment</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Budget/Unit:</span>
-                                <span class="font-medium">Rp168,000,000</span>
+                                <span class="text-gray-600">Item:</span>
+                                <span class="font-medium">Excavator</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Quantity:</span>
-                                <span class="font-medium">5 Units</span>
-                            </div>
-                            <div class="flex justify-between border-t pt-3">
-                                <span class="text-gray-600 font-semibold">Total:</span>
-                                <span class="font-bold text-red-600 text-lg">Rp840,000,000</span>
+                                <span class="font-medium">5</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Timeline:</span>
-                                <span class="font-medium text-sm">12 Jun - 30 Jun</span>
+                                <span class="text-gray-600">Unit:</span>
+                                <span class="font-medium">Units</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">ETA:</span>
+                                <span class="font-medium text-sm">30 Jun 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Specification:</span>
+                                <span class="font-medium text-sm">Heavy Duty</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Remarks:</span>
+                                <span class="font-medium text-sm">Equipment</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-3">
+                                <span class="text-gray-600 font-semibold">Price:</span>
+                                <span class="font-bold text-red-600 text-lg">Rp840,000,000</span>
                             </div>
                         </div>
                         
@@ -225,24 +233,32 @@
                         
                         <div class="space-y-3">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Category:</span>
-                                <span class="font-medium">Material</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Budget/Unit:</span>
-                                <span class="font-medium">Rp20,000</span>
+                                <span class="text-gray-600">Item:</span>
+                                <span class="font-medium">Cement</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Quantity:</span>
-                                <span class="font-medium">500 Bags</span>
-                            </div>
-                            <div class="flex justify-between border-t pt-3">
-                                <span class="text-gray-600 font-semibold">Total:</span>
-                                <span class="font-bold text-red-600 text-lg">Rp10,000,000</span>
+                                <span class="font-medium">500</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Timeline:</span>
-                                <span class="font-medium text-sm">20 Jun - 25 Jun</span>
+                                <span class="text-gray-600">Unit:</span>
+                                <span class="font-medium">Bags</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">ETA:</span>
+                                <span class="font-medium text-sm">25 Jun 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Specification:</span>
+                                <span class="font-medium text-sm">Type I Portland</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Remarks:</span>
+                                <span class="font-medium text-sm">Material</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-3">
+                                <span class="text-gray-600 font-semibold">Price:</span>
+                                <span class="font-bold text-red-600 text-lg">Rp10,000,000</span>
                             </div>
                         </div>
                         
@@ -265,24 +281,32 @@
                         
                         <div class="space-y-3">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Category:</span>
-                                <span class="font-medium">Equipment</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Budget/Unit:</span>
-                                <span class="font-medium">Rp15,000,000</span>
+                                <span class="text-gray-600">Item:</span>
+                                <span class="font-medium">Concrete Mixer</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Quantity:</span>
-                                <span class="font-medium">2 Units</span>
-                            </div>
-                            <div class="flex justify-between border-t pt-3">
-                                <span class="text-gray-600 font-semibold">Total:</span>
-                                <span class="font-bold text-red-600 text-lg">Rp30,000,000</span>
+                                <span class="font-medium">2</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Timeline:</span>
-                                <span class="font-medium text-sm">14 Jun - 22 Jun</span>
+                                <span class="text-gray-600">Unit:</span>
+                                <span class="font-medium">Units</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">ETA:</span>
+                                <span class="font-medium text-sm">22 Jun 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Specification:</span>
+                                <span class="font-medium text-sm">350L Capacity</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Remarks:</span>
+                                <span class="font-medium text-sm">Equipment</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-3">
+                                <span class="text-gray-600 font-semibold">Price:</span>
+                                <span class="font-bold text-red-600 text-lg">Rp30,000,000</span>
                             </div>
                         </div>
                         
@@ -305,24 +329,32 @@
                         
                         <div class="space-y-3">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Category:</span>
-                                <span class="font-medium">Equipment</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Budget/Unit:</span>
-                                <span class="font-medium">Rp150,000,000</span>
+                                <span class="text-gray-600">Item:</span>
+                                <span class="font-medium">Tower Crane</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Quantity:</span>
-                                <span class="font-medium">1 Unit</span>
-                            </div>
-                            <div class="flex justify-between border-t pt-3">
-                                <span class="text-gray-600 font-semibold">Total:</span>
-                                <span class="font-bold text-red-600 text-lg">Rp150,000,000</span>
+                                <span class="font-medium">1</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Timeline:</span>
-                                <span class="font-medium text-sm">15 Jun - 10 Jul</span>
+                                <span class="text-gray-600">Unit:</span>
+                                <span class="font-medium">Unit</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">ETA:</span>
+                                <span class="font-medium text-sm">10 Jul 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Specification:</span>
+                                <span class="font-medium text-sm">50m Height</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Remarks:</span>
+                                <span class="font-medium text-sm">Equipment</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-3">
+                                <span class="text-gray-600 font-semibold">Price:</span>
+                                <span class="font-bold text-red-600 text-lg">Rp150,000,000</span>
                             </div>
                         </div>
                         
@@ -345,24 +377,32 @@
                         
                         <div class="space-y-3">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Category:</span>
-                                <span class="font-medium">Material</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Budget/Unit:</span>
-                                <span class="font-medium">Rp8,500</span>
+                                <span class="text-gray-600">Item:</span>
+                                <span class="font-medium">Rebar Steel</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Quantity:</span>
-                                <span class="font-medium">3000 kg</span>
-                            </div>
-                            <div class="flex justify-between border-t pt-3">
-                                <span class="text-gray-600 font-semibold">Total:</span>
-                                <span class="font-bold text-red-600 text-lg">Rp25,500,000</span>
+                                <span class="font-medium">3000</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Timeline:</span>
-                                <span class="font-medium text-sm">22 Jun - 05 Jul</span>
+                                <span class="text-gray-600">Unit:</span>
+                                <span class="font-medium">kg</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">ETA:</span>
+                                <span class="font-medium text-sm">05 Jul 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Specification:</span>
+                                <span class="font-medium text-sm">Grade 40 Steel</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Remarks:</span>
+                                <span class="font-medium text-sm">Material</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-3">
+                                <span class="text-gray-600 font-semibold">Price:</span>
+                                <span class="font-bold text-red-600 text-lg">Rp25,500,000</span>
                             </div>
                         </div>
                         
@@ -385,24 +425,32 @@
                         
                         <div class="space-y-3">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Category:</span>
-                                <span class="font-medium">Equipment</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Budget/Unit:</span>
-                                <span class="font-medium">Rp390,000</span>
+                                <span class="text-gray-600">Item:</span>
+                                <span class="font-medium">Scaffolding</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Quantity:</span>
-                                <span class="font-medium">100 Sets</span>
-                            </div>
-                            <div class="flex justify-between border-t pt-3">
-                                <span class="text-gray-600 font-semibold">Total:</span>
-                                <span class="font-bold text-red-600 text-lg">Rp39,000,000</span>
+                                <span class="font-medium">100</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Timeline:</span>
-                                <span class="font-medium text-sm">18 Jun - 15 Jul</span>
+                                <span class="text-gray-600">Unit:</span>
+                                <span class="font-medium">Sets</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">ETA:</span>
+                                <span class="font-medium text-sm">15 Jul 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Specification:</span>
+                                <span class="font-medium text-sm">Steel Frame</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Remarks:</span>
+                                <span class="font-medium text-sm">Equipment</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-3">
+                                <span class="text-gray-600 font-semibold">Price:</span>
+                                <span class="font-bold text-red-600 text-lg">Rp39,000,000</span>
                             </div>
                         </div>
                         
@@ -466,24 +514,32 @@
                         
                         <div class="space-y-3">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Category:</span>
-                                <span class="font-medium">PPE</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Budget/Unit:</span>
-                                <span class="font-medium">Rp25,000</span>
+                                <span class="text-gray-600">Item:</span>
+                                <span class="font-medium">Safety Helmet</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Quantity:</span>
-                                <span class="font-medium">100 Pcs</span>
-                            </div>
-                            <div class="flex justify-between border-t pt-3">
-                                <span class="text-gray-600 font-semibold">Total:</span>
-                                <span class="font-bold text-blue-600 text-lg">Rp2,500,000</span>
+                                <span class="font-medium">100</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Timeline:</span>
-                                <span class="font-medium text-sm">15 Jun - 20 Jun</span>
+                                <span class="text-gray-600">Unit:</span>
+                                <span class="font-medium">Pcs</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">ETA:</span>
+                                <span class="font-medium text-sm">20 Jun 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Specification:</span>
+                                <span class="font-medium text-sm">ANSI Z89.1 Standard</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Remarks:</span>
+                                <span class="font-medium text-sm">PPE</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-3">
+                                <span class="text-gray-600 font-semibold">Price:</span>
+                                <span class="font-bold text-blue-600 text-lg">Rp2,500,000</span>
                             </div>
                         </div>
                         
@@ -506,24 +562,32 @@
                         
                         <div class="space-y-3">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Category:</span>
-                                <span class="font-medium">Material</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Budget/Unit:</span>
-                                <span class="font-medium">Rp125,000</span>
+                                <span class="text-gray-600">Item:</span>
+                                <span class="font-medium">Steel Beams</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Quantity:</span>
-                                <span class="font-medium">200 Units</span>
-                            </div>
-                            <div class="flex justify-between border-t pt-3">
-                                <span class="text-gray-600 font-semibold">Total:</span>
-                                <span class="font-bold text-blue-600 text-lg">Rp25,000,000</span>
+                                <span class="font-medium">200</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Timeline:</span>
-                                <span class="font-medium text-sm">18 Jun - 28 Jun</span>
+                                <span class="text-gray-600">Unit:</span>
+                                <span class="font-medium">Units</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">ETA:</span>
+                                <span class="font-medium text-sm">28 Jun 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Specification:</span>
+                                <span class="font-medium text-sm">A36 Grade Steel</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Remarks:</span>
+                                <span class="font-medium text-sm">Material</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-3">
+                                <span class="text-gray-600 font-semibold">Price:</span>
+                                <span class="font-bold text-blue-600 text-lg">Rp25,000,000</span>
                             </div>
                         </div>
                         
@@ -546,24 +610,32 @@
                         
                         <div class="space-y-3">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Category:</span>
-                                <span class="font-medium">PPE</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Budget/Unit:</span>
-                                <span class="font-medium">Rp75,000</span>
+                                <span class="text-gray-600">Item:</span>
+                                <span class="font-medium">Safety Vest</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Quantity:</span>
-                                <span class="font-medium">50 Pcs</span>
-                            </div>
-                            <div class="flex justify-between border-t pt-3">
-                                <span class="text-gray-600 font-semibold">Total:</span>
-                                <span class="font-bold text-blue-600 text-lg">Rp3,750,000</span>
+                                <span class="font-medium">50</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Timeline:</span>
-                                <span class="font-medium text-sm">16 Jun - 21 Jun</span>
+                                <span class="text-gray-600">Unit:</span>
+                                <span class="font-medium">Pcs</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">ETA:</span>
+                                <span class="font-medium text-sm">21 Jun 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Specification:</span>
+                                <span class="font-medium text-sm">High Visibility</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Remarks:</span>
+                                <span class="font-medium text-sm">PPE</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-3">
+                                <span class="text-gray-600 font-semibold">Price:</span>
+                                <span class="font-bold text-blue-600 text-lg">Rp3,750,000</span>
                             </div>
                         </div>
                         
@@ -586,24 +658,32 @@
                         
                         <div class="space-y-3">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Category:</span>
-                                <span class="font-medium">Safety</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Budget/Unit:</span>
-                                <span class="font-medium">Rp850,000</span>
+                                <span class="text-gray-600">Item:</span>
+                                <span class="font-medium">Fire Extinguisher</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Quantity:</span>
-                                <span class="font-medium">20 Units</span>
-                            </div>
-                            <div class="flex justify-between border-t pt-3">
-                                <span class="text-gray-600 font-semibold">Total:</span>
-                                <span class="font-bold text-blue-600 text-lg">Rp17,000,000</span>
+                                <span class="font-medium">20</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Timeline:</span>
-                                <span class="font-medium text-sm">14 Jun - 18 Jun</span>
+                                <span class="text-gray-600">Unit:</span>
+                                <span class="font-medium">Units</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">ETA:</span>
+                                <span class="font-medium text-sm">18 Jun 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Specification:</span>
+                                <span class="font-medium text-sm">5kg ABC Type</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Remarks:</span>
+                                <span class="font-medium text-sm">Safety</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-3">
+                                <span class="text-gray-600 font-semibold">Price:</span>
+                                <span class="font-bold text-blue-600 text-lg">Rp17,000,000</span>
                             </div>
                         </div>
                         
@@ -626,24 +706,32 @@
                         
                         <div class="space-y-3">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Category:</span>
-                                <span class="font-medium">Finishing</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Budget/Unit:</span>
-                                <span class="font-medium">Rp75,000</span>
+                                <span class="text-gray-600">Item:</span>
+                                <span class="font-medium">Paint Materials</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Quantity:</span>
-                                <span class="font-medium">200 Liters</span>
-                            </div>
-                            <div class="flex justify-between border-t pt-3">
-                                <span class="text-gray-600 font-semibold">Total:</span>
-                                <span class="font-bold text-blue-600 text-lg">Rp15,000,000</span>
+                                <span class="font-medium">200</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Timeline:</span>
-                                <span class="font-medium text-sm">25 Jun - 05 Jul</span>
+                                <span class="text-gray-600">Unit:</span>
+                                <span class="font-medium">Liters</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">ETA:</span>
+                                <span class="font-medium text-sm">05 Jul 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Specification:</span>
+                                <span class="font-medium text-sm">Acrylic Emulsion</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Remarks:</span>
+                                <span class="font-medium text-sm">Finishing</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-3">
+                                <span class="text-gray-600 font-semibold">Price:</span>
+                                <span class="font-bold text-blue-600 text-lg">Rp15,000,000</span>
                             </div>
                         </div>
                         
@@ -666,24 +754,32 @@
                         
                         <div class="space-y-3">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Category:</span>
-                                <span class="font-medium">Safety</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Budget/Unit:</span>
-                                <span class="font-medium">Rp500,000</span>
+                                <span class="text-gray-600">Item:</span>
+                                <span class="font-medium">First Aid Kit</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Quantity:</span>
-                                <span class="font-medium">50 Sets</span>
-                            </div>
-                            <div class="flex justify-between border-t pt-3">
-                                <span class="text-gray-600 font-semibold">Total:</span>
-                                <span class="font-bold text-blue-600 text-lg">Rp25,500,000</span>
+                                <span class="font-medium">50</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Timeline:</span>
-                                <span class="font-medium text-sm">12 Jun - 17 Jun</span>
+                                <span class="text-gray-600">Unit:</span>
+                                <span class="font-medium">Sets</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">ETA:</span>
+                                <span class="font-medium text-sm">17 Jun 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Specification:</span>
+                                <span class="font-medium text-sm">Complete Medical Kit</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Remarks:</span>
+                                <span class="font-medium text-sm">Safety</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-3">
+                                <span class="text-gray-600 font-semibold">Price:</span>
+                                <span class="font-bold text-blue-600 text-lg">Rp25,500,000</span>
                             </div>
                         </div>
                         
