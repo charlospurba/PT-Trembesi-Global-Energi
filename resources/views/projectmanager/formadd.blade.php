@@ -21,8 +21,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <h1 class="text-2xl font-bold text-white">Tambah PM Request</h1>
-                                <p class="text-red-100 text-sm">Lengkapi formulir untuk membuat permintaan material baru</p>
+                                <h1 class="text-2xl font-bold text-white">Add PM Request</h1>
+                                <p class="text-red-100 text-sm">Complete the form to create a new material request.</p>
                             </div>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                                         </svg>
                                     </div>
                                     <div class="ml-3">
-                                        <h3 class="text-sm font-medium text-red-800">Terdapat kesalahan pada form:</h3>
+                                        <h3 class="text-sm font-medium text-red-800">There is an error in the form:</h3>
                                         <ul class="mt-2 text-sm text-red-700 list-disc list-inside space-y-1">
                                             @foreach ($errors->all() as $error)
                                                 <li>{{ $error }}</li>
@@ -237,8 +237,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <h2 class="text-lg font-bold text-white">Import Request Barang</h2>
-                                <p class="text-red-100 text-sm">Upload file Excel untuk import data dalam jumlah besar</p>
+                                <h2 class="text-lg font-bold text-white">Import Item Request</h2>
+                                <p class="text-red-100 text-sm">Please upload an Excel file to perform bulk data import.</p>
                             </div>
                         </div>
                     </div>
@@ -267,7 +267,7 @@
                                     <input type="file" name="file" id="file" accept=".xlsx, .xls" required
                                         class="block w-full text-sm text-gray-700 border border-gray-300 rounded-xl p-3 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent hover:border-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
                                 </div>
-                                <p class="mt-2 text-xs text-gray-500">Format yang didukung: .xlsx, .xls (maksimal 10MB)</p>
+                                <p class="mt-2 text-xs text-gray-500">Supported formats: .xlsx, .xls (maximum 10MB)</p>
                             </div>
 
                             {{-- Action Buttons --}}

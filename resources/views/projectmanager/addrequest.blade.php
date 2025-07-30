@@ -11,8 +11,8 @@
 
             @if(session('success'))
                 <div class="bg-green-100 border border-green-300 text-green-800 px-6 py-4 rounded-lg shadow-md animate-fade-in">
-                    <h2 class="text-xl font-semibold mb-1">✅ Request Berhasil Ditambahkan</h2>
-                    <p class="text-sm">Berikut adalah daftar permintaan Anda:</p>
+                    <h2 class="text-xl font-semibold mb-1">✅ Request has been successfully added.</h2>
+                    <p class="text-sm">Here is the list of your requests:</p>
                 </div>
             @endif
 
@@ -98,14 +98,14 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
-                        Tambah Request Lain
+                        Add Another Request
                     </a>
                 </div>
 
             @else
                 <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-6 py-6 rounded-lg text-center mt-10 shadow-md animate-fade-in">
-                    <p class="mb-2 text-lg font-semibold">⚠️ Belum ada data request.</p>
-                    <p class="mb-4 text-sm">Silakan tambahkan request terlebih dahulu.</p>
+                    <p class="mb-2 text-lg font-semibold">⚠️ No request data available.</p>
+                    <p class="mb-4 text-sm">Please add a request first.</p>
                     <a href="{{ route('projectmanager.formadd') }}"
                        class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium shadow transition">
                         Tambah Request
