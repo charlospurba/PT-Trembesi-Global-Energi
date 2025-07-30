@@ -83,11 +83,21 @@
                 </div>
 
                 <!-- Phone Field -->
-                <div>
+                <div class="mb-6">
                     <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
                     <input id="phone" 
                            type="text" 
                            value="{{ $user->phone_number }}" 
+                           readonly
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed">
+                </div>
+
+                <!-- Procurement Code -->
+                <div class="mb-6">
+                    <label for="procurement_kode" class="block text-sm font-medium text-gray-700 mb-2">Procurement Code</label>
+                    <input id="procurement_kode" 
+                           type="text" 
+                           value="{{ $user->procurement_kode }}" 
                            readonly
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed">
                 </div>

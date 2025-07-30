@@ -19,6 +19,7 @@ use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\VendorApprovalController;
 use App\Http\Controllers\PurchaseRequestController;
 use App\Http\Controllers\PMRequestController;
+use App\Http\Controllers\ProcurementNotesController;
 use Illuminate\Support\Facades\Route;
 
 // 🏠 Default Routes
@@ -100,11 +101,11 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     Route::get('/electrical/search', [ProductController::class, 'searchElectrical'])->name('search.electrical');
     Route::get('/consumables/search', [ProductController::class, 'searchConsumables'])->name('search.consumables');
     Route::get('/personal/search', [ProductController::class, 'searchPersonal'])->name('search.personal');
+    
+    //Notes
+    Route::get('/procurement/notes', [ProcurementNotesController::class, 'index'])->name('procurement.notes');
+    Route::get('/procurement/detail/{id}', [ProcurementNotesController::class, 'detailNote'])->name('procurement.detailnote');
 
-    // Notes Routes
-    Route::get('/procurement/notes', function () {
-        return view('procurement.notes');
-    })->name('procurement.notes');
 
     Route::get('/procurement/detailnote', function () {
         return view('procurement.detailnote');
