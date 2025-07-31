@@ -2,21 +2,21 @@
 @section('content')
     @include('components.procnav')
 
-    <!-- Header Section -->
-    <section class="bg-red-600 text-white py-6 px-6 md:px-12 shadow-md rounded-b-xl mt-4 md:mt-6">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-bold">Office Building Construction</h1>
-                <p class="text-sm md:text-base">Jakarta Pusat • Active Project</p>
-            </div>
-            <div class="text-right">
-                <a href="{{ route('dashboard') }}"
-                    class="inline-flex items-center bg-white text-red-600 px-4 py-2 text-sm rounded-full font-semibold shadow hover:bg-gray-100 transition-all duration-150">
-                    ← Back to Dashboard
-                </a>
-            </div>
+   <!-- Header Section -->
+<section class="bg-red-600 text-white py-6 px-6 md:px-12 shadow-md rounded-b-xl mt-4 md:mt-6 mx-4 md:mx-8 lg:mx-16">
+    <div class="max-w-5xl mx-auto flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl md:text-3xl font-bold">Office Building Construction</h1>
+            <p class="text-sm md:text-base">Jakarta Pusat • Active Project</p>
         </div>
-    </section>
+        <div class="text-right">
+            <a href="{{ route('dashboard') }}"
+                class="inline-flex items-center bg-white text-red-600 px-4 py-2 text-sm rounded-full font-semibold shadow hover:bg-gray-100 transition-all duration-150">
+                ← Back to Dashboard
+            </a>
+        </div>
+    </div>
+</section>
 
     <!-- Charts Section -->
     <section class="bg-white py-8 px-6 md:px-12 shadow-sm">
