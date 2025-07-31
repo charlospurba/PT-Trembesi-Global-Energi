@@ -22,30 +22,11 @@
                         <div class="bg-white rounded-xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition duration-300 ease-in-out">
                             <!-- Header with Title and Status -->
                             <div class="flex justify-between items-start mb-4">
-                                <h1 class="text-lg font-bold text-blue-800 flex-1 pr-3">{{ $pmRequest->description ?? '-' }}</h1>
-                                    <div class="flex-shrink-0">
-                                        @if(isset($pmRequest->status) && $pmRequest->status === 'completed')
-                                            <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                Completed
-                                            </span>
-                                        @else
-                                            <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                On Progress
-                                            </span>
-                                        @endif
-                                    </div>
+                                <h1 class="text-lg font-bold text-blue-800 flex-1 pr-3">{{ $pmRequest->item ?? '-' }}</h1>
                             </div>
 
                             <!-- Main Info Grid -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                 {{-- Item --}}
-                                <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border-l-4 border-red-400 shadow-sm">
-                                    <div>
-                                        <p class="text-xs font-semibold text-gray-500 uppercase">Item</p>
-                                        <p class="text-sm text-gray-800 font-bold">{{ $pmRequest->item ?? '-' }}</p>
-                                    </div>
-                                </div>
-
                                 {{-- Qty --}}
                                 <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border-l-4 border-red-400 shadow-sm">
                                     <div>
@@ -69,18 +50,20 @@
                                         <p class="text-sm text-gray-800 font-bold">{{ $pmRequest->eta ? \Carbon\Carbon::parse($pmRequest->eta)->format('Y-m-d') : '-' }}</p>
                                     </div>
                                 </div>
+
+                                {{-- Remarks --}}
+                                <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border-l-4 border-red-400 shadow-sm">
+                                    <div>
+                                        <p class="text-xs font-semibold text-gray-500 uppercase">Remarks</p>
+                                        <p class="text-sm text-gray-800 font-bold">{{ $pmRequest->remark ?? '-' }}</p>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Specification -->
                             <div class="mb-3 p-4 bg-gray-50 rounded-lg shadow-sm border-l-4 border-red-400">
                                 <p class="text-xs font-semibold text-gray-500 uppercase">Specification</p>
                                 <p class="text-sm text-gray-800 line-clamp-2">{{ $pmRequest->specification ?? '-' }}</p>
-                            </div>
-
-                            <!-- Remarks -->
-                            <div class="mb-3 p-4 bg-gray-50 rounded-lg shadow-sm border-l-4 border-red-400">
-                                <p class="text-xs font-semibold text-gray-500 uppercase">Remarks</p>
-                                <p class="text-sm text-gray-800 line-clamp-2">{{ $pmRequest->remark ?? '-' }}</p>
                             </div>
 
                             <!-- Price -->
