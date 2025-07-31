@@ -173,10 +173,10 @@
 
                 @php
                     $projectColors = [
-                        ['from' => 'from-red-600', 'to' => 'to-red-700', 'light' => 'bg-red-500', 'muted' => 'text-red-100', 'progress' => 'bg-red-200', 'text' => 'text-red-700'],
-                        ['from' => 'from-blue-600', 'to' => 'to-blue-700', 'light' => 'bg-blue-500', 'muted' => 'text-blue-100', 'progress' => 'bg-blue-200', 'text' => 'text-blue-700'],
-                        ['from' => 'from-green-600', 'to' => 'to-green-700', 'light' => 'bg-green-500', 'muted' => 'text-green-100', 'progress' => 'bg-green-200', 'text' => 'text-green-700'],
-                        ['from' => 'from-purple-600', 'to' => 'to-purple-700', 'light' => 'bg-purple-500', 'muted' => 'text-purple-100', 'progress' => 'bg-purple-200', 'text' => 'text-purple-700'],
+                        ['from' => 'from-red-600', 'to' => 'to-red-700', 'light' => 'bg-red-500', 'hover' => 'hover:bg-red-700', 'muted' => 'text-red-100', 'progress' => 'bg-red-200', 'text' => 'text-red-700'],
+                        ['from' => 'from-blue-600', 'to' => 'to-blue-700', 'light' => 'bg-blue-500', 'hover' => 'hover:bg-blue-700', 'muted' => 'text-blue-100', 'progress' => 'bg-blue-200', 'text' => 'text-blue-700'],
+                        ['from' => 'from-green-600', 'to' => 'to-green-700', 'light' => 'bg-green-500', 'hover' => 'hover:bg-green-700', 'muted' => 'text-green-100', 'progress' => 'bg-green-200', 'text' => 'text-green-700'],
+                        ['from' => 'from-purple-600', 'to' => 'to-purple-700', 'light' => 'bg-purple-500', 'hover' => 'hover:bg-purple-700', 'muted' => 'text-purple-100', 'progress' => 'bg-purple-200', 'text' => 'text-purple-700'],
                     ];
                 @endphp
 
@@ -274,7 +274,7 @@
                                         <!-- Detail Button -->
                                         <div class="mt-6">
                                             <a href="{{ route('procurement.detailnote', $request->id) }}"
-                                                class="w-full inline-flex justify-center items-center bg-red-600 hover:bg-red-700 text-white px-4 py-2 text-sm rounded-lg font-semibold shadow transition-all duration-150">
+                                                class="w-full inline-flex justify-center items-center {{ $colors['light'] }} {{ $colors['hover'] }} text-white px-4 py-2 text-sm rounded-lg font-semibold shadow transition-all duration-150">
                                                 View Details
                                             </a>
                                         </div>
