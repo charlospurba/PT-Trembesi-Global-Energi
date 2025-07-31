@@ -12,7 +12,7 @@ class ProcurementNotesController extends Controller
     {
         $user = Auth::user();
 
-        // Ambil semua request dengan procurement_kode yang sama
+        // Fetch all requests with the same procurement_kode
         $requests = PMRequest::where('procurement_kode', $user->procurement_kode)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -22,14 +22,17 @@ class ProcurementNotesController extends Controller
 
     public function detailNote($id)
     {
+        // Fetch the specific request
         $request = PMRequest::findOrFail($id);
 
-        // Validasi keamanan
+        // Validate that the user has access to this request
         if ($request->procurement_kode !== Auth::user()->procurement_kode) {
-            abort(403);
+            abort(403, 'Unauthorized access to this procurement request.');
         }
 
-        return view('procurement.detail', compact('request'));
-    }
+        // Optionally fetch related user data if needed
+        $user = $request->user;
 
+        return view('procurement.detailnote', compact('request', 'user'));
+    }
 }

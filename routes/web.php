@@ -101,15 +101,10 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     Route::get('/electrical/search', [ProductController::class, 'searchElectrical'])->name('search.electrical');
     Route::get('/consumables/search', [ProductController::class, 'searchConsumables'])->name('search.consumables');
     Route::get('/personal/search', [ProductController::class, 'searchPersonal'])->name('search.personal');
-    
-    //Notes
+
+    // Notes
     Route::get('/procurement/notes', [ProcurementNotesController::class, 'index'])->name('procurement.notes');
     Route::get('/procurement/detail/{id}', [ProcurementNotesController::class, 'detailNote'])->name('procurement.detailnote');
-
-
-    Route::get('/procurement/detailnote', function () {
-        return view('procurement.detailnote');
-    })->name('procurement.detailnote');
 
     // Cart Routes
     Route::get('/cart', [CartController::class, 'showCart'])->name('procurement.cart');
