@@ -9,6 +9,7 @@ use App\Models\Bid;
 use App\Models\Notification;
 use App\Models\User;
 use App\Models\PurchaseRequest;
+use App\Models\PMRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -20,6 +21,7 @@ class CartController extends Controller
       $product = Product::findOrFail($id);
       $quantity = (int) $request->input('quantity', 1);
       $user = Auth::user();
+      $note_id = $request->input('note_id'); // Get note_id from request
 
       if (!$user) {
         return response()->json([
@@ -28,7 +30,23 @@ class CartController extends Controller
         ], 401);
       }
 
-      Log::info('Add to Cart - Product ID: ' . $id . ', Quantity: ' . $quantity . ', Available Quantity: ' . ($product->quantity ?? 'Unlimited'));
+      // Validate note_id and item match
+      if (!$note_id) {
+        return response()->json([
+          'success' => false,
+          'message' => 'Adding to cart is only allowed from a procurement note'
+        ], 403);
+      }
+
+      $note = PMRequest::findOrFail($note_id);
+      if ($note->item !== $product->name) {
+        return response()->json([
+          'success' => false,
+          'message' => 'Selected product does not match the item in the procurement note'
+        ], 422);
+      }
+
+      Log::info('Add to Cart - Product ID: ' . $id . ', Quantity: ' . $quantity . ', Available Quantity: ' . ($product->quantity ?? 'Unlimited') . ', Note ID: ' . $note_id);
 
       if ($quantity <= 0) {
         return response()->json([
@@ -61,6 +79,7 @@ class CartController extends Controller
           'quantity' => $quantity,
           'variant' => $request->input('variant', 'default'),
           'status' => 'Pending',
+          'note_id' => $note_id, // Store note_id in cart
         ]);
       }
 
@@ -70,7 +89,7 @@ class CartController extends Controller
         Notification::create([
           'user_id' => $pm->id,
           'type' => 'cart_pending',
-          'message' => 'New cart item pending approval from ' . $user->name . ' for product: ' . $product->name,
+          'message' => 'New cart item pending approval from ' . $user->name . ' for product: ' . $product->name . ' (Note ID: ' . $note_id . ')',
           'data' => json_encode([
             'cart_item' => [
               'product_id' => $product->id,
@@ -79,6 +98,7 @@ class CartController extends Controller
               'variant' => $request->input('variant', 'default'),
               'user_id' => $user->id,
               'user_name' => $user->name,
+              'note_id' => $note_id,
             ],
           ]),
         ]);
@@ -92,10 +112,10 @@ class CartController extends Controller
         'message' => 'Product added to cart successfully! Awaiting Project Manager approval.'
       ]);
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-      Log::error('Add to Cart Error - Product not found: ' . $id);
+      Log::error('Add to Cart Error - Product or Note not found: ' . $id . ', Note ID: ' . $note_id);
       return response()->json([
         'success' => false,
-        'message' => 'Product not found'
+        'message' => 'Product or procurement note not found'
       ], 404);
     } catch (\Exception $e) {
       Log::error('Add to Cart Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
@@ -121,12 +141,21 @@ class CartController extends Controller
         ], 403);
       }
 
+      // Pass note_id to addToCart
       $response = $this->addToCart($request, $id);
       $data = json_decode($response->getContent(), true);
 
       if ($response->getStatusCode() === 200 && $data['success']) {
+        // This block seems to be misplacing the success, leading to a 403 even on success.
+        // The original design of buyNow calling addToCart and then returning a 403 on success of addToCart
+        // implies buyNow is meant for direct purchase *after* approval, or is meant to guide the user
+        // that even if it's in the cart, it needs approval.
+        // Given the flow, if addToCart succeeds, we should indicate success and possibly redirect
+        // or inform about the approval process.
+        // For now, I'll keep the original logic's intent, but this `if ($response->getStatusCode() === 200 && $data['success'])`
+        // block might be the source of confusion about "buy now" immediately.
         return response()->json([
-          'success' => false,
+          'success' => false, // This seems counter-intuitive if addToCart was successful
           'message' => 'Item added to cart, but requires Project Manager approval before checkout.'
         ], 403);
       }
@@ -200,6 +229,7 @@ class CartController extends Controller
               'variant' => $cartItem->variant,
               'user_id' => $user->id,
               'user_name' => $user->name,
+              'note_id' => $cartItem->note_id,
             ],
           ]),
         ]);
@@ -259,6 +289,7 @@ class CartController extends Controller
               'product_name' => $product->name,
               'user_id' => $user->id,
               'user_name' => $user->name,
+              'note_id' => $cartItem->note_id,
             ],
           ]),
         ]);
@@ -287,7 +318,7 @@ class CartController extends Controller
       ->map(function ($cartItem) {
         $acceptedBid = Bid::where('product_id', $cartItem->product_id)
           ->where('user_id', Auth::id())
-          ->where('cart_id', $cartItem->id) // Scope by cart_id
+          ->where('cart_id', $cartItem->id)
           ->where('status', 'Accepted')
           ->latest()
           ->first();
@@ -305,6 +336,7 @@ class CartController extends Controller
           'supplier' => $cartItem->product->supplier,
           'status' => $cartItem->status,
           'is_bid_price' => $acceptedBid ? true : false,
+          'note_id' => $cartItem->note_id,
         ];
       })->toArray();
 
@@ -371,7 +403,7 @@ class CartController extends Controller
         'product_id' => $productId,
         'vendor_id' => $product->vendor_id,
         'bid_price' => $bidPrice,
-        'cart_id' => $cartItem->id, // Store cart_id
+        'cart_id' => $cartItem->id,
         'status' => 'Pending',
       ]);
 
@@ -385,6 +417,7 @@ class CartController extends Controller
           'product_id' => $productId,
           'bid_price' => $bidPrice,
           'cart_id' => $cartItem->id,
+          'note_id' => $cartItem->note_id,
         ]),
       ]);
 
@@ -499,6 +532,7 @@ class CartController extends Controller
           'supplier' => $cartItem->product->supplier,
           'status' => 'Pending',
           'submitted_at' => now(),
+          'note_id' => $cartItem->note_id, // Store note_id in purchase request
         ]);
         $purchaseRequestIds[] = $purchaseRequest->id;
       }
@@ -518,17 +552,18 @@ class CartController extends Controller
           Notification::create([
             'user_id' => $pm->id,
             'type' => 'purchase_request',
-            'message' => "New purchase request from {$user->name} for product: {$cartItem->product->name}",
+            'message' => "New purchase request from {$user->name} for product: {$cartItem->product->name} (Note ID: {$cartItem->note_id})",
             'data' => json_encode([
               'purchase_request' => [
                 'cart_id' => $cartItem->id,
-                'product_id' => $cartItem->product_id,
+                'product_id' => $cartItem->product->id,
                 'product_name' => $cartItem->product->name,
                 'quantity' => $cartItem->quantity,
                 'price' => $cartItem->product->price,
                 'variant' => $cartItem->variant ?? 'default',
                 'user_id' => $user->id,
                 'user_name' => $user->name,
+                'note_id' => $cartItem->note_id,
               ],
             ]),
           ]);

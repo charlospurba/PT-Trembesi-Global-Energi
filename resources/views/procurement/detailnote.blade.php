@@ -2,7 +2,6 @@
 @section('content')
     @include('components.procnav')
 
-    <!-- Header Section -->
     <section class="bg-white border-b border-gray-200 py-4 px-4 mt-4 mx-2 lg:mx-4">
         <div class="max-w-5xl mx-auto">
             <div class="flex items-center justify-between">
@@ -25,13 +24,9 @@
         </div>
     </section>
 
-    <!-- Main Content -->
     <main class="bg-gray-50 py-4 px-4 min-h-screen">
         <div class="max-w-5xl mx-auto">
-            <!-- Main Card -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-
-                <!-- Item Header -->
                 <div class="bg-white p-6 border-b border-gray-200">
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div class="flex items-center space-x-4">
@@ -54,18 +49,14 @@
                             <span class="text-sm font-medium">{{ $remarkText }} Priority</span>
                         </div>
                     </div>
-                    <!-- Additional Project Info -->
                     <div class="mt-4 text-sm text-gray-600">
                         <p>Requested by: User ID {{ $request->user_id }}</p>
                         <p>Procurement Code: {{ $request->procurement_kode }}</p>
                     </div>
                 </div>
 
-                <!-- Information Content -->
                 <div class="p-6">
-                    <!-- Information Grid -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                        <!-- Quantity -->
                         <div class="border border-gray-200 rounded-lg p-4 bg-white">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center">
@@ -83,7 +74,6 @@
                             </div>
                         </div>
 
-                        <!-- ETA -->
                         <div class="border border-gray-200 rounded-lg p-4 bg-white">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center">
@@ -102,7 +92,6 @@
                         </div>
                     </div>
 
-                    <!-- Specification Section -->
                     <div class="border border-gray-200 rounded-lg p-6 mb-8 bg-white">
                         <div class="flex items-center space-x-3 mb-4">
                             <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -124,7 +113,6 @@
                         </div>
                     </div>
 
-                    <!-- Price Section -->
                     <div class="border border-gray-200 rounded-lg p-6 mb-8 bg-white">
                         <div class="flex flex-col sm:flex-row justify-between items-center">
                             <div class="flex items-center mb-4 sm:mb-0">
@@ -149,9 +137,9 @@
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
                     <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                        <a href="{{ route('procurement.search.item', ['query' => urlencode($request->item)]) }}"
+                        {{-- MODIFIED: Ensure note_id is explicitly passed in the route parameters for search --}}
+                        <a href="{{ route('procurement.search.item', ['query' => urlencode($request->item), 'note_id' => $request->id]) }}"
                             class="inline-flex items-center px-8 py-3 bg-red-600 text-white text-base font-semibold rounded-lg hover:bg-red-700 transition-colors duration-200 shadow-sm">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

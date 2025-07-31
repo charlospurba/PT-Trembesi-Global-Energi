@@ -84,6 +84,7 @@ class ProductController extends Controller
   {
     $query = strtolower($request->input('query'));
     $sort = $request->input('sort');
+    $note_id = $request->input('note_id'); // Capture note_id
 
     $products = Product::where('category', 'material')
       ->when($query, function ($q) use ($query) {
@@ -101,13 +102,14 @@ class ProductController extends Controller
       })
       ->get();
 
-    return view('procurement.material', compact('products', 'query', 'sort'));
+    return view('procurement.material', compact('products', 'query', 'sort', 'note_id')); // Pass note_id
   }
 
   public function equipmentProducts(Request $request)
   {
     $query = strtolower($request->input('query'));
     $sort = $request->input('sort');
+    $note_id = $request->input('note_id'); // Capture note_id
 
     $products = Product::where('category', 'equipment')
       ->when($query, function ($q) use ($query) {
@@ -125,13 +127,14 @@ class ProductController extends Controller
       })
       ->get();
 
-    return view('procurement.equipment', compact('products', 'query', 'sort'));
+    return view('procurement.equipment', compact('products', 'query', 'sort', 'note_id')); // Pass note_id
   }
 
   public function consumablesProducts(Request $request)
   {
     $query = strtolower($request->input('query'));
     $sort = $request->input('sort');
+    $note_id = $request->input('note_id'); // Capture note_id
 
     $products = Product::where('category', 'consumables')
       ->when($query, function ($q) use ($query) {
@@ -149,13 +152,14 @@ class ProductController extends Controller
       })
       ->get();
 
-    return view('procurement.consumables', compact('products', 'query', 'sort'));
+    return view('procurement.consumables', compact('products', 'query', 'sort', 'note_id')); // Pass note_id
   }
 
   public function electricalProducts(Request $request)
   {
     $query = strtolower($request->input('query'));
     $sort = $request->input('sort');
+    $note_id = $request->input('note_id'); // Capture note_id
 
     $products = Product::where('category', 'electrical tools')
       ->when($query, function ($q) use ($query) {
@@ -173,13 +177,14 @@ class ProductController extends Controller
       })
       ->get();
 
-    return view('procurement.electrical', compact('products', 'query', 'sort'));
+    return view('procurement.electrical', compact('products', 'query', 'sort', 'note_id')); // Pass note_id
   }
 
   public function personalProducts(Request $request)
   {
     $query = strtolower($request->input('query'));
     $sort = $request->input('sort');
+    $note_id = $request->input('note_id'); // Capture note_id
 
     $products = Product::where('category', 'personal protective equipment')
       ->when($query, function ($q) use ($query) {
@@ -197,7 +202,7 @@ class ProductController extends Controller
       })
       ->get();
 
-    return view('procurement.personal', compact('products', 'query', 'sort'));
+    return view('procurement.personal', compact('products', 'query', 'sort', 'note_id')); // Pass note_id
   }
 
   public function dashboard(Request $request)
@@ -238,6 +243,7 @@ class ProductController extends Controller
   {
     $query = strtolower($request->input('query'));
     $category = $request->input('category');
+    $note_id = $request->input('note_id'); // Capture note_id
 
     $results = Product::query()
       ->when($category, function ($q) use ($category) {
@@ -271,6 +277,7 @@ class ProductController extends Controller
         return view($viewMap[$category], [
           'products' => $results,
           'query' => $query,
+          'note_id' => $note_id, // Pass note_id here
         ]);
       }
     }
@@ -278,16 +285,18 @@ class ProductController extends Controller
     return view('search-result', [
       'results' => $results,
       'query' => $query,
+      'note_id' => $note_id, // Pass note_id here
     ]);
   }
 
-  public function show($id)
+  public function show($id, Request $request) // Add Request to capture note_id from URL
   {
     try {
       $product = Product::with('ratings')->findOrFail($id);
       $soldQuantity = OrderItem::where('product_id', $id)->sum('quantity');
+      $note_id = $request->query('note_id'); // Get note_id from query parameter
 
-      return view('procurement.detail', compact('product', 'soldQuantity'));
+      return view('procurement.detail', compact('product', 'soldQuantity', 'note_id')); // Pass note_id
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
       Log::error('Product not found: ' . $id);
       return redirect()->route('procurement.dashboardproc')->withErrors(['error' => 'Product not found.']);
@@ -303,6 +312,7 @@ class ProductController extends Controller
   public function searchMaterial(Request $request)
   {
     $query = strtolower($request->input('query'));
+    $note_id = $request->input('note_id'); // Capture note_id
 
     $products = Product::where('category', 'material')
       ->where(function ($q) use ($query) {
@@ -311,12 +321,13 @@ class ProductController extends Controller
           ->orWhere(DB::raw('LOWER(address)'), 'like', "%$query%");
       })->get();
 
-    return view('procurement.material', compact('products', 'query'));
+    return view('procurement.material', compact('products', 'query', 'note_id')); // Pass note_id
   }
 
   public function searchEquipment(Request $request)
   {
     $query = strtolower($request->input('query'));
+    $note_id = $request->input('note_id'); // Capture note_id
 
     $products = Product::where('category', 'equipment')
       ->where(function ($q) use ($query) {
@@ -325,12 +336,13 @@ class ProductController extends Controller
           ->orWhere(DB::raw('LOWER(address)'), 'like', "%$query%");
       })->get();
 
-    return view('procurement.equipment', compact('products', 'query'));
+    return view('procurement.equipment', compact('products', 'query', 'note_id')); // Pass note_id
   }
 
   public function searchElectrical(Request $request)
   {
     $query = strtolower($request->input('query'));
+    $note_id = $request->input('note_id'); // Capture note_id
 
     $products = Product::where('category', 'electrical tools')
       ->where(function ($q) use ($query) {
@@ -339,12 +351,13 @@ class ProductController extends Controller
           ->orWhere(DB::raw('LOWER(address)'), 'like', "%$query%");
       })->get();
 
-    return view('procurement.electrical', compact('products', 'query'));
+    return view('procurement.electrical', compact('products', 'query', 'note_id')); // Pass note_id
   }
 
   public function searchConsumables(Request $request)
   {
     $query = strtolower($request->input('query'));
+    $note_id = $request->input('note_id'); // Capture note_id
 
     $products = Product::where('category', 'consumables')
       ->where(function ($q) use ($query) {
@@ -353,12 +366,13 @@ class ProductController extends Controller
           ->orWhere(DB::raw('LOWER(address)'), 'like', "%$query%");
       })->get();
 
-    return view('procurement.consumables', compact('products', 'query'));
+    return view('procurement.consumables', compact('products', 'query', 'note_id')); // Pass note_id
   }
 
   public function searchPersonal(Request $request)
   {
     $query = strtolower($request->input('query'));
+    $note_id = $request->input('note_id'); // Capture note_id
 
     $products = Product::where('category', 'personal protective equipment')
       ->where(function ($q) use ($query) {
@@ -367,12 +381,13 @@ class ProductController extends Controller
           ->orWhere(DB::raw('LOWER(address)'), 'like', "%$query%");
       })->get();
 
-    return view('procurement.personal', compact('products', 'query'));
+    return view('procurement.personal', compact('products', 'query', 'note_id')); // Pass note_id
   }
 
   public function searchByItem(Request $request)
   {
     $query = strtolower($request->input('query'));
+    $note_id = $request->input('note_id'); // Crucially, capture note_id from the request
 
     // Validate query
     if (empty($query)) {
@@ -402,14 +417,16 @@ class ProductController extends Controller
           'products' => $products,
           'query' => $query,
           'sort' => null, // No sorting applied by default
+          'note_id' => $note_id, // Pass note_id here as well
         ]);
       }
     }
 
     // Otherwise, return the general search results view
     return view('search-result', [
-      'results' => $products,
+      'products' => $products, // Changed from 'results' to 'products' for consistency in search-result.blade.php
       'query' => $query,
+      'note_id' => $note_id, // Pass note_id here
     ]);
   }
 }

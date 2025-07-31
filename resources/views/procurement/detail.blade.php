@@ -1,36 +1,32 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- Include SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Include Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <!-- Include Navbar Component -->
     @include('components.procnav')
 
     <div class="min-h-screen bg-gradient-to-br from-gray-50 via-red-50 to-rose-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <!-- Breadcrumb -->
             <nav id="breadcrumb" class="flex items-center space-x-2 text-sm mb-6 px-4 py-3 rounded-xl shadow-lg">
                 <a href="{{ route('procurement.dashboardproc') }}"
                     class="flex items-center text-gray-600 hover:text-red-600 transition-all duration-300">
                     <i class="fas fa-home mr-2"></i>Dashboard
                 </a>
                 <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
-                <span class="text-red-600 font-semibold">{{ $product->name }}</span>
+                {{-- Pastikan note_id juga diteruskan jika breadcrumb ini diklik balik --}}
+                <a href="{{ route('product.detail', ['id' => $product->id, 'note_id' => $note_id ?? null]) }}">
+                    <span class="text-red-600 font-semibold">{{ $product->name }}</span>
+                </a>
             </nav>
 
-            <!-- Main Product Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-                <!-- Image Section -->
                 <div class="lg:col-span-4 equal-height" id="imageSection">
                     <div class="relative floating-card h-full">
                         <div id="imageCard" class="rounded-2xl shadow-xl overflow-hidden h-full flex flex-col">
 
-                            <!-- Main Image Container -->
                             <div class="relative group flex-1" id="productImageContainer">
                                 <div id="imageLoader"
                                     class="absolute inset-0 bg-gray-50 hidden items-center justify-center z-10">
@@ -43,11 +39,9 @@
                                     class="w-full h-full object-contain transition-all duration-500"
                                     onload="hideImageLoader()" onerror="handleImageError(this)" />
 
-                                <!-- Subtle overlay -->
                                 <div id="imageOverlay" class="absolute inset-0 opacity-0 transition-all duration-300"></div>
                             </div>
 
-                            <!-- Thumbnail Gallery Section -->
                             <div id="thumbnailSection" class="flex-shrink-0">
                                 <div id="thumbnailGallery" class="flex gap-2 overflow-x-auto p-3">
                                     @php
@@ -83,17 +77,14 @@
                     </div>
                 </div>
 
-                <!-- Product Details -->
                 <div class="lg:col-span-4 equal-height" id="productDetailsSection">
                     <div id="productDetailsCard" class="rounded-2xl shadow-xl h-full p-5">
                         <div class="h-full flex flex-col">
 
-                            <!-- Product Title -->
                             <h1 class="text-2xl font-bold text-gray-900 leading-tight mb-4">
                                 {{ $product->name }}
                             </h1>
 
-                            <!-- Price & Rating Section -->
                             <div id="priceSection" class="rounded-xl p-4 mb-4">
                                 <div class="flex items-center justify-between mb-3">
                                     <span class="text-3xl font-bold text-red-600">
@@ -101,7 +92,6 @@
                                     </span>
                                 </div>
 
-                                <!-- Rating & Sales -->
                                 <div class="flex items-center gap-3">
                                     <div class="flex items-center bg-white px-3 py-2 rounded-full shadow-sm">
                                         <div class="flex text-yellow-400 mr-2 text-sm">
@@ -132,7 +122,6 @@
                                 </div>
                             </div>
 
-                            <!-- Product Information -->
                             <div class="flex-1">
                                 <h2 class="text-lg font-semibold text-gray-900 mb-3">
                                     <i class="fas fa-info-circle mr-2 text-red-600"></i>
@@ -162,12 +151,10 @@
                     </div>
                 </div>
 
-                <!-- Purchase Box -->
                 <div class="lg:col-span-4 equal-height" id="purchaseSection">
                     <div id="purchaseCard" class="rounded-2xl shadow-xl overflow-hidden h-full">
                         <div class="h-full flex flex-col">
 
-                            <!-- Header -->
                             <div id="purchaseHeader" class="text-white p-4 flex-shrink-0">
                                 <h3 class="font-semibold text-lg flex items-center">
                                     <i id="cartIcon" class="fas fa-shopping-cart mr-2"></i>
@@ -177,61 +164,58 @@
                             </div>
 
                             <div class="p-5 flex-1 flex flex-col">
-                                <form id="add-to-cart-form" class="h-full flex flex-col">
-                                    @csrf
-
-                                    <div class="flex-1 flex flex-col justify-between">
-                                        <!-- Quantity Selector -->
-                                        <div class="mb-4">
-                                            <label class="block text-sm font-medium text-gray-700 mb-3">
-                                                <i class="fas fa-sort-numeric-up mr-2 text-red-600"></i>
-                                                Quantity
-                                            </label>
-                                            <div class="flex items-center justify-center gap-3">
-                                                <button type="button" id="decreaseBtn" onclick="updateQuantity(-1)"
-                                                    class="w-10 h-10 bg-gray-200 hover:bg-red-500 hover:text-white text-gray-700 font-medium rounded-lg transition-all duration-300">
-                                                    <i class="fas fa-minus text-sm"></i>
-                                                </button>
-                                                <input type="number" id="quantity" name="quantity" value="1"
-                                                    min="{{ $product->min_order ?? 1 }}"
-                                                    max="{{ $product->quantity ?? 9999 }}"
-                                                    class="w-20 h-10 text-center border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 font-medium"
-                                                    oninput="validateQuantity(this)" />
-                                                <button type="button" id="increaseBtn" onclick="updateQuantity(1)"
-                                                    class="w-10 h-10 bg-gray-200 hover:bg-red-500 hover:text-white text-gray-700 font-medium rounded-lg transition-all duration-300">
-                                                    <i class="fas fa-plus text-sm"></i>
-                                                </button>
-                                            </div>
-                                            <p class="text-center mt-3 text-sm text-gray-600">
-                                                <i class="fas fa-box mr-1 text-red-500"></i>
-                                                <span class="font-medium">{{ $product->quantity ?? 'Many' }}</span>
-                                                Available
-                                            </p>
+                                <div class="h-full flex flex-col justify-between">
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium text-gray-700 mb-3">
+                                            <i class="fas fa-sort-numeric-up mr-2 text-red-600"></i>
+                                            Quantity
+                                        </label>
+                                        <div class="flex items-center justify-center gap-3">
+                                            <button type="button" id="decreaseBtn" onclick="updateQuantity(-1)"
+                                                class="w-10 h-10 bg-gray-200 hover:bg-red-500 hover:text-white text-gray-700 font-medium rounded-lg transition-all duration-300">
+                                                <i class="fas fa-minus text-sm"></i>
+                                            </button>
+                                            <input type="number" id="quantity" name="quantity" value="1"
+                                                min="{{ $product->min_order ?? 1 }}"
+                                                max="{{ $product->quantity ?? 9999 }}"
+                                                class="w-20 h-10 text-center border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 font-medium"
+                                                oninput="validateQuantity(this)" />
+                                            <button type="button" id="increaseBtn" onclick="updateQuantity(1)"
+                                                class="w-10 h-10 bg-gray-200 hover:bg-red-500 hover:text-white text-gray-700 font-medium rounded-lg transition-all duration-300">
+                                                <i class="fas fa-plus text-sm"></i>
+                                            </button>
                                         </div>
-
-                                        <!-- Total Price -->
-                                        <div id="totalPriceSection" class="mb-4 rounded-xl p-4 border-2">
-                                            <div class="text-center">
-                                                <div class="text-sm text-gray-600 mb-2">Total Price</div>
-                                                <div class="text-2xl font-bold text-red-600" id="total-price">
-                                                    Rp{{ number_format($product->price, 0, ',', '.') }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button type="button" id="addToCartBtn"
-                                            onclick="addToCart({{ $product->id }})"
-                                            class="w-full border-2 border-red-500 text-red-600 py-3 px-4 rounded-xl font-semibold hover:bg-red-500 hover:text-white transition-all duration-300 transform">
-                                            <i class="fas fa-cart-plus mr-2"></i>Add to Cart
-                                        </button>
+                                        <p class="text-center mt-3 text-sm text-gray-600">
+                                            <i class="fas fa-box mr-1 text-red-500"></i>
+                                            <span class="font-medium">{{ $product->quantity ?? 'Many' }}</span>
+                                            Available
+                                        </p>
                                     </div>
-                                </form>
+
+                                    <div id="totalPriceSection" class="mb-4 rounded-xl p-4 border-2">
+                                        <div class="text-center">
+                                            <div class="text-sm text-gray-600 mb-2">Total Price</div>
+                                            <div class="text-2xl font-bold text-red-600" id="total-price">
+                                                Rp{{ number_format($product->price, 0, ',', '.') }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- The key change for this page: conditionally call the correct function --}}
+                                    <button type="button" id="addToCartBtn"
+                                        @if (isset($note_id) && is_numeric($note_id)) onclick="addToCartFromDetail({{ $product->id }}, {{ $note_id }})"
+                                        @else
+                                            onclick="showAddToCartWarning()" @endif
+                                        class="w-full border-2 border-red-500 text-red-600 py-3 px-4 rounded-xl font-semibold hover:bg-red-500 hover:text-white transition-all duration-300 transform">
+                                        <i class="fas fa-cart-plus mr-2"></i>Add to Cart
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Vendor Section -->
             <div id="vendorSection" class="mt-6">
                 <div id="vendorCard" class="rounded-2xl shadow-xl p-6">
                     <h2 class="text-xl font-bold text-gray-900 mb-4">
@@ -437,6 +421,7 @@
                     item.style.display = 'flex';
                     item.style.alignItems = 'center';
                     item.style.justifyContent = 'center';
+                    item.style.textIndent = '-9999px'; // Hide plus icon if it's there
                 }
 
                 const img = item.querySelector('img');
@@ -448,6 +433,7 @@
                 }
             });
         }
+
 
         function applyFloatingAnimation() {
             const floatingCards = document.querySelectorAll('.floating-card');
@@ -479,8 +465,8 @@
                     item.addEventListener('mouseleave', () => {
                         if (!item.classList.contains('active')) {
                             item.style.borderColor = 'transparent';
-                            item.style.transform = 'scale(1)';
                             item.style.boxShadow = 'none';
+                            item.style.transform = 'scale(1)';
                         }
                     });
                 }
@@ -636,7 +622,6 @@
         }
 
         function applyGlowingAnimation() {
-            // Apply bounce animation to cart icon
             const cartIcon = document.getElementById('cartIcon');
             if (cartIcon) {
                 let bouncePosition = 0;
@@ -797,51 +782,54 @@
             }, 200);
         }
 
-        // Cart functions
-        function addToCart(productId) {
-            let quantity = document.getElementById('quantity').value;
+        // New function to handle adding to cart when note_id is present
+        function addToCartFromDetail(productId, noteId) {
+            const quantity = parseInt(document.getElementById('quantity').value);
 
-            Swal.fire({
-                title: 'Adding to Cart...',
-                html: '<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>',
-                allowOutsideClick: false,
-                showConfirmButton: false
-            });
+            // Ensure noteId is explicitly passed and is a number
+            const finalNoteId = (noteId !== null && typeof noteId === 'number' && !isNaN(noteId)) ? noteId : null;
 
-            fetch('{{ route('cart.add', ['id' => ':id']) }}'.replace(':id', productId), {
+            if (!finalNoteId) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Adding to cart is only allowed from a procurement note.',
+                    confirmButtonColor: '#dc2626'
+                });
+                return;
+            }
+
+            fetch('{{ route('cart.add', ':id') }}'.replace(':id', productId), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('#add-to-cart-form input[name="_token"]').value,
-                        'Accept': 'application/json'
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
-                        quantity: quantity
+                        quantity: quantity,
+                        note_id: finalNoteId
                     })
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok: ' + response.status);
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        updateCartBadge(data.cart_count);
                         Swal.fire({
                             icon: 'success',
-                            title: 'Added to Cart!',
+                            title: 'Success!',
                             text: data.message,
-                            timer: 1500,
-                            showConfirmButton: false
-                        }).then(() => {
-                            window.location.href = '{{ route('procurement.cart') }}';
+                            timer: 1500, // Durasi pop-up 1.5 detik
+                            showConfirmButton: false,
+                            willClose: () => {
+                                // Redirect ke halaman keranjang setelah pop-up hilang
+                                window.location.href = '{{ route('procurement.cart') }}';
+                            }
                         });
-                        updateCartBadge(data.cart_count);
                     } else {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Oops!',
-                            text: data.message || 'Failed to add product to cart',
+                            title: 'Error',
+                            text: data.message,
                             confirmButtonColor: '#dc2626'
                         });
                     }
@@ -849,11 +837,21 @@
                 .catch(error => {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Connection Error',
-                        text: 'Failed to add product to cart: ' + error.message,
+                        title: 'Error',
+                        text: 'Failed to add to cart. ' + error.message, // Include error message for debugging
                         confirmButtonColor: '#dc2626'
                     });
                 });
+        }
+
+        // Warning function for Add to Cart (when no note_id)
+        function showAddToCartWarning() {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Action Not Allowed',
+                text: 'To add this product to your cart, please use the "Buy Now" button from a procurement note, or add it from the search results after clicking "Buy Now" on a note.',
+                confirmButtonColor: '#dc2626'
+            });
         }
 
         function updateCartBadge(count) {
@@ -942,26 +940,13 @@
                 .catch(error => console.error('Error fetching vendor rating:', error));
         }
 
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Apply all styling
+        // Initialize functions
+        document.addEventListener('DOMContentLoaded', () => {
             applyStyles();
-
-            // Apply animations
-            applySlideInAnimation();
             applyGlowingAnimation();
-
-            // Setup interactions
+            applySlideInAnimation();
             setupThumbnailScrolling();
-
-            // Hide initial loader
-            hideImageLoader();
-
-            // Initialize real-time rating updates
             updateVendorRating();
-            setInterval(updateVendorRating, 30000); // Update every 30 seconds
-
-            console.log('Product detail page initialized with JavaScript styling and real-time rating updates!');
         });
     </script>
 @endsection
