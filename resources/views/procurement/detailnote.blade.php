@@ -151,7 +151,7 @@
 
                     <!-- Action Buttons -->
                     <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                        <a href="{{ route('procurement.dashboardproc') }}"
+                        <a href="{{ route('procurement.search.item', ['query' => urlencode($request->item)]) }}"
                             class="inline-flex items-center px-8 py-3 bg-red-600 text-white text-base font-semibold rounded-lg hover:bg-red-700 transition-colors duration-200 shadow-sm">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

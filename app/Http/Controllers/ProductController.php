@@ -369,4 +369,47 @@ class ProductController extends Controller
 
     return view('procurement.personal', compact('products', 'query'));
   }
+
+  public function searchByItem(Request $request)
+  {
+    $query = strtolower($request->input('query'));
+
+    // Validate query
+    if (empty($query)) {
+      return redirect()->route('procurement.dashboardproc')->withErrors(['error' => 'No item name provided for search.']);
+    }
+
+    // Search products matching the item name
+    $products = Product::where(DB::raw('LOWER(name)'), 'like', "%$query%")
+      ->orWhere(DB::raw('LOWER(supplier)'), 'like', "%$query%")
+      ->orWhere(DB::raw('LOWER(address)'), 'like', "%$query%")
+      ->get();
+
+    // If products are found and all belong to a single category, redirect to the category-specific view
+    $categories = $products->pluck('category')->unique();
+    if ($categories->count() === 1) {
+      $category = $categories->first();
+      $viewMap = [
+        'material' => 'procurement.material',
+        'equipment' => 'procurement.equipment',
+        'consumables' => 'procurement.consumables',
+        'electrical tools' => 'procurement.electrical',
+        'personal protective equipment' => 'procurement.personal',
+      ];
+
+      if (isset($viewMap[$category])) {
+        return view($viewMap[$category], [
+          'products' => $products,
+          'query' => $query,
+          'sort' => null, // No sorting applied by default
+        ]);
+      }
+    }
+
+    // Otherwise, return the general search results view
+    return view('search-result', [
+      'results' => $products,
+      'query' => $query,
+    ]);
+  }
 }

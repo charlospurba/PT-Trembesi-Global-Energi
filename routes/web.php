@@ -101,6 +101,7 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     Route::get('/electrical/search', [ProductController::class, 'searchElectrical'])->name('search.electrical');
     Route::get('/consumables/search', [ProductController::class, 'searchConsumables'])->name('search.consumables');
     Route::get('/personal/search', [ProductController::class, 'searchPersonal'])->name('search.personal');
+    Route::get('/search/item', [ProductController::class, 'searchByItem'])->name('procurement.search.item'); // New route for item search
 
     // Notes
     Route::get('/procurement/notes', [ProcurementNotesController::class, 'index'])->name('procurement.notes');
