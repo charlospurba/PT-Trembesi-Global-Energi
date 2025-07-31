@@ -169,19 +169,19 @@
                                 </div>
                             </div>
 
-                            <!-- Role -->
-                            <div class="group transition-all duration-200 hover:-translate-y-1 focus-within:scale-[1.02]">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    <i class="fas fa-user-tag text-gray-400 mr-2"></i>Role
-                                </label>
-                                <select name="role"
-                                        class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-700
-                                               focus:border-blue-500 focus:ring-0 focus:shadow-lg focus:shadow-blue-500/20">
-                                    <option value="">-- Select Role --</option>
-                                    <option value="project_manager" {{ old('role') === 'project_manager' ? 'selected' : '' }}>Project Manager</option>
-                                    <option value="procurement" {{ old('role') === 'procurement' ? 'selected' : '' }}>Procurement</option>
-                                </select>
-                            </div>
+                                <!-- Role -->
+                                <div class="group transition-all duration-200 hover:-translate-y-1 focus-within:scale-[1.02]">
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                        <i class="fas fa-user-tag text-gray-400 mr-2"></i>Role
+                                    </label>
+                                    <select name="role" id="roleSelect"
+                                            class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-700
+                                                focus:border-blue-500 focus:ring-0 focus:shadow-lg focus:shadow-blue-500/20">
+                                        <option value="">-- Select Role --</option>
+                                        <option value="project_manager" {{ old('role') === 'project_manager' ? 'selected' : '' }}>Project Manager</option>
+                                        <option value="procurement" {{ old('role') === 'procurement' ? 'selected' : '' }}>Procurement</option>
+                                    </select>
+                                </div>
 
                             <!-- Status -->
                             <div class="group transition-all duration-200 hover:-translate-y-1 focus-within:scale-[1.02]">
@@ -198,13 +198,13 @@
                             </div>
 
                             <!-- Project Name -->
-                            <div class="lg:col-span-2 group transition-all duration-200 hover:-translate-y-1 focus-within:scale-[1.02]">
+                            <div id="projectNameGroup" class="lg:col-span-2 group transition-all duration-200 hover:-translate-y-1 focus-within:scale-[1.02]">
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">
                                     <i class="fas fa-code text-gray-400 mr-2"></i>Project Name
                                 </label>
                                 <input type="text" name="project_name" value="{{ old('project_name') }}"
-                                       class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-700
-                                              focus:border-blue-500 focus:ring-0 focus:shadow-lg focus:shadow-blue-500/20"/>
+                                    class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-700
+                                            focus:border-blue-500 focus:ring-0 focus:shadow-lg focus:shadow-blue-500/20"/>
                             </div>
 
                             
@@ -261,5 +261,21 @@
                 toggleIcon.classList.add('fa-eye');
             }
         }
+        document.addEventListener('DOMContentLoaded', function () {
+        const roleSelect = document.getElementById('roleSelect');
+        const projectNameGroup = document.getElementById('projectNameGroup');
+
+        function toggleProjectNameVisibility() {
+            if (roleSelect.value === 'procurement') {
+                projectNameGroup.style.display = 'none';
+                projectNameGroup.querySelector('input').value = '';
+            } else {
+                projectNameGroup.style.display = 'block';
+            }
+        }
+
+        toggleProjectNameVisibility();
+        roleSelect.addEventListener('change', toggleProjectNameVisibility);
+    });
     </script>
 @endsection
