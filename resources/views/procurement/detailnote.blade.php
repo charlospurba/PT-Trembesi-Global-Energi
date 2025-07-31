@@ -3,149 +3,141 @@
 @include('components.procnav')
 
 <!-- Header Section -->
-<section class="bg-red-600 text-white py-6 px-6 rounded-b-xl mt-4">
-    <div class="max-w-7xl mx-auto flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold">Procurement Notes</h1>
-            <p class="text-base">Detailed view of the procurement item</p>
+<section class="bg-white border-b border-gray-200 py-4 px-4 mt-4 mx-2 lg:mx-4">
+    <div class="max-w-5xl mx-auto">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-xl font-semibold text-gray-900 mb-1">Procurement Details</h1>
+                <p class="text-gray-600 text-sm">Complete item information and specifications</p>
+            </div>
         </div>
     </div>
 </section>
 
 <!-- Main Content -->
-<main class="bg-gray-100 py-10 px-6">
-    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-10 space-y-10">
+<main class="bg-gray-50 py-4 px-4 min-h-screen">
+    <div class="max-w-5xl mx-auto">
+        <!-- Main Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            
+            <!-- Item Header -->
+            <div class="bg-white p-6 border-b border-gray-200">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-4">
+                        <a href="{{ route('procurement.notes') }}" 
+                           class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                            Back to List
+                        </a>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-900 mb-2">{{ $request->item ?? 'Premium Office Supplies' }}</h2>
+                            <p class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-md inline-block">ID: #{{ $request->id ?? 'EXC-2025-001' }}</p>
+                        </div>
+                    </div>
+                    @php
+                        $remarkClass = match ($request->remark ?? 'Urgent') {
+                            'Top Urgent' => 'bg-red-600 text-white',
+                            'Urgent' => 'bg-orange-500 text-white',
+                            'Average' => 'bg-green-500 text-white',
+                            default => 'bg-orange-500 text-white',
+                        };
+                        $remarkText = $request->remark ?? 'Urgent';
+                    @endphp
+                    <div class="{{ $remarkClass }} px-4 py-2 rounded-md">
+                        <span class="text-sm font-medium">{{ $remarkText }} Priority</span>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Main Item Info -->
-        <div class="grid lg:grid-cols-3 gap-8">
-            <!-- Left Side -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Back Button -->
-                <a href="{{ route('procurement.notes') }}" 
-                   class="bg-gray-300 text-gray-800 rounded-full py-2 px-5 font-semibold hover:bg-gray-400 inline-block">
-                    Back
-                </a>
-
-                <h2 class="text-3xl font-bold text-gray-800">Excavator</h2>
-                
-                <div class="grid sm:grid-cols-2 gap-4">
-                    <!-- Category -->
-                    <div class="flex items-center space-x-3">
-                        <span class="bg-gray-100 rounded-full p-2">📋</span>
-                        <div>
-                            <p class="text-gray-500 text-sm">Category</p>
-                            <p class="font-semibold text-gray-800">Equipment</p>
-                        </div>
-                    </div>
-                    <!-- Budget -->
-                    <div class="flex items-center space-x-3">
-                        <span class="bg-gray-100 rounded-full p-2">💵</span>
-                        <div>
-                            <p class="text-gray-500 text-sm">Budget</p>
-                            <p class="font-bold text-red-600 text-lg">Rp. 840,000,000</p>
-                        </div>
-                    </div>
-                    <!-- Date of Request -->
-                    <div class="flex items-center space-x-3">
-                        <span class="bg-gray-100 rounded-full p-2">📅</span>
-                        <div>
-                            <p class="text-gray-500 text-sm">Date of Request</p>
-                            <p class="font-semibold text-gray-800">12/06/2025</p>
-                        </div>
-                    </div>
+            <!-- Information Content -->
+            <div class="p-6">
+                <!-- Information Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                     <!-- Quantity -->
-                    <div class="flex items-center space-x-3">
-                        <span class="bg-gray-100 rounded-full p-2">📦</span>
-                        <div>
-                            <p class="text-gray-500 text-sm">Quantity</p>
-                            <p class="font-semibold text-gray-800">5 Units</p>
+                    <div class="border border-gray-200 rounded-lg p-4 bg-white">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
+                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700">Quantity Required</span>
+                            </div>
+                            <span class="text-xl font-semibold text-gray-900">{{ $request->qty ?? '123' }} <span class="text-base text-gray-600">{{ $request->unit ?? 'kg' }}</span></span>
                         </div>
                     </div>
-                    <!-- Priority -->
-                    <div class="flex items-center space-x-3">
-                        <span class="bg-gray-100 rounded-full p-2">⚡️</span>
-                        <div>
-                            <p class="text-gray-500 text-sm">Priority</p>
-                            <span class="bg-red-100 text-red-600 rounded-full text-xs font-bold px-3 py-1">High</span>
+
+                    <!-- ETA -->
+                    <div class="border border-gray-200 rounded-lg p-4 bg-white">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
+                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700">Expected Delivery</span>
+                            </div>
+                            <span class="text-xl font-semibold text-gray-900">{{ isset($request->eta) ? \Carbon\Carbon::parse($request->eta)->translatedFormat('d M Y') : '09 Aug 2025' }}</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Notes -->
-                <div class="mt-6 p-4 rounded-xl bg-gray-50">
-                    <h3 class="font-bold text-gray-800 text-lg">Notes</h3>
-                    <p class="text-gray-600 text-sm mt-2">
-                        This excavator is required for long bridge construction and needs specific specifications from trusted vendors.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Right Side: Detail Items -->
-            <div class="bg-gray-50 rounded-xl p-6 shadow space-y-6">
-                <h3 class="font-bold text-gray-800 text-lg border-b pb-3">Item Details</h3>
-                
-                <div class="text-gray-600 space-y-4">
-                    <div>
-                        <h4 class="font-semibold text-gray-800">Brand: HG 250 CDG</h4>
-                        <p>Specification: CUMMINS 6LTAA8.9-G2</p>
-                        <p>Unit: DAIGENKO DGK274K</p>
+                <!-- Specification Section -->
+                <div class="border border-gray-200 rounded-lg p-6 mb-8 bg-white">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Product Specifications</h3>
+                            <p class="text-sm text-gray-600">Detailed requirements and features</p>
+                        </div>
                     </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-800">Brand: HG 250 CD (6LT)</h4>
-                        <p>Specification: CUMMINS 6LTAA8.9-G2</p>
-                        <p>Unit: STAMFORD UCDI274K14</p>
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <p class="text-gray-800 text-sm leading-relaxed">
+                            {{ $request->specification ?? 'High-quality office supplies meeting international standards with sustainable materials and ergonomic design features for enhanced productivity and user comfort.' }}
+                        </p>
                     </div>
                 </div>
 
-                <!-- Button for Buy Now -->
-                <div class="mt-6 flex justify-end">
-                  <a href="{{ route('procurement.dashboardproc') }}" 
-                    class="bg-red-600 text-white rounded-full py-2 px-5 font-semibold hover:bg-red-700">
-                      Buy Now
-                  </a>
-              </div>
-            </div>
-        </div>
+                <!-- Price Section -->
+                <div class="border border-gray-200 rounded-lg p-6 mb-8 bg-white">
+                    <div class="flex flex-col sm:flex-row justify-between items-center">
+                        <div class="flex items-center mb-4 sm:mb-0">
+                            <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-4">
+                                <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-lg font-semibold text-gray-900 block">Price</span>
+                                <span class="text-sm text-gray-600">All costs included</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-3xl font-bold text-gray-900 block">Rp{{ number_format($request->price ?? 134134, 0, ',', '.') }}</span>
+                            <span class="text-sm text-gray-600">Final price</span>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Detail Items & Purchase History Table -->
-        <div class="bg-gray-50 rounded-xl p-6 space-y-4">
-            <h3 class="font-bold text-gray-800 text-lg">Item Details & Purchase History</h3>
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-100 text-gray-600 text-sm">
-                        <th class="py-3 px-4">Item Name</th>
-                        <th class="py-3 px-4">Brand</th>
-                        <th class="py-3 px-4">Specification</th>
-                        <th class="py-3 px-4">Unit</th>
-                        <th class="py-3 px-4">Date</th>
-                        <th class="py-3 px-4">Vendor</th>
-                        <th class="py-3 px-4">Quantity</th>
-                        <th class="py-3 px-4">Price</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-700 text-sm">
-                    <tr class="border-t">
-                        <td class="py-3 px-4">Excavator</td>
-                        <td class="py-3 px-4">HG 250 CDG</td>
-                        <td class="py-3 px-4">CUMMINS 6LTAA8.9-G2</td>
-                        <td class="py-3 px-4">DAIGENKO DGK274K</td>
-                        <td class="py-3 px-4">15/03/2025</td>
-                        <td class="py-3 px-4">PT. Alat Berat Sejahtera</td>
-                        <td class="py-3 px-4">2 Units</td>
-                        <td class="py-3 px-4">Rp. 336,000,000</td>
-                    </tr>
-                    <tr class="border-t">
-                        <td class="py-3 px-4">Excavator</td>
-                        <td class="py-3 px-4">HG 250 CD (6LT)</td>
-                        <td class="py-3 px-4">CUMMINS 6LTAA8.9-G2</td>
-                        <td class="py-3 px-4">STAMFORD UCDI274K14</td>
-                        <td class="py-3 px-4">20/04/2025</td>
-                        <td class="py-3 px-4">PT. Mesin Konstruksi Jaya</td>
-                        <td class="py-3 px-4">3 Units</td>
-                        <td class="py-3 px-4">Rp. 504,000,000</td>
-                    </tr>
-                </tbody>
-            </table>
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="{{ route('procurement.dashboardproc') }}" 
+                       class="inline-flex items-center px-8 py-3 bg-red-600 text-white text-base font-semibold rounded-lg hover:bg-red-700 transition-colors duration-200 shadow-sm">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        </svg>
+                        Buy Now
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </main>
