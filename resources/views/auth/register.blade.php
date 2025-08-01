@@ -44,7 +44,7 @@
       class="flex-1 bg-gradient-to-b from-red-500 to-red-700 text-white flex flex-col justify-center items-center text-center p-12">
       <img src="{{ asset('assets/images/register-as.cf421d13.svg') }}" alt="Document Icon" class="w-5/6 max-w-lg">
       <!-- Gambar diperbesar -->
-      <h4 class="text-2xl font-semibold mb-3">With Trembesi Global Energi</h4>
+      <h4 class="text-2xl font-semibold mb-3">With Trembesi Manunggal Energi</h4>
       <p class="text-base leading-relaxed max-w-sm">
         Smart Solutions. Seamless Execution.<br />
         Strategic Impact.
