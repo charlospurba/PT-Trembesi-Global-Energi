@@ -176,6 +176,45 @@ class CartController extends Controller
         ], 404);
       }
 
+      $product = Product::findOrFail($id);
+      $newQuantity = (int) $request->input('quantity', $cartItem->quantity);
+
+      // Cek apakah ada perubahan pada kuantitas
+      if ($newQuantity !== $cartItem->quantity) {
+        // Jika ada perubahan, set status kembali ke Pending untuk persetujuan ulang
+        $cartItem->update(['quantity' => $newQuantity, 'status' => 'Pending']);
+
+        // Notifikasi ke Project Manager bahwa ada perubahan yang memerlukan persetujuan ulang
+        $note = PMRequest::find($cartItem->note_id);
+        if ($note && $note->user_id) {
+          $projectManager = User::find($note->user_id);
+          if ($projectManager) {
+            Notification::create([
+              'user_id' => $projectManager->id,
+              'type' => 'cart_updated',
+              'message' => 'Cart item updated by ' . $user->name . ' for product: ' . $product->name . ' (New Quantity: ' . $newQuantity . '). Awaiting re-approval.',
+              'data' => json_encode([
+                'cart_item' => [
+                  'product_id' => $product->id,
+                  'product_name' => $product->name,
+                  'quantity' => $newQuantity,
+                  'variant' => $cartItem->variant,
+                  'user_id' => $user->id,
+                  'user_name' => $user->name,
+                  'note_id' => $cartItem->note_id,
+                ],
+              ]),
+            ]);
+          }
+        }
+
+        return response()->json([
+          'success' => true,
+          'cart_count' => Cart::where('user_id', $user->id)->count(),
+          'message' => 'Cart updated successfully, awaiting Project Manager re-approval.'
+        ]);
+      }
+
       if ($cartItem->status !== 'Pending') {
         return response()->json([
           'success' => false,
@@ -183,11 +222,7 @@ class CartController extends Controller
         ], 403);
       }
 
-      $quantity = (int) $request->input('quantity', 1);
-      $product = Product::findOrFail($id);
-      $availableQuantity = $product->quantity ?? PHP_INT_MAX;
-
-      if ($quantity <= 0) {
+      if ($newQuantity <= 0) {
         $cartItem->delete();
         $cartCount = Cart::where('user_id', $user->id)->count();
         return response()->json([
@@ -197,14 +232,15 @@ class CartController extends Controller
         ]);
       }
 
-      if ($quantity > $availableQuantity) {
+      $availableQuantity = $product->quantity ?? PHP_INT_MAX;
+      if ($newQuantity > $availableQuantity) {
         return response()->json([
           'success' => false,
           'message' => 'Requested quantity exceeds available quantity (' . $availableQuantity . ')'
         ], 422);
       }
 
-      $cartItem->update(['quantity' => $quantity]);
+      $cartItem->update(['quantity' => $newQuantity]);
 
       $note = PMRequest::find($cartItem->note_id);
       if ($note && $note->user_id) {
@@ -213,12 +249,12 @@ class CartController extends Controller
           Notification::create([
             'user_id' => $projectManager->id,
             'type' => 'cart_updated',
-            'message' => 'Cart item updated by ' . $user->name . ' for product: ' . $product->name . ' (Quantity: ' . $quantity . ')',
+            'message' => 'Cart item updated by ' . $user->name . ' for product: ' . $product->name . ' (Quantity: ' . $newQuantity . ')',
             'data' => json_encode([
               'cart_item' => [
                 'product_id' => $product->id,
                 'product_name' => $product->name,
-                'quantity' => $quantity,
+                'quantity' => $newQuantity,
                 'variant' => $cartItem->variant,
                 'user_id' => $user->id,
                 'user_name' => $user->name,
@@ -320,6 +356,11 @@ class CartController extends Controller
           ->first();
         $price = $acceptedBid ? $acceptedBid->bid_price : $cartItem->product->price;
 
+        $hasPendingRequest = PurchaseRequest::where('user_id', Auth::id())
+          ->where('cart_id', $cartItem->id)
+          ->where('status', 'Pending')
+          ->exists();
+
         return [
           'id' => $cartItem->product_id,
           'name' => $cartItem->product->name,
@@ -333,6 +374,7 @@ class CartController extends Controller
           'status' => $cartItem->status,
           'is_bid_price' => $acceptedBid ? true : false,
           'note_id' => $cartItem->note_id,
+          'has_pending_request' => $hasPendingRequest,
         ];
       })->toArray();
 
@@ -393,6 +435,13 @@ class CartController extends Controller
         ], 422);
       }
 
+      // Hapus bid sebelumnya yang berstatus Pending untuk mencegah duplikasi
+      Bid::where('user_id', $user->id)
+        ->where('product_id', $productId)
+        ->where('cart_id', $cartItem->id)
+        ->where('status', 'Pending')
+        ->delete();
+
       $bid = Bid::create([
         'user_id' => $user->id,
         'product_id' => $productId,
@@ -401,6 +450,10 @@ class CartController extends Controller
         'cart_id' => $cartItem->id,
         'status' => 'Pending',
       ]);
+
+      // Setiap bid baru, set status cart item kembali menjadi Pending
+      // Ini akan memaksa Procurement untuk mengajukan Purchase Request lagi.
+      $cartItem->update(['status' => 'Pending']);
 
       Notification::create([
         'user_id' => $product->vendor_id,
@@ -415,15 +468,39 @@ class CartController extends Controller
         ]),
       ]);
 
+      // Kirim notifikasi ke PM bahwa ada perubahan bid yang memerlukan persetujuan ulang
+      $note = PMRequest::find($cartItem->note_id);
+      if ($note && $note->user_id) {
+        $projectManager = User::find($note->user_id);
+        if ($projectManager) {
+          Notification::create([
+            'user_id' => $projectManager->id,
+            'type' => 'cart_updated',
+            'message' => 'A new bid has been submitted for a product in your cart. The item now requires re-approval.',
+            'data' => json_encode([
+              'cart_item' => [
+                'product_id' => $product->id,
+                'product_name' => $product->name,
+                'quantity' => $cartItem->quantity,
+                'variant' => $cartItem->variant,
+                'user_id' => $user->id,
+                'user_name' => $user->name,
+                'note_id' => $cartItem->note_id,
+              ],
+            ]),
+          ]);
+        }
+      }
+
       return response()->json([
         'success' => true,
-        'message' => 'Bid submitted successfully!'
+        'message' => 'Bid submitted successfully! The item status has been reset and requires Project Manager re-approval.'
       ]);
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-      Log::error('Submit Bid Error - Product not found: ' . $productId);
+      Log::error('Submit Bid Error - Product or Note not found: ' . $productId);
       return response()->json([
         'success' => false,
-        'message' => 'Product not found'
+        'message' => 'Product or procurement note not found'
       ], 404);
     } catch (\Exception $e) {
       Log::error('Submit Bid Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
@@ -478,35 +555,11 @@ class CartController extends Controller
         ], 422);
       }
 
-      $unprocessedItems = $cartItems->whereNotIn('status', ['Pending']);
-      if ($unprocessedItems->isNotEmpty()) {
-        Log::warning('Request Purchase - Non-pending items detected', [
-          'user_id' => $user->id,
-          'non_pending_items' => $unprocessedItems->pluck('product_id')->toArray()
-        ]);
-        return response()->json([
-          'success' => false,
-          'message' => 'Some selected items have already been processed (Approved/Rejected).'
-        ], 422);
-      }
-
-      $existingRequests = PurchaseRequest::whereIn('cart_id', $cartItems->pluck('id'))
-        ->where('status', 'Pending')
-        ->pluck('cart_id')
-        ->toArray();
-      if (!empty($existingRequests)) {
-        Log::warning('Request Purchase - Duplicate purchase requests detected', [
-          'user_id' => $user->id,
-          'cart_ids' => $existingRequests
-        ]);
-        return response()->json([
-          'success' => false,
-          'message' => 'Some items already have pending purchase requests.'
-        ], 422);
-      }
-
       $purchaseRequestIds = [];
       foreach ($cartItems as $cartItem) {
+        // Hapus logika validasi status di sini
+        // Ini memungkinkan request purchase dikirim terlepas dari statusnya
+
         $pmUserId = optional($cartItem->note)->user_id;
         if (!$pmUserId) {
           Log::warning('Request Purchase - No PM found for cart item', ['cart_item_id' => $cartItem->id]);
@@ -519,6 +572,7 @@ class CartController extends Controller
           ->where('status', 'Accepted')
           ->latest()
           ->first();
+
         $price = $acceptedBid ? $acceptedBid->bid_price : $cartItem->product->price;
 
         $purchaseRequest = PurchaseRequest::create([
@@ -532,6 +586,7 @@ class CartController extends Controller
           'status' => 'Pending',
           'submitted_at' => now(),
           'note_id' => $cartItem->note_id,
+          'bid_id' => optional($acceptedBid)->id,
         ]);
         $purchaseRequestIds[] = $purchaseRequest->id;
 
@@ -588,10 +643,5 @@ class CartController extends Controller
         'message' => 'Failed to submit purchase request: ' . $e->getMessage()
       ], 500);
     }
-  }
-
-  public function updateBidStatus(Request $request, $id)
-  {
-    // ... (fungsi yang tidak ada dalam kode asli, jika diperlukan) ...
   }
 }

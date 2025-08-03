@@ -26,20 +26,19 @@
                     <div class="divide-y">
                         @foreach ($purchaseRequests as $request)
                             <div class="p-4 flex items-center space-x-4" data-item-id="{{ $request->id }}">
-                                <img src="{{ $request->product->image_paths && is_array($request->product->image_paths) ? asset('storage/' . $request->product->image_paths[0]) : '/images/pipa-besi.png' }}"
+                                <img src="{{ optional($request->product)->image_paths && is_array($request->product->image_paths) ? asset('storage/' . $request->product->image_paths[0]) : '/images/pipa-besi.png' }}"
                                     class="w-16 h-16 rounded object-cover border border-red-200">
                                 <div class="flex-1">
                                     <a href="{{ route('projectmanager.purchase_requests.detail', $request->id) }}"
                                         class="font-semibold text-red-700 hover:text-red-800 hover:underline">
-                                        {{ $request->product->name }}
+                                        {{ optional($request->product)->name }}
                                     </a>
                                     <p class="text-gray-500 text-sm">Quantity: {{ $request->quantity }}</p>
                                     <p class="text-gray-500 text-sm">Price: Rp
                                         {{ number_format($request->price, 0, ',', '.') }}</p>
-                                    <p class="text-gray-500 text-sm">Variant: {{ $request->cart->variant ?? 'default' }}</p>
                                     <p class="text-gray-500 text-sm">Supplier: {{ $request->supplier }}</p>
-                                    <p class="text-gray-500 text-sm">Requested by: {{ $request->user->name }}
-                                        ({{ $request->user->email }})
+                                    <p class="text-gray-500 text-sm">Requested by: {{ optional($request->user)->name }}
+                                        ({{ optional($request->user)->email }})
                                     </p>
                                     <p class="text-gray-500 text-sm">Submitted:
                                         {{ $request->submitted_at->format('Y-m-d H:i:s') }}</p>
@@ -49,12 +48,15 @@
                                     <p class="text-sm">
                                         <span
                                             class="px-2 py-0.5 rounded-full text-xs 
-                                            {{ $request->status === 'Approved' ? 'bg-green-100 text-green-700' : ($request->status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700') }}">
+                                            @switch($request->status)
+                                                @case('Approved') bg-green-100 text-green-700 @break
+                                                @case('Rejected') bg-red-100 text-red-700 @break
+                                                @default bg-gray-100 text-gray-700
+                                            @endswitch">
                                             {{ $request->status }}
                                         </span>
                                     </p>
                                 </div>
-                                {{-- Tombol Aksi hanya akan muncul jika statusnya Pending --}}
                                 @if ($request->status === 'Pending')
                                     <div class="flex items-center space-x-2">
                                         <button onclick="approveRequest({{ $request->id }})"
@@ -79,6 +81,7 @@
         </div>
     </div>
 
+    {{-- Script untuk SweetAlert --}}
     <script>
         async function approveRequest(id) {
             Swal.fire({

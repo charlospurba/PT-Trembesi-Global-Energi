@@ -30,7 +30,8 @@ class PurchaseRequestController extends Controller
         },
         'cart'
       ])
-        ->where('project_manager_id', Auth::id()) // Gunakan kolom baru untuk filter
+        // Filter sekarang menggunakan project_manager_id yang ada di tabel purchase_requests
+        ->where('project_manager_id', Auth::id())
         ->whereIn('status', ['Pending', 'Approved', 'Rejected'])
         ->orderBy('created_at', 'desc')
         ->get();
@@ -69,7 +70,7 @@ class PurchaseRequestController extends Controller
         'cart.note'
       ])->findOrFail($id);
 
-      // Verifikasi bahwa purchase request ini milik PM yang sedang login
+      // Verifikasi menggunakan project_manager_id
       if ($purchaseRequest->project_manager_id !== Auth::id()) {
         Log::warning('Unauthorized access to purchase request detail for another PM', ['user_id' => Auth::id(), 'purchase_request_id' => $id]);
         abort(403, 'Unauthorized access.');
@@ -121,6 +122,7 @@ class PurchaseRequestController extends Controller
     try {
       $purchaseRequest = PurchaseRequest::with('cart.note')->findOrFail($id);
 
+      // Verifikasi menggunakan project_manager_id
       if ($purchaseRequest->project_manager_id !== Auth::id()) {
         Log::warning('Unauthorized approval attempt for another PM\'s request', ['user_id' => Auth::id(), 'purchase_request_id' => $id]);
         return response()->json([
@@ -141,6 +143,7 @@ class PurchaseRequestController extends Controller
         'approved_at' => now(),
       ]);
 
+      // Perbarui status cart hanya jika purchase request disetujui
       if ($purchaseRequest->cart_id) {
         $cartItem = $purchaseRequest->cart;
         if ($cartItem) {
@@ -200,6 +203,7 @@ class PurchaseRequestController extends Controller
     try {
       $purchaseRequest = PurchaseRequest::with('cart.note')->findOrFail($id);
 
+      // Verifikasi menggunakan project_manager_id
       if ($purchaseRequest->project_manager_id !== Auth::id()) {
         Log::warning('Unauthorized rejection attempt for another PM\'s request', ['user_id' => Auth::id(), 'purchase_request_id' => $id]);
         return response()->json([
@@ -220,6 +224,7 @@ class PurchaseRequestController extends Controller
         'rejected_at' => now(),
       ]);
 
+      // Perbarui status cart hanya jika purchase request disetujui
       if ($purchaseRequest->cart_id) {
         $cartItem = $purchaseRequest->cart;
         if ($cartItem) {

@@ -44,7 +44,7 @@ class OrderController extends Controller
         $orders = $query->latest()->paginate(10);
         $orderCounts = $this->getOrderCounts($user->id);
 
-        $bidQuery = Bid::where('vendor_id', $user->id)->with('product', 'user');
+        $bidQuery = Bid::where('vendor_id', $user->id)->with('product', 'user', 'cart');
 
         if ($request->has('bid_status') && $request->bid_status) {
             $bidQuery->where('status', $request->bid_status);
@@ -159,18 +159,22 @@ class OrderController extends Controller
             $user = Auth::user();
             $bid = Bid::where('id', $id)
                 ->where('vendor_id', $user->id)
+                ->with('cart')
                 ->firstOrFail();
 
             $validated = $request->validate([
-                'status' => 'required|in:Pending,Accepted,Rejected',
+                'status' => 'required|in:Accepted,Rejected',
             ]);
 
             if ($validated['status'] === 'Accepted') {
                 Bid::where('product_id', $bid->product_id)
                     ->where('user_id', $bid->user_id)
                     ->where('id', '!=', $bid->id)
-                    ->where('status', 'Accepted')
                     ->update(['status' => 'Rejected']);
+
+                // --- PERBAIKAN DI SINI ---
+                // Saat bid disetujui, kita tidak langsung mengubah status cart.
+                // Status cart akan diubah oleh Project Manager di PurchaseRequestController.
             }
 
             $bid->update(['status' => $validated['status']]);
@@ -181,6 +185,7 @@ class OrderController extends Controller
                 'message' => 'Your bid for ' . $bid->product->name . ' has been ' . $validated['status'] . '.',
                 'data' => json_encode([
                     'bid_id' => $bid->id,
+                    'product_name' => $bid->product->name,
                     'status' => $validated['status'],
                 ]),
             ]);
