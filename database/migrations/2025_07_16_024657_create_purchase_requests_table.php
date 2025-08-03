@@ -5,16 +5,15 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('purchase_requests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('project_manager_id')->constrained('users')->onDelete('set null');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->foreignId('cart_id')->nullable()->constrained('carts')->onDelete('set null');
+            $table->foreignId('bid_id')->nullable()->constrained('bids')->onDelete('set null'); // Relasi ke tabel bids
             $table->integer('quantity');
             $table->decimal('price', 15, 2)->nullable();
             $table->string('supplier');
@@ -27,9 +26,6 @@ return new class extends Migration {
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('purchase_requests');

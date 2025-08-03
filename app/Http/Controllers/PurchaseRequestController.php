@@ -28,9 +28,10 @@ class PurchaseRequestController extends Controller
         'user' => function ($query) {
           $query->select('id', 'name', 'email');
         },
-        'cart'
+        'cart',
+        'bid' // Muat relasi bid juga
       ])
-        // Filter sekarang menggunakan project_manager_id yang ada di tabel purchase_requests
+        // Filter berdasarkan project_manager_id yang ada di tabel purchase_requests
         ->where('project_manager_id', Auth::id())
         ->whereIn('status', ['Pending', 'Approved', 'Rejected'])
         ->orderBy('created_at', 'desc')
@@ -67,7 +68,8 @@ class PurchaseRequestController extends Controller
         'user' => function ($query) {
           $query->select('id', 'name', 'email');
         },
-        'cart.note'
+        'cart.note',
+        'bid' // Muat relasi bid juga
       ])->findOrFail($id);
 
       // Verifikasi menggunakan project_manager_id
@@ -76,6 +78,7 @@ class PurchaseRequestController extends Controller
         abort(403, 'Unauthorized access.');
       }
 
+      // Ambil bid terkait dengan purchase request ini
       $bids = Bid::where('product_id', $purchaseRequest->product_id)
         ->where('user_id', $purchaseRequest->user_id)
         ->where('cart_id', $purchaseRequest->cart_id)
@@ -122,7 +125,6 @@ class PurchaseRequestController extends Controller
     try {
       $purchaseRequest = PurchaseRequest::with('cart.note')->findOrFail($id);
 
-      // Verifikasi menggunakan project_manager_id
       if ($purchaseRequest->project_manager_id !== Auth::id()) {
         Log::warning('Unauthorized approval attempt for another PM\'s request', ['user_id' => Auth::id(), 'purchase_request_id' => $id]);
         return response()->json([
@@ -203,7 +205,6 @@ class PurchaseRequestController extends Controller
     try {
       $purchaseRequest = PurchaseRequest::with('cart.note')->findOrFail($id);
 
-      // Verifikasi menggunakan project_manager_id
       if ($purchaseRequest->project_manager_id !== Auth::id()) {
         Log::warning('Unauthorized rejection attempt for another PM\'s request', ['user_id' => Auth::id(), 'purchase_request_id' => $id]);
         return response()->json([

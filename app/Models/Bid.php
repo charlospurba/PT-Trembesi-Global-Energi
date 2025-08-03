@@ -16,6 +16,7 @@ class Bid extends Model
     'cart_id',
     'bid_price',
     'status',
+    'purchase_request_id' // Tambahkan ini
   ];
 
   protected $casts = [
@@ -40,5 +41,10 @@ class Bid extends Model
   public function cart()
   {
     return $this->belongsTo(Cart::class);
+  }
+
+  public function purchaseRequest()
+  {
+    return $this->belongsTo(PurchaseRequest::class);
   }
 }

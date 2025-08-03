@@ -9,7 +9,7 @@ class AddCartIdToBidsTable extends Migration
     public function up(): void
     {
         Schema::table('bids', function (Blueprint $table) {
-            $table->foreignId('cart_id')->nullable()->constrained()->onDelete('cascade')->after('vendor_id');
+            $table->foreignId('cart_id')->nullable()->constrained('carts')->onDelete('set null')->after('vendor_id');
         });
     }
 

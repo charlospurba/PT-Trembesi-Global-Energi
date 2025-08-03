@@ -44,7 +44,13 @@ class OrderController extends Controller
         $orders = $query->latest()->paginate(10);
         $orderCounts = $this->getOrderCounts($user->id);
 
-        $bidQuery = Bid::where('vendor_id', $user->id)->with('product', 'user', 'cart');
+        // Perbaikan: Ambil data bid yang memiliki relasi 'purchaseRequest' atau 'cart'
+        $bidQuery = Bid::where('vendor_id', $user->id)
+            ->with('product', 'user', 'purchaseRequest') // Muat relasi ke Purchase Request
+            ->where(function ($q) {
+                $q->whereNotNull('cart_id') // Bid yang masih terhubung ke keranjang
+                    ->orWhereNotNull('purchase_request_id'); // Bid yang sudah jadi riwayat
+            });
 
         if ($request->has('bid_status') && $request->bid_status) {
             $bidQuery->where('status', $request->bid_status);
@@ -159,7 +165,6 @@ class OrderController extends Controller
             $user = Auth::user();
             $bid = Bid::where('id', $id)
                 ->where('vendor_id', $user->id)
-                ->with('cart')
                 ->firstOrFail();
 
             $validated = $request->validate([
@@ -171,10 +176,6 @@ class OrderController extends Controller
                     ->where('user_id', $bid->user_id)
                     ->where('id', '!=', $bid->id)
                     ->update(['status' => 'Rejected']);
-
-                // --- PERBAIKAN DI SINI ---
-                // Saat bid disetujui, kita tidak langsung mengubah status cart.
-                // Status cart akan diubah oleh Project Manager di PurchaseRequestController.
             }
 
             $bid->update(['status' => $validated['status']]);

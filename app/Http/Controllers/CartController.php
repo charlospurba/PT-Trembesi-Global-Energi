@@ -179,12 +179,9 @@ class CartController extends Controller
       $product = Product::findOrFail($id);
       $newQuantity = (int) $request->input('quantity', $cartItem->quantity);
 
-      // Cek apakah ada perubahan pada kuantitas
       if ($newQuantity !== $cartItem->quantity) {
-        // Jika ada perubahan, set status kembali ke Pending untuk persetujuan ulang
         $cartItem->update(['quantity' => $newQuantity, 'status' => 'Pending']);
 
-        // Notifikasi ke Project Manager bahwa ada perubahan yang memerlukan persetujuan ulang
         $note = PMRequest::find($cartItem->note_id);
         if ($note && $note->user_id) {
           $projectManager = User::find($note->user_id);
@@ -435,7 +432,6 @@ class CartController extends Controller
         ], 422);
       }
 
-      // Hapus bid sebelumnya yang berstatus Pending untuk mencegah duplikasi
       Bid::where('user_id', $user->id)
         ->where('product_id', $productId)
         ->where('cart_id', $cartItem->id)
@@ -451,8 +447,6 @@ class CartController extends Controller
         'status' => 'Pending',
       ]);
 
-      // Setiap bid baru, set status cart item kembali menjadi Pending
-      // Ini akan memaksa Procurement untuk mengajukan Purchase Request lagi.
       $cartItem->update(['status' => 'Pending']);
 
       Notification::create([
@@ -468,7 +462,6 @@ class CartController extends Controller
         ]),
       ]);
 
-      // Kirim notifikasi ke PM bahwa ada perubahan bid yang memerlukan persetujuan ulang
       $note = PMRequest::find($cartItem->note_id);
       if ($note && $note->user_id) {
         $projectManager = User::find($note->user_id);
@@ -557,9 +550,6 @@ class CartController extends Controller
 
       $purchaseRequestIds = [];
       foreach ($cartItems as $cartItem) {
-        // Hapus logika validasi status di sini
-        // Ini memungkinkan request purchase dikirim terlepas dari statusnya
-
         $pmUserId = optional($cartItem->note)->user_id;
         if (!$pmUserId) {
           Log::warning('Request Purchase - No PM found for cart item', ['cart_item_id' => $cartItem->id]);
@@ -580,14 +570,19 @@ class CartController extends Controller
           'project_manager_id' => $pmUserId,
           'product_id' => $cartItem->product_id,
           'cart_id' => $cartItem->id,
+          'bid_id' => optional($acceptedBid)->id,
           'quantity' => $cartItem->quantity,
           'price' => $price,
           'supplier' => $cartItem->product->supplier,
           'status' => 'Pending',
           'submitted_at' => now(),
           'note_id' => $cartItem->note_id,
-          'bid_id' => optional($acceptedBid)->id,
         ]);
+
+        if ($acceptedBid) {
+          $acceptedBid->update(['purchase_request_id' => $purchaseRequest->id]);
+        }
+
         $purchaseRequestIds[] = $purchaseRequest->id;
 
         $pm = User::find($pmUserId);

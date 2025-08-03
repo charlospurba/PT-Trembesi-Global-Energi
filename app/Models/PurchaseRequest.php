@@ -11,9 +11,10 @@ class PurchaseRequest extends Model
 
   protected $fillable = [
     'user_id',
-    'project_manager_id', // Tambahkan ini
+    'project_manager_id',
     'product_id',
     'cart_id',
+    'bid_id', // Tambahkan ini
     'quantity',
     'price',
     'supplier',
@@ -45,9 +46,13 @@ class PurchaseRequest extends Model
     return $this->belongsTo(Cart::class);
   }
 
-  // Tambahkan relasi ke Project Manager
   public function projectManager()
   {
     return $this->belongsTo(User::class, 'project_manager_id');
+  }
+
+  public function bid()
+  {
+    return $this->belongsTo(Bid::class);
   }
 }
