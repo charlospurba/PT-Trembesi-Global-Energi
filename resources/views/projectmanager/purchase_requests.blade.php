@@ -10,10 +10,10 @@
         @include('components.sidepm')
         <div class="bg-gray-100 min-h-screen p-6 flex-1">
             <div class="mb-6">
-            <div class="bg-red-500 text-white px-6 py-4 rounded-md shadow">
-                <h2 class="text-xl font-bold">Purchase Requests </h2>
-                <p class="text-sm">Review and manage purchase requests from procurement team</p>
-            </div>
+                <div class="bg-red-500 text-white px-6 py-4 rounded-md shadow">
+                    <h2 class="text-xl font-bold">Purchase Requests </h2>
+                    <p class="text-sm">Review and manage purchase requests from procurement team</p>
+                </div>
             </div>
 
             @if ($purchaseRequests->isEmpty())
@@ -48,11 +48,13 @@
                                     @endif
                                     <p class="text-sm">
                                         <span
-                                            class="px-2 py-0.5 rounded-full text-xs {{ $request->status === 'Approved' ? 'bg-green-100 text-green-700' : ($request->status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700') }}">
+                                            class="px-2 py-0.5 rounded-full text-xs 
+                                            {{ $request->status === 'Approved' ? 'bg-green-100 text-green-700' : ($request->status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700') }}">
                                             {{ $request->status }}
                                         </span>
                                     </p>
                                 </div>
+                                {{-- Tombol Aksi hanya akan muncul jika statusnya Pending --}}
                                 @if ($request->status === 'Pending')
                                     <div class="flex items-center space-x-2">
                                         <button onclick="approveRequest({{ $request->id }})"
@@ -63,6 +65,10 @@
                                             class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-all duration-200">
                                             <i class="fas fa-times mr-1"></i> Reject
                                         </button>
+                                    </div>
+                                @else
+                                    <div class="flex items-center">
+                                        <span class="text-sm font-semibold text-gray-500">Processed</span>
                                     </div>
                                 @endif
                             </div>

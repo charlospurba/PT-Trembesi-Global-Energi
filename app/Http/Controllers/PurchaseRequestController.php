@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\PurchaseRequest;
 use App\Models\Bid;
 use App\Models\Notification;
+use App\Models\User;
+use App\Models\Cart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -28,9 +30,16 @@ class PurchaseRequestController extends Controller
         },
         'cart'
       ])
+        ->where('project_manager_id', Auth::id()) // Gunakan kolom baru untuk filter
         ->whereIn('status', ['Pending', 'Approved', 'Rejected'])
         ->orderBy('created_at', 'desc')
         ->get();
+
+      Log::info('Fetched Purchase Requests for PM', [
+        'user_id' => Auth::id(),
+        'request_count' => $purchaseRequests->count(),
+        'requests_data' => $purchaseRequests->pluck('status', 'id')->toArray()
+      ]);
 
       return view('projectmanager.purchase_requests', compact('purchaseRequests'));
     } catch (\Exception $e) {
@@ -57,11 +66,18 @@ class PurchaseRequestController extends Controller
         'user' => function ($query) {
           $query->select('id', 'name', 'email');
         },
-        'cart'
+        'cart.note'
       ])->findOrFail($id);
+
+      // Verifikasi bahwa purchase request ini milik PM yang sedang login
+      if ($purchaseRequest->project_manager_id !== Auth::id()) {
+        Log::warning('Unauthorized access to purchase request detail for another PM', ['user_id' => Auth::id(), 'purchase_request_id' => $id]);
+        abort(403, 'Unauthorized access.');
+      }
 
       $bids = Bid::where('product_id', $purchaseRequest->product_id)
         ->where('user_id', $purchaseRequest->user_id)
+        ->where('cart_id', $purchaseRequest->cart_id)
         ->latest()
         ->take(3)
         ->get();
@@ -103,7 +119,15 @@ class PurchaseRequestController extends Controller
     }
 
     try {
-      $purchaseRequest = PurchaseRequest::findOrFail($id);
+      $purchaseRequest = PurchaseRequest::with('cart.note')->findOrFail($id);
+
+      if ($purchaseRequest->project_manager_id !== Auth::id()) {
+        Log::warning('Unauthorized approval attempt for another PM\'s request', ['user_id' => Auth::id(), 'purchase_request_id' => $id]);
+        return response()->json([
+          'success' => false,
+          'message' => 'Unauthorized access to approve this request.'
+        ], 403);
+      }
 
       if ($purchaseRequest->status !== 'Pending') {
         return response()->json([
@@ -117,7 +141,6 @@ class PurchaseRequestController extends Controller
         'approved_at' => now(),
       ]);
 
-      // Update associated cart item status, if it exists
       if ($purchaseRequest->cart_id) {
         $cartItem = $purchaseRequest->cart;
         if ($cartItem) {
@@ -175,7 +198,15 @@ class PurchaseRequestController extends Controller
     }
 
     try {
-      $purchaseRequest = PurchaseRequest::findOrFail($id);
+      $purchaseRequest = PurchaseRequest::with('cart.note')->findOrFail($id);
+
+      if ($purchaseRequest->project_manager_id !== Auth::id()) {
+        Log::warning('Unauthorized rejection attempt for another PM\'s request', ['user_id' => Auth::id(), 'purchase_request_id' => $id]);
+        return response()->json([
+          'success' => false,
+          'message' => 'Unauthorized access to reject this request.'
+        ], 403);
+      }
 
       if ($purchaseRequest->status !== 'Pending') {
         return response()->json([
@@ -189,7 +220,6 @@ class PurchaseRequestController extends Controller
         'rejected_at' => now(),
       ]);
 
-      // Update associated cart item status, if it exists
       if ($purchaseRequest->cart_id) {
         $cartItem = $purchaseRequest->cart;
         if ($cartItem) {

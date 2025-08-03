@@ -21,7 +21,7 @@ class CartController extends Controller
       $product = Product::findOrFail($id);
       $quantity = (int) $request->input('quantity', 1);
       $user = Auth::user();
-      $note_id = $request->input('note_id'); // Get note_id from request
+      $note_id = $request->input('note_id');
 
       if (!$user) {
         return response()->json([
@@ -30,7 +30,6 @@ class CartController extends Controller
         ], 401);
       }
 
-      // Validate note_id and item match
       if (!$note_id) {
         return response()->json([
           'success' => false,
@@ -79,15 +78,17 @@ class CartController extends Controller
           'quantity' => $quantity,
           'variant' => $request->input('variant', 'default'),
           'status' => 'Pending',
-          'note_id' => $note_id, // Store note_id in cart
+          'note_id' => $note_id,
         ]);
       }
 
-      // Notify Project Manager
-      $projectManagers = User::where('role', 'project_manager')->get();
-      foreach ($projectManagers as $pm) {
+      $projectManager = User::where('role', 'project_manager')
+        ->where('id', $note->user_id)
+        ->first();
+
+      if ($projectManager) {
         Notification::create([
-          'user_id' => $pm->id,
+          'user_id' => $projectManager->id,
           'type' => 'cart_pending',
           'message' => 'New cart item pending approval from ' . $user->name . ' for product: ' . $product->name . ' (Note ID: ' . $note_id . ')',
           'data' => json_encode([
@@ -141,21 +142,12 @@ class CartController extends Controller
         ], 403);
       }
 
-      // Pass note_id to addToCart
       $response = $this->addToCart($request, $id);
       $data = json_decode($response->getContent(), true);
 
       if ($response->getStatusCode() === 200 && $data['success']) {
-        // This block seems to be misplacing the success, leading to a 403 even on success.
-        // The original design of buyNow calling addToCart and then returning a 403 on success of addToCart
-        // implies buyNow is meant for direct purchase *after* approval, or is meant to guide the user
-        // that even if it's in the cart, it needs approval.
-        // Given the flow, if addToCart succeeds, we should indicate success and possibly redirect
-        // or inform about the approval process.
-        // For now, I'll keep the original logic's intent, but this `if ($response->getStatusCode() === 200 && $data['success'])`
-        // block might be the source of confusion about "buy now" immediately.
         return response()->json([
-          'success' => false, // This seems counter-intuitive if addToCart was successful
+          'success' => false,
           'message' => 'Item added to cart, but requires Project Manager approval before checkout.'
         ], 403);
       }
@@ -214,25 +206,27 @@ class CartController extends Controller
 
       $cartItem->update(['quantity' => $quantity]);
 
-      // Notify Project Manager of update
-      $projectManagers = User::where('role', 'project_manager')->get();
-      foreach ($projectManagers as $pm) {
-        Notification::create([
-          'user_id' => $pm->id,
-          'type' => 'cart_updated',
-          'message' => 'Cart item updated by ' . $user->name . ' for product: ' . $product->name . ' (Quantity: ' . $quantity . ')',
-          'data' => json_encode([
-            'cart_item' => [
-              'product_id' => $product->id,
-              'product_name' => $product->name,
-              'quantity' => $quantity,
-              'variant' => $cartItem->variant,
-              'user_id' => $user->id,
-              'user_name' => $user->name,
-              'note_id' => $cartItem->note_id,
-            ],
-          ]),
-        ]);
+      $note = PMRequest::find($cartItem->note_id);
+      if ($note && $note->user_id) {
+        $projectManager = User::find($note->user_id);
+        if ($projectManager) {
+          Notification::create([
+            'user_id' => $projectManager->id,
+            'type' => 'cart_updated',
+            'message' => 'Cart item updated by ' . $user->name . ' for product: ' . $product->name . ' (Quantity: ' . $quantity . ')',
+            'data' => json_encode([
+              'cart_item' => [
+                'product_id' => $product->id,
+                'product_name' => $product->name,
+                'quantity' => $quantity,
+                'variant' => $cartItem->variant,
+                'user_id' => $user->id,
+                'user_name' => $user->name,
+                'note_id' => $cartItem->note_id,
+              ],
+            ]),
+          ]);
+        }
       }
 
       $cartCount = Cart::where('user_id', $user->id)->count();
@@ -276,23 +270,25 @@ class CartController extends Controller
       $cartItem->delete();
       $cartCount = Cart::where('user_id', $user->id)->count();
 
-      // Notify Project Manager of removal
-      $projectManagers = User::where('role', 'project_manager')->get();
-      foreach ($projectManagers as $pm) {
-        Notification::create([
-          'user_id' => $pm->id,
-          'type' => 'cart_removed',
-          'message' => 'Cart item removed by ' . $user->name . ' for product: ' . $product->name,
-          'data' => json_encode([
-            'cart_item' => [
-              'product_id' => $product->id,
-              'product_name' => $product->name,
-              'user_id' => $user->id,
-              'user_name' => $user->name,
-              'note_id' => $cartItem->note_id,
-            ],
-          ]),
-        ]);
+      $note = PMRequest::find($cartItem->note_id);
+      if ($note && $note->user_id) {
+        $projectManager = User::find($note->user_id);
+        if ($projectManager) {
+          Notification::create([
+            'user_id' => $projectManager->id,
+            'type' => 'cart_removed',
+            'message' => 'Cart item removed by ' . $user->name . ' for product: ' . $product->name,
+            'data' => json_encode([
+              'cart_item' => [
+                'product_id' => $product->id,
+                'product_name' => $product->name,
+                'user_id' => $user->id,
+                'user_name' => $user->name,
+                'note_id' => $cartItem->note_id,
+              ],
+            ]),
+          ]);
+        }
       }
 
       return response()->json([
@@ -385,7 +381,6 @@ class CartController extends Controller
         ], 422);
       }
 
-      // Check bid count limit for this cart item
       $bidCount = Bid::where('user_id', $user->id)
         ->where('product_id', $productId)
         ->where('cart_id', $cartItem->id)
@@ -407,7 +402,6 @@ class CartController extends Controller
         'status' => 'Pending',
       ]);
 
-      // Notify vendor
       Notification::create([
         'user_id' => $product->vendor_id,
         'type' => 'bid_submitted',
@@ -453,7 +447,6 @@ class CartController extends Controller
 
       $selectedIds = $request->input('selected_ids', []);
 
-      // Validate input
       if (empty($selectedIds)) {
         Log::warning('Request Purchase - No items selected', ['user_id' => $user->id]);
         return response()->json([
@@ -462,12 +455,14 @@ class CartController extends Controller
         ], 422);
       }
 
-      // Fetch cart items for the selected IDs
       $cartItems = Cart::where('user_id', $user->id)
         ->whereIn('product_id', $selectedIds)
         ->with([
           'product' => function ($query) {
             $query->select('id', 'name', 'price', 'supplier');
+          },
+          'note' => function ($query) {
+            $query->select('id', 'user_id');
           }
         ])
         ->get();
@@ -483,7 +478,6 @@ class CartController extends Controller
         ], 422);
       }
 
-      // Check for unprocessed items
       $unprocessedItems = $cartItems->whereNotIn('status', ['Pending']);
       if ($unprocessedItems->isNotEmpty()) {
         Log::warning('Request Purchase - Non-pending items detected', [
@@ -496,7 +490,6 @@ class CartController extends Controller
         ], 422);
       }
 
-      // Check for existing purchase requests
       $existingRequests = PurchaseRequest::whereIn('cart_id', $cartItems->pluck('id'))
         ->where('status', 'Pending')
         ->pluck('cart_id')
@@ -512,9 +505,14 @@ class CartController extends Controller
         ], 422);
       }
 
-      // Create PurchaseRequest entries
       $purchaseRequestIds = [];
       foreach ($cartItems as $cartItem) {
+        $pmUserId = optional($cartItem->note)->user_id;
+        if (!$pmUserId) {
+          Log::warning('Request Purchase - No PM found for cart item', ['cart_item_id' => $cartItem->id]);
+          continue;
+        }
+
         $acceptedBid = Bid::where('product_id', $cartItem->product_id)
           ->where('user_id', $user->id)
           ->where('cart_id', $cartItem->id)
@@ -525,6 +523,7 @@ class CartController extends Controller
 
         $purchaseRequest = PurchaseRequest::create([
           'user_id' => $user->id,
+          'project_manager_id' => $pmUserId,
           'product_id' => $cartItem->product_id,
           'cart_id' => $cartItem->id,
           'quantity' => $cartItem->quantity,
@@ -532,23 +531,12 @@ class CartController extends Controller
           'supplier' => $cartItem->product->supplier,
           'status' => 'Pending',
           'submitted_at' => now(),
-          'note_id' => $cartItem->note_id, // Store note_id in purchase request
+          'note_id' => $cartItem->note_id,
         ]);
         $purchaseRequestIds[] = $purchaseRequest->id;
-      }
 
-      // Notify Project Managers
-      $projectManagers = User::where('role', 'project_manager')->get();
-      if ($projectManagers->isEmpty()) {
-        Log::warning('Request Purchase - No project managers found', ['user_id' => $user->id]);
-        return response()->json([
-          'success' => false,
-          'message' => 'No project managers available to process the request.'
-        ], 422);
-      }
-
-      foreach ($cartItems as $cartItem) {
-        foreach ($projectManagers as $pm) {
+        $pm = User::find($pmUserId);
+        if ($pm) {
           Notification::create([
             'user_id' => $pm->id,
             'type' => 'purchase_request',
@@ -588,7 +576,7 @@ class CartController extends Controller
       ]);
       return response()->json([
         'success' => false,
-        'message' => 'One or more items not found in the cart.'
+        'message' => 'One or more items or their associated notes not found.'
       ], 404);
     } catch (\Exception $e) {
       Log::error('Request Purchase Error: ' . $e->getMessage(), [
@@ -600,5 +588,10 @@ class CartController extends Controller
         'message' => 'Failed to submit purchase request: ' . $e->getMessage()
       ], 500);
     }
+  }
+
+  public function updateBidStatus(Request $request, $id)
+  {
+    // ... (fungsi yang tidak ada dalam kode asli, jika diperlukan) ...
   }
 }
