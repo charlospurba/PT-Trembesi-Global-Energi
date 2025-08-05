@@ -55,8 +55,11 @@ class CartController extends Controller
       }
 
       $availableQuantity = $product->quantity ?? PHP_INT_MAX;
+
+      // Mencari item di keranjang dengan product_id dan note_id yang sama
       $cartItem = Cart::where('user_id', $user->id)
         ->where('product_id', $id)
+        ->where('note_id', $note_id) // Validasi tambahan untuk memastikan item dari note yang sama
         ->first();
 
       $existingQuantity = $cartItem ? $cartItem->quantity : 0;
@@ -131,6 +134,7 @@ class CartController extends Controller
   {
     Log::info('Buy Now - Product ID: ' . $id . ', Request: ', $request->all());
     try {
+      // Logika ini sudah benar, memastikan hanya item yang disetujui yang bisa di-checkout
       $cartItem = Cart::where('user_id', Auth::id())
         ->where('product_id', $id)
         ->first();
@@ -167,20 +171,27 @@ class CartController extends Controller
       $user = Auth::user();
       $cartItem = Cart::where('user_id', $user->id)
         ->where('product_id', $id)
-        ->first();
+        ->firstOrFail();
 
-      if (!$cartItem) {
-        return response()->json([
-          'success' => false,
-          'message' => 'Product not found in cart'
-        ], 404);
-      }
-
-      $product = Product::findOrFail($id);
       $newQuantity = (int) $request->input('quantity', $cartItem->quantity);
 
       if ($newQuantity !== $cartItem->quantity) {
-        $cartItem->update(['quantity' => $newQuantity, 'status' => 'Pending']);
+        if ($newQuantity <= 0) {
+          $cartItem->delete();
+          $message = 'Product removed from cart';
+        } else {
+          $product = Product::findOrFail($id);
+          $availableQuantity = $product->quantity ?? PHP_INT_MAX;
+          if ($newQuantity > $availableQuantity) {
+            return response()->json([
+              'success' => false,
+              'message' => 'Requested quantity exceeds available quantity (' . $availableQuantity . ')'
+            ], 422);
+          }
+          // Reset status to Pending upon quantity change
+          $cartItem->update(['quantity' => $newQuantity, 'status' => 'Pending']);
+          $message = 'Cart updated successfully, awaiting Project Manager re-approval.';
+        }
 
         $note = PMRequest::find($cartItem->note_id);
         if ($note && $note->user_id) {
@@ -189,11 +200,11 @@ class CartController extends Controller
             Notification::create([
               'user_id' => $projectManager->id,
               'type' => 'cart_updated',
-              'message' => 'Cart item updated by ' . $user->name . ' for product: ' . $product->name . ' (New Quantity: ' . $newQuantity . '). Awaiting re-approval.',
+              'message' => 'Cart item updated by ' . $user->name . ' for product: ' . $cartItem->product->name . ' (New Quantity: ' . $newQuantity . '). Awaiting re-approval.',
               'data' => json_encode([
                 'cart_item' => [
-                  'product_id' => $product->id,
-                  'product_name' => $product->name,
+                  'product_id' => $cartItem->product->id,
+                  'product_name' => $cartItem->product->name,
                   'quantity' => $newQuantity,
                   'variant' => $cartItem->variant,
                   'user_id' => $user->id,
@@ -204,70 +215,20 @@ class CartController extends Controller
             ]);
           }
         }
-
-        return response()->json([
-          'success' => true,
-          'cart_count' => Cart::where('user_id', $user->id)->count(),
-          'message' => 'Cart updated successfully, awaiting Project Manager re-approval.'
-        ]);
-      }
-
-      if ($cartItem->status !== 'Pending') {
+      } else {
         return response()->json([
           'success' => false,
-          'message' => 'Cannot update cart item. Status is ' . $cartItem->status . '.'
-        ], 403);
-      }
-
-      if ($newQuantity <= 0) {
-        $cartItem->delete();
-        $cartCount = Cart::where('user_id', $user->id)->count();
-        return response()->json([
-          'success' => true,
-          'cart_count' => $cartCount,
-          'message' => 'Product removed from cart'
-        ]);
-      }
-
-      $availableQuantity = $product->quantity ?? PHP_INT_MAX;
-      if ($newQuantity > $availableQuantity) {
-        return response()->json([
-          'success' => false,
-          'message' => 'Requested quantity exceeds available quantity (' . $availableQuantity . ')'
+          'message' => 'Quantity not changed'
         ], 422);
       }
 
-      $cartItem->update(['quantity' => $newQuantity]);
-
-      $note = PMRequest::find($cartItem->note_id);
-      if ($note && $note->user_id) {
-        $projectManager = User::find($note->user_id);
-        if ($projectManager) {
-          Notification::create([
-            'user_id' => $projectManager->id,
-            'type' => 'cart_updated',
-            'message' => 'Cart item updated by ' . $user->name . ' for product: ' . $product->name . ' (Quantity: ' . $newQuantity . ')',
-            'data' => json_encode([
-              'cart_item' => [
-                'product_id' => $product->id,
-                'product_name' => $product->name,
-                'quantity' => $newQuantity,
-                'variant' => $cartItem->variant,
-                'user_id' => $user->id,
-                'user_name' => $user->name,
-                'note_id' => $cartItem->note_id,
-              ],
-            ]),
-          ]);
-        }
-      }
 
       $cartCount = Cart::where('user_id', $user->id)->count();
 
       return response()->json([
         'success' => true,
         'cart_count' => $cartCount,
-        'message' => 'Cart updated successfully, awaiting Project Manager approval.'
+        'message' => $message,
       ]);
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
       Log::error('Update Cart Error - Product not found: ' . $id);
@@ -305,7 +266,7 @@ class CartController extends Controller
 
       $note = PMRequest::find($cartItem->note_id);
       if ($note && $note->user_id) {
-        $projectManager = User::find($note->user_id);
+        $projectManager = User::find($note->user->id);
         if ($projectManager) {
           Notification::create([
             'user_id' => $projectManager->id,

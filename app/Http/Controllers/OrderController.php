@@ -44,7 +44,6 @@ class OrderController extends Controller
         $orders = $query->latest()->paginate(10);
         $orderCounts = $this->getOrderCounts($user->id);
 
-        // --- Corrected Bid Logic ---
         $bidQuery = Bid::where('vendor_id', $user->id)
             ->with('product', 'user', 'purchaseRequest');
 

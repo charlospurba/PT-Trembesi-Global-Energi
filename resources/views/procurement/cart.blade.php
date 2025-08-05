@@ -41,43 +41,70 @@
                         <div class="divide-y">
                             @foreach ($items as $item)
                                 @php
-                                    // Fetch the current cart item
-                                    $cartItem = App\Models\Cart::where('user_id', Auth::id())
+                                    // Ambil data produk asli untuk harga awal
+                                    $product = \App\Models\Product::find($item['id']);
+                                    $originalPrice = $product ? $product->price : $item['price'];
+
+                                    $cartItem = \App\Models\Cart::where('user_id', Auth::id())
                                         ->where('product_id', $item['id'])
+                                        ->where('note_id', $item['note_id'])
                                         ->first();
 
-                                    // Fetch bids for the current cart item
-                                    $bids = App\Models\Bid::where('product_id', $item['id'])
-                                        ->where('user_id', Auth::id())
-                                        ->where('cart_id', $cartItem->id)
-                                        ->latest()
-                                        ->take(3)
-                                        ->get();
+                                    $hasAcceptedBid = false;
+                                    $acceptedBidPrice = null;
 
-                                    // Fetch purchase requests for the current cart item
-                                    $purchaseRequests = App\Models\PurchaseRequest::where('product_id', $item['id'])
-                                        ->where('user_id', Auth::id())
-                                        ->where('cart_id', $cartItem->id)
-                                        ->latest()
-                                        ->get();
+                                    if ($cartItem) {
+                                        // Cek apakah ada bid yang sudah di-approve untuk item_cart ini
+                                        $acceptedBid = \App\Models\Bid::where('product_id', $item['id'])
+                                            ->where('user_id', Auth::id())
+                                            ->where('cart_id', $cartItem->id)
+                                            ->where('status', 'Accepted')
+                                            ->latest()
+                                            ->first();
 
-                                    $acceptedBid = $bids->where('status', 'Accepted')->first();
+                                        if ($acceptedBid) {
+                                            $hasAcceptedBid = true;
+                                            $acceptedBidPrice = $acceptedBid->bid_price;
+                                        }
+
+                                        // Fetch bids history for display
+                                        $bids = \App\Models\Bid::where('product_id', $item['id'])
+                                            ->where('user_id', Auth::id())
+                                            ->where('cart_id', $cartItem->id)
+                                            ->latest()
+                                            ->take(3)
+                                            ->get();
+
+                                        // Fetch purchase requests for display
+                                        $purchaseRequests = \App\Models\PurchaseRequest::where(
+                                            'product_id',
+                                            $item['id'],
+                                        )
+                                            ->where('user_id', Auth::id())
+                                            ->where('cart_id', $cartItem->id)
+                                            ->latest()
+                                            ->get();
+                                    } else {
+                                        $bids = collect();
+                                        $purchaseRequests = collect();
+                                    }
                                 @endphp
                                 <div class="p-4" data-item-id="{{ $item['id'] }}">
                                     <div class="flex items-center space-x-4">
                                         <input type="checkbox" class="item-checkbox" data-id="{{ $item['id'] }}"
-                                            data-supplier="{{ $item['supplier'] }}" data-status="{{ $item['status'] }}">
+                                            data-supplier="{{ $item['supplier'] }}" data-status="{{ $item['status'] }}"
+                                            data-note-id="{{ $item['note_id'] }}">
                                         <img src="{{ $item['image'] ? asset('storage/' . $item['image']) : '/images/pipa-besi.png' }}"
                                             class="w-16 h-16 rounded object-cover border border-red-200">
                                         <div class="flex-1">
                                             <h3 class="font-semibold text-red-700">{{ $item['name'] }}</h3>
                                             <div class="flex space-x-2 items-center mt-1">
-                                                @if ($acceptedBid)
+                                                @if ($hasAcceptedBid)
                                                     <span class="line-through text-gray-400 text-sm">Rp
-                                                        {{ number_format($item['price'], 0, ',', '.') }}</span>
+                                                        {{ number_format($originalPrice, 0, ',', '.') }}</span>
                                                     <span class="font-bold text-red-600 price-value"
-                                                        data-price="{{ $acceptedBid->bid_price }}">Rp
-                                                        {{ number_format($acceptedBid->bid_price, 0, ',', '.') }}</span>
+                                                        data-price="{{ $acceptedBidPrice }}">Rp
+                                                        {{ number_format($acceptedBidPrice, 0, ',', '.') }}</span>
                                                 @else
                                                     <span class="font-bold text-red-600 price-value"
                                                         data-price="{{ $item['price'] }}">Rp
@@ -115,11 +142,9 @@
                                             class="ml-3 px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-all duration-200"
                                             {{ $bids->count() >= 3 ? 'disabled' : '' }}>BID</button>
                                     </div>
-                                    <!-- History Table -->
                                     <div class="mt-4">
                                         <h4 class="text-sm font-semibold text-red-600 mb-2">History</h4>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <!-- Bid History -->
                                             <div>
                                                 <h5 class="text-sm font-semibold text-red-600 mb-1">Bid History</h5>
                                                 @if ($bids->isEmpty())
@@ -151,7 +176,6 @@
                                                     </div>
                                                 @endif
                                             </div>
-                                            <!-- Purchase Request History -->
                                             <div>
                                                 <h5 class="text-sm font-semibold text-red-600 mb-1">Purchase Request History
                                                 </h5>
@@ -295,7 +319,6 @@
                     const checkbox = document.querySelector(`.item-checkbox[data-id="${id}"]`);
                     if (checkbox.getAttribute('data-status') === 'Approved') {
                         checkbox.setAttribute('data-status', 'Pending');
-                        await resetCartItemStatus(id);
                     }
                     updateTotals();
                     Swal.fire({
@@ -324,28 +347,6 @@
             } finally {
                 buttons.forEach(btn => btn.classList.remove('opacity-50', 'cursor-not-allowed'));
                 input.classList.remove('opacity-50');
-            }
-        }
-
-        async function resetCartItemStatus(id) {
-            try {
-                const response = await fetch(`/cart/update/${id}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        status: 'Pending'
-                    })
-                });
-                const data = await response.json();
-                if (!data.success) {
-                    console.error('Failed to reset cart item status:', data.message);
-                }
-            } catch (error) {
-                console.error('Error resetting cart item status:', error);
             }
         }
 
@@ -406,11 +407,12 @@
                 count = 0;
             document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
                 const row = cb.closest('[data-item-id]');
-                const qty = parseInt(row.querySelector('input[id^="qty-"]').value) || 0;
+                const qty = parseInt(document.getElementById(`qty-${cb.getAttribute('data-id')}`).value) || 0;
                 const priceElement = row.querySelector('[data-price]');
                 const price = parseFloat(priceElement.getAttribute('data-price')) || 0;
-                const status = cb.getAttribute('data-status');
-                if (status === 'Approved') {
+
+                // Hanya hitung total dan jumlah item untuk yang sudah disetujui
+                if (cb.getAttribute('data-status') === 'Approved') {
                     total += qty * price;
                     count++;
                 }
@@ -589,14 +591,6 @@
             const supplierCheckboxes = document.querySelectorAll('.select-supplier');
             const itemCheckboxes = document.querySelectorAll('.item-checkbox');
 
-            // Debugging: Log all item statuses
-            console.log('Item Checkboxes:', itemCheckboxes.length);
-            itemCheckboxes.forEach(cb => {
-                console.log(
-                    `Item ID: ${cb.getAttribute('data-id')}, Status: ${cb.getAttribute('data-status')}`);
-            });
-
-            // Update Select All and Supplier checkboxes based on item selections
             function updateParentCheckboxes() {
                 const allItems = document.querySelectorAll('.item-checkbox');
                 const checkedItems = document.querySelectorAll('.item-checkbox:checked');
@@ -611,18 +605,12 @@
                     supplierCb.checked = supplierItems.length > 0 && checkedSupplierItems.length ===
                         supplierItems.length;
                 });
-                console.log('Updated parent checkboxes:', {
-                    selectAll: selectAllCheckbox.checked
-                });
             }
 
-            // Select All checkbox logic
             selectAllCheckbox.addEventListener('change', function() {
                 const checked = this.checked;
-                console.log('Select All clicked, checked:', checked);
                 itemCheckboxes.forEach(cb => {
                     cb.checked = checked;
-                    console.log(`Item ID: ${cb.getAttribute('data-id')} checked: ${cb.checked}`);
                 });
                 supplierCheckboxes.forEach(cb => {
                     const supplier = cb.getAttribute('data-supplier');
@@ -635,36 +623,26 @@
                 updateTotals();
             });
 
-            // Supplier checkbox logic
             supplierCheckboxes.forEach(cb => {
                 cb.addEventListener('change', function() {
                     const supplier = this.getAttribute('data-supplier');
                     const checked = this.checked;
-                    console.log(`Supplier ${supplier} clicked, checked:`, checked);
                     document.querySelectorAll(`.item-checkbox[data-supplier="${supplier}"]`)
                         .forEach(itemCb => {
                             itemCb.checked = checked;
-                            console.log(
-                                `Item ID: ${itemCb.getAttribute('data-id')} checked: ${itemCb.checked}`
-                            );
                         });
                     updateParentCheckboxes();
                     updateTotals();
                 });
             });
 
-            // Item checkbox logic
             itemCheckboxes.forEach(cb => {
                 cb.addEventListener('change', function() {
-                    console.log(
-                        `Item ID: ${cb.getAttribute('data-id')} changed, checked: ${cb.checked}`
-                    );
                     updateParentCheckboxes();
                     updateTotals();
                 });
             });
 
-            // Bid form submission
             document.getElementById('bidForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const id = document.getElementById('bidProductId').value;
