@@ -398,7 +398,7 @@ class ProductController extends Controller
     $products = Product::where(DB::raw('LOWER(name)'), 'like', "%$query%")
       ->orWhere(DB::raw('LOWER(supplier)'), 'like', "%$query%")
       ->orWhere(DB::raw('LOWER(address)'), 'like', "%$query%")
-      ->get();
+      ->paginate(10);
 
     // If products are found and all belong to a single category, redirect to the category-specific view
     $categories = $products->pluck('category')->unique();
