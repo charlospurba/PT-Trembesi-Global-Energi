@@ -29,23 +29,23 @@
                 <div id="orders-tab" class="{{ request('tab', 'orders') === 'orders' ? '' : 'hidden' }}">
                     <h2 class="text-2xl font-semibold text-red-600 mb-6">Orders Status</h2>
                     <div class="flex flex-wrap items-center mb-4 gap-3">
-                        <a href="{{ route('vendor.orders', ['tab' => 'orders']) }}"
+                        <a href="{{ route('vendor.orders', array_merge(['tab' => 'orders'], request('search') ? ['search' => request('search')] : [])) }}"
                             class="px-4 py-2 rounded transition {{ !request('status') && request('tab', 'orders') === 'orders' ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-red-100 text-gray-800' }}">
                             All ({{ $orderCounts['all'] ?? 0 }})
                         </a>
-                        <a href="{{ route('vendor.orders', ['status' => 'Awaiting Shipment', 'tab' => 'orders']) }}"
+                        <a href="{{ route('vendor.orders', array_merge(['status' => 'Awaiting Shipment', 'tab' => 'orders'], request('search') ? ['search' => request('search')] : [])) }}"
                             class="px-4 py-2 rounded transition {{ request('status') === 'Awaiting Shipment' ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-red-100 text-gray-800' }}">
                             Awaiting Shipment ({{ $orderCounts['awaiting_shipment'] ?? 0 }})
                         </a>
-                        <a href="{{ route('vendor.orders', ['status' => 'Shipped', 'tab' => 'orders']) }}"
+                        <a href="{{ route('vendor.orders', array_merge(['status' => 'Shipped', 'tab' => 'orders'], request('search') ? ['search' => request('search')] : [])) }}"
                             class="px-4 py-2 rounded transition {{ request('status') === 'Shipped' ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-red-100 text-gray-800' }}">
                             Shipped ({{ $orderCounts['shipped'] ?? 0 }})
                         </a>
-                        <a href="{{ route('vendor.orders', ['status' => 'Completed', 'tab' => 'orders']) }}"
+                        <a href="{{ route('vendor.orders', array_merge(['status' => 'Completed', 'tab' => 'orders'], request('search') ? ['search' => request('search')] : [])) }}"
                             class="px-4 py-2 rounded transition {{ request('status') === 'Completed' ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-red-100 text-gray-800' }}">
                             Completed ({{ $orderCounts['completed'] ?? 0 }})
                         </a>
-                        <a href="{{ route('vendor.orders', ['status' => 'Cancelled', 'tab' => 'orders']) }}"
+                        <a href="{{ route('vendor.orders', array_merge(['status' => 'Cancelled', 'tab' => 'orders'], request('search') ? ['search' => request('search')] : [])) }}"
                             class="px-4 py-2 rounded transition {{ request('status') === 'Cancelled' ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-red-100 text-gray-800' }}">
                             Cancelled ({{ $orderCounts['cancelled'] ?? 0 }})
                         </a>
@@ -53,7 +53,7 @@
                         <div class="ml-auto relative w-64">
                             <input type="text" placeholder="Search orders..." id="searchInput"
                                 class="w-full border border-gray-300 rounded pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-400"
-                                value="{{ request('search') }}">
+                                value="{{ request('search') }}" onkeypress="handleSearch(event, 'orders')">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
@@ -179,19 +179,19 @@
                 <div id="bids-tab" class="{{ request('tab') === 'bids' ? '' : 'hidden' }}">
                     <h2 class="text-2xl font-semibold text-red-600 mt-8 mb-6">Bid Status</h2>
                     <div class="flex flex-wrap items-center mb-4 gap-3">
-                        <a href="{{ route('vendor.orders', ['tab' => 'bids']) }}"
+                        <a href="{{ route('vendor.orders', array_merge(['tab' => 'bids'], request('search') ? ['search' => request('search')] : [])) }}"
                             class="px-4 py-2 rounded transition {{ !request('bid_status') && request('tab') === 'bids' ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-red-100 text-gray-800' }}">
                             All ({{ $bidCounts['all'] ?? 0 }})
                         </a>
-                        <a href="{{ route('vendor.orders', ['bid_status' => 'Pending', 'tab' => 'bids']) }}"
+                        <a href="{{ route('vendor.orders', array_merge(['bid_status' => 'Pending', 'tab' => 'bids'], request('search') ? ['search' => request('search')] : [])) }}"
                             class="px-4 py-2 rounded transition {{ request('bid_status') === 'Pending' ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-red-100 text-gray-800' }}">
                             Pending ({{ $bidCounts['pending'] ?? 0 }})
                         </a>
-                        <a href="{{ route('vendor.orders', ['bid_status' => 'Accepted', 'tab' => 'bids']) }}"
+                        <a href="{{ route('vendor.orders', array_merge(['bid_status' => 'Accepted', 'tab' => 'bids'], request('search') ? ['search' => request('search')] : [])) }}"
                             class="px-4 py-2 rounded transition {{ request('bid_status') === 'Accepted' ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-red-100 text-gray-800' }}">
                             Accepted ({{ $bidCounts['accepted'] ?? 0 }})
                         </a>
-                        <a href="{{ route('vendor.orders', ['bid_status' => 'Rejected', 'tab' => 'bids']) }}"
+                        <a href="{{ route('vendor.orders', array_merge(['bid_status' => 'Rejected', 'tab' => 'bids'], request('search') ? ['search' => request('search')] : [])) }}"
                             class="px-4 py-2 rounded transition {{ request('bid_status') === 'Rejected' ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-red-100 text-gray-800' }}">
                             Rejected ({{ $bidCounts['rejected'] ?? 0 }})
                         </a>
@@ -199,7 +199,7 @@
                         <div class="ml-auto relative w-64">
                             <input type="text" placeholder="Search bids..." id="bidSearchInput"
                                 class="w-full border border-gray-300 rounded pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-400"
-                                value="{{ request('search') }}">
+                                value="{{ request('search') }}" onkeypress="handleSearch(event, 'bids')">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
@@ -334,7 +334,7 @@
     </div>
 
     <script>
-        // Tab switching logic
+        // Tab switching logic (now handles full page reload)
         document.addEventListener('DOMContentLoaded', function() {
             const tabs = document.querySelectorAll('a[href*="tab="]');
             const initialTab = new URL(window.location.href).searchParams.get('tab') || 'orders';
@@ -347,25 +347,35 @@
             }
 
             tabs.forEach(tab => {
-                tab.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const url = new URL(this.href);
-                    const tabName = url.searchParams.get('tab');
-
-                    document.getElementById('orders-tab').classList.add('hidden');
-                    document.getElementById('bids-tab').classList.add('hidden');
-                    document.getElementById(tabName + '-tab').classList.remove('hidden');
-
-                    tabs.forEach(t => t.classList.remove('border-b-2', 'border-red-600',
-                        'text-red-600'));
-                    this.classList.add('border-b-2', 'border-red-600', 'text-red-600');
-
-                    window.history.pushState({}, '', this.href);
+                tab.addEventListener('click', function() {
+                    // Let the browser handle the full page reload
+                    window.location.href = this.href;
                 });
             });
         });
 
-        // Ajax for updating bid status
+        // Function to handle search input
+        function handleSearch(event, tab) {
+            if (event.key === 'Enter') {
+                const searchValue = event.target.value;
+                let currentUrl = new URL(window.location.href);
+
+                // Set the search parameter
+                if (searchValue) {
+                    currentUrl.searchParams.set('search', searchValue);
+                } else {
+                    currentUrl.searchParams.delete('search');
+                }
+
+                // Ensure the tab parameter is correct
+                currentUrl.searchParams.set('tab', tab);
+
+                // Redirect to the new URL
+                window.location.href = currentUrl.href;
+            }
+        }
+
+        // Ajax for updating bid status (unchanged)
         function updateBidStatus(bidId, status) {
             Swal.fire({
                 title: 'Are you sure?',
