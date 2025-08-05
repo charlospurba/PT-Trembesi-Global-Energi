@@ -13,7 +13,8 @@ return new class extends Migration {
             $table->foreignId('project_manager_id')->constrained('users')->onDelete('set null');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->foreignId('cart_id')->nullable()->constrained('carts')->onDelete('set null');
-            $table->foreignId('bid_id')->nullable()->constrained('bids')->onDelete('set null'); // Relasi ke tabel bids
+            // Hilangkan foreign constraint ke 'bids' untuk hindari circular dependency
+            $table->foreignId('bid_id')->nullable(); // tanpa ->constrained()
             $table->integer('quantity');
             $table->decimal('price', 15, 2)->nullable();
             $table->string('supplier');

@@ -13,7 +13,8 @@ return new class extends Migration {
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->foreignId('vendor_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('cart_id')->nullable()->constrained('carts')->onDelete('set null');
-            $table->foreignId('purchase_request_id')->nullable()->constrained('purchase_requests')->onDelete('set null'); // Kolom baru
+            // FOREIGN KEY purchase_request_id valid karena tabelnya sudah dibuat duluan
+            $table->foreignId('purchase_request_id')->nullable()->constrained('purchase_requests')->onDelete('set null');
             $table->decimal('bid_price', 15, 2);
             $table->string('status')->default('Pending');
             $table->timestamps();
