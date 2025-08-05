@@ -40,7 +40,8 @@
                             $remarkClass = match ($request->remark) {
                                 'Top Urgent' => 'bg-red-600 text-white',
                                 'Urgent' => 'bg-orange-500 text-white',
-                                'Regular' => 'bg-green-500 text-white',
+                                'Regular' => 'bg-yellow-500 text-white',
+                                'Termination' => 'bg-purple-500 text-white',
                                 default => 'bg-gray-500 text-white',
                             };
                             $remarkText = $request->remark ?? 'N/A';
