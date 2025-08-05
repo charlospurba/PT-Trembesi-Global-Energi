@@ -184,7 +184,7 @@ class ProductController extends Controller
   {
     $query = strtolower($request->input('query'));
     $sort = $request->input('sort');
-    $note_id = $request->input('note_id'); // Capture note_id
+    $note_id = $request->input(key: 'note_id'); // Capture note_id
 
     $products = Product::where('category', 'personal protective equipment')
       ->when($query, function ($q) use ($query) {

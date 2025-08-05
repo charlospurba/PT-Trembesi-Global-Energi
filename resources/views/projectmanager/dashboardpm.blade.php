@@ -2,575 +2,258 @@
 
 @section('content')
     @include('components.navpm')
-    
+
     <div class="flex min-h-screen">
         @include('components.sidepm')
-        
-        <div class="bg-gray-100 min-h-screen p-6 flex-1">
-            <!-- Header -->
-            <div class="bg-red-500 text-white px-6 py-4 rounded-md shadow mb-6">
-                <h2 class="text-xl font-bold">Construction Materials Procurement</h2>
-                <p class="text-sm">Track construction material deliveries and manage project supply chain</p>
-            </div>
 
-            <div class="mt-6">
-                <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-lg font-semibold text-gray-900">ETA vs ATA Analysis</h3>
-                            <div class="flex items-center space-x-4">
-                                <div class="flex items-center space-x-2 text-sm">
-                                    <div class="w-3 h-3 bg-blue-500 rounded"></div>
-                                    <span>ETA (Estimated Arrival)</span>
-                                </div>
-                                <div class="flex items-center space-x-2 text-sm">
-                                    <div class="w-3 h-3 bg-green-500 rounded"></div>
-                                    <span>ATA (Actual Arrival)</span>
-                                </div>
-                                <div class="flex items-center space-x-2 text-sm">
-                                    <div class="w-3 h-3 bg-red-500 rounded"></div>
-                                    <span>Delayed</span>
-                                </div>
+        <div class="flex-1 p-6 lg:p-8">
+            <div class="max-w-7xl mx-auto space-y-8">
+
+                {{-- Dashboard Header --}}
+                <div
+                    class="bg-gradient-to-r from-red-600 to-rose-600 rounded-2xl shadow-lg p-6 text-white mb-6 animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-extrabold tracking-tight">
+                                Welcome Back, {{ Auth::user()->name }}!
+                            </h1>
+                            <p class="text-red-100 mt-1 text-lg">
+                                Here's a quick overview of your procurement requests.
+                            </p>
+                        </div>
+                        <div class="hidden md:block">
+                            <svg class="w-20 h-20 text-red-300 opacity-70" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+
+                {{-- Material Status (Dengan Hover, Tanpa Link) --}}
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 animate-fade-in-up">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Material Status</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {{-- Awaiting Shipment --}}
+                        <div
+                            class="bg-white rounded-lg shadow-sm border-l-4 border-yellow-400 p-4 transition-transform duration-200 hover:scale-105 hover:shadow-lg">
+                            <p class="text-sm font-medium text-gray-500">Awaiting Shipment</p>
+                            <p class="mt-1 text-2xl font-bold text-gray-900">{{ $materialStatus['awaiting_shipment'] }}</p>
+                        </div>
+
+                        {{-- Shipped --}}
+                        <div
+                            class="bg-white rounded-lg shadow-sm border-l-4 border-blue-400 p-4 transition-transform duration-200 hover:scale-105 hover:shadow-lg">
+                            <p class="text-sm font-medium text-gray-500">Shipped</p>
+                            <p class="mt-1 text-2xl font-bold text-gray-900">{{ $materialStatus['shipped'] }}</p>
+                        </div>
+
+                        {{-- Completed --}}
+                        <div
+                            class="bg-white rounded-lg shadow-sm border-l-4 border-green-400 p-4 transition-transform duration-200 hover:scale-105 hover:shadow-lg">
+                            <p class="text-sm font-medium text-gray-500">Completed</p>
+                            <p class="mt-1 text-2xl font-bold text-gray-900">{{ $materialStatus['completed'] }}</p>
+                        </div>
+
+                        {{-- Cancelled --}}
+                        <div
+                            class="bg-white rounded-lg shadow-sm border-l-4 border-red-400 p-4 transition-transform duration-200 hover:scale-105 hover:shadow-lg">
+                            <p class="text-sm font-medium text-gray-500">Cancelled</p>
+                            <p class="mt-1 text-2xl font-bold text-gray-900">{{ $materialStatus['cancelled'] }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Summary Cards --}}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in-up">
+                    <div
+                        class="bg-white rounded-2xl shadow-md p-6 border-l-4 border-yellow-400 hover:shadow-xl transition-shadow duration-300">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Pending Requests</p>
+                                <p class="mt-1 text-3xl font-bold text-gray-900">{{ $summary['pending'] }}</p>
+                            </div>
+                            <div class="flex-shrink-0 bg-yellow-100 rounded-full p-3">
+                                <svg class="h-8 w-8 text-yellow-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
                             </div>
                         </div>
-                        
-                        <!-- Urgency Filter -->
-                        <div class="mb-4">
-                            <div class="flex items-center space-x-4">
-                                <label class="text-sm font-medium text-gray-700">Filter by Urgency:</label>
-                                <div class="flex space-x-2">
-                                    <button id="filterAll" class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-md transition-colors border-2 border-gray-300">
-                                        All
-                                    </button>
-                                    <button id="filterTopUrgent" class="px-3 py-1 text-sm bg-red-50 hover:bg-red-100 text-red-700 rounded-md transition-colors border-2 border-red-200">
-                                        🔴 Top Urgent
-                                    </button>
-                                    <button id="filterUrgent" class="px-3 py-1 text-sm bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-md transition-colors border-2 border-orange-200">
-                                        🟠 Urgent
-                                    </button>
-                                    <button id="filterRegular" class="px-3 py-1 text-sm bg-green-50 hover:bg-green-100 text-green-700 rounded-md transition-colors border-2 border-green-200">
-                                        🟢 Regular
-                                    </button>
-                                </div>
+                    </div>
+                    <div
+                        class="bg-white rounded-2xl shadow-md p-6 border-l-4 border-green-400 hover:shadow-xl transition-shadow duration-300">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Approved Requests</p>
+                                <p class="mt-1 text-3xl font-bold text-gray-900">{{ $summary['approved'] }}</p>
+                            </div>
+                            <div class="flex-shrink-0 bg-green-100 rounded-full p-3">
+                                <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
                             </div>
                         </div>
-                        
-                        <!-- Chart Container -->
-                        <div class="relative" style="height: 400px;">
-                            <canvas id="etaAtaChart"></canvas>
-                        </div>
-                        
-                        <!-- Summary Cards -->
-                        <div class="grid grid-cols-1 md:grid-cols-7 gap-4 mt-6">
-                            <div class="bg-blue-50 p-4 rounded-lg">
-                                <div class="text-sm font-medium text-blue-600">On Time Deliveries</div>
-                                <div id="onTimeCount" class="text-2xl font-bold text-blue-900">0</div>
-                                <div id="onTimePercentage" class="text-xs text-blue-600">0%</div>
+                    </div>
+                    <div
+                        class="bg-white rounded-2xl shadow-md p-6 border-l-4 border-red-400 hover:shadow-xl transition-shadow duration-300">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Rejected Requests</p>
+                                <p class="mt-1 text-3xl font-bold text-gray-900">{{ $summary['rejected'] }}</p>
                             </div>
-                            <div class="bg-yellow-50 p-4 rounded-lg">
-                                <div class="text-sm font-medium text-yellow-600">Early Deliveries</div>
-                                <div id="earlyCount" class="text-2xl font-bold text-yellow-900">0</div>
-                                <div id="earlyPercentage" class="text-xs text-yellow-600">0%</div>
-                            </div>
-                            <div class="bg-red-50 p-4 rounded-lg">
-                                <div class="text-sm font-medium text-red-600">Late Deliveries</div>
-                                <div id="lateCount" class="text-2xl font-bold text-red-900">0</div>
-                                <div id="latePercentage" class="text-xs text-red-600">0%</div>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="text-sm font-medium text-gray-600">Avg Delay</div>
-                                <div id="avgDelay" class="text-2xl font-bold text-gray-900">0</div>
-                                <div class="text-xs text-gray-600">days</div>
-                            </div>
-                            <!-- New Urgency Cards -->
-                            <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-400">
-                                <div class="text-sm font-medium text-red-600">🔴 Top Urgent</div>
-                                <div id="topUrgentCount" class="text-2xl font-bold text-red-900">0</div>
-                                <div id="topUrgentPercentage" class="text-xs text-red-600">0%</div>
-                            </div>
-                            <div class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-400">
-                                <div class="text-sm font-medium text-orange-600">🟠 Urgent</div>
-                                <div id="urgentCount" class="text-2xl font-bold text-orange-900">0</div>
-                                <div id="urgentPercentage" class="text-xs text-orange-600">0%</div>
-                            </div>
-                            <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
-                                <div class="text-sm font-medium text-green-600">🟢 Regular</div>
-                                <div id="regulareCount" class="text-2xl font-bold text-green-900">0</div>
-                                <div id="regularPercentage" class="text-xs text-green-600">0%</div>
+                            <div class="flex-shrink-0 bg-red-100 rounded-full p-3">
+                                <svg class="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
                             </div>
                         </div>
                     </div>
                 </div>
+
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {{-- Recent Purchase Requests Section --}}
+                    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                        <div class="bg-gray-50 px-6 py-4 flex items-center justify-between border-b">
+                            <h2 class="text-lg font-semibold text-gray-800">Recent Purchase Requests</h2>
+                            <a href="{{ route('projectmanager.purchase_requests') }}"
+                                class="text-sm text-red-600 hover:underline">View All</a>
+                        </div>
+                        <ul role="list" class="divide-y divide-gray-200">
+                            @forelse ($recentRequests as $request)
+                                <li class="p-4 sm:p-6 hover:bg-gray-50 transition-colors duration-200">
+                                    <div class="flex items-center justify-between space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate">
+                                                {{ $request->product->name ?? 'N/A' }}
+                                            </p>
+                                            <p class="text-sm text-gray-500 truncate">
+                                                Requested by: {{ $request->user->name ?? 'N/A' }}
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span
+                                                class="px-2 py-0.5 rounded-full text-xs font-semibold
+                                                @switch($request->status)
+                                                    @case('Approved') bg-green-100 text-green-700 @break
+                                                    @case('Rejected') bg-red-100 text-red-700 @break
+                                                    @default bg-yellow-100 text-yellow-700 @endswitch">
+                                                {{ $request->status }}
+                                            </span>
+                                            <a href="{{ route('projectmanager.purchase_requests.detail', $request->id) }}"
+                                                class="text-red-600 hover:text-red-800 transition-colors duration-200">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                                    </path>
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                            @empty
+                                <li class="p-6 text-center text-gray-500">No recent requests found.</li>
+                            @endforelse
+                        </ul>
+                    </div>
+
+                    {{-- Monthly Status Chart --}}
+                    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4">Monthly Request Status</h2>
+                        <div class="h-96">
+                            <canvas id="monthlyStatusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Quick Actions --}}
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 text-center">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h2>
+                    <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="{{ route('projectmanager.formadd') }}"
+                            class="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add New Request
+                        </a>
+                        <a href="{{ route('projectmanager.addrequest') }}"
+                            class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                            View All My Requests
+                        </a>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
+@endsection
 
-            <!-- Scripts -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-            <script>
-            // Dummy data untuk ETA vs ATA chart
-            function generateETAATADummyData() {
-                const dummyData = [];
-                const materials = [
-                    "Besi Beton 10mm", "Semen Portland", "Pasir Beton", "Keramik 40x40", 
-                    "Bata Merah", "Pipa PVC 4in", "Genteng Beton", "Kayu Meranti", 
-                    "Kaca Tempered", "Cat Tembok", "Keramik Granite", "Baja Ringan",
-                    "Pintu Panel", "Jendela UPVC", "Atap Spandek", "Wire Mesh",
-                    "Besi Hollow", "Triplek 18mm", "Plafon Gypsum", "Lantai Parket"
-                ];
-                
-                const suppliers = [
-                    "PT Krakatau Steel", "PT Semen Indonesia", "CV Sumber Alam", "PT Roman Ceramics",
-                    "UD Bata Mandiri", "PT Rucika", "PT Genteng Mas", "CV Kayu Jati",
-                    "PT Asahimas", "PT Propan Raya", "PT Granito Tiles", "PT Baja Ringan Prima"
-                ];
-                
-                const categories = ["Material", "Equipment", "Electrical Tools", "Consumables"];
-                const urgencyLevels = ["top-urgent", "urgent", "regular"];
-                
-                for (let i = 1; i <= 50; i++) {
-                    // Generate ETA (2-8 weeks from now)
-                    const etaDate = new Date();
-                    etaDate.setDate(etaDate.getDate() + Math.floor(Math.random() * 42) + 14);
-                    
-                    // Generate urgency level
-                    const urgencyRandom = Math.random();
-                    let urgency;
-                    if (urgencyRandom < 0.2) {
-                        urgency = "top-urgent"; // 20%
-                    } else if (urgencyRandom < 0.5) {
-                        urgency = "urgent"; // 30%
-                    } else {
-                        urgency = "regular"; // 50%
-                    }
-                    
-                    // Generate ATA with realistic patterns
-                    let ataDate, delayDays, status;
-                    const random = Math.random();
-                    
-                    if (random < 0.3) {
-                        // 30% On time (0 days delay)
-                        ataDate = new Date(etaDate);
-                        delayDays = 0;
-                        status = 'completed';
-                    } else if (random < 0.45) {
-                        // 15% Early (-1 to -7 days)
-                        const earlyDays = Math.floor(Math.random() * 7) + 1;
-                        ataDate = new Date(etaDate.getTime() - earlyDays * 24 * 60 * 60 * 1000);
-                        delayDays = -earlyDays;
-                        status = 'completed';
-                    } else if (random < 0.75) {
-                        // 30% Late (1-14 days)
-                        const lateDays = Math.floor(Math.random() * 14) + 1;
-                        ataDate = new Date(etaDate.getTime() + lateDays * 24 * 60 * 60 * 1000);
-                        delayDays = lateDays;
-                        status = 'completed';
-                    } else if (random < 0.9) {
-                        // 15% Very late (15-30 days)
-                        const veryLateDays = Math.floor(Math.random() * 16) + 15;
-                        ataDate = new Date(etaDate.getTime() + veryLateDays * 24 * 60 * 60 * 1000);
-                        delayDays = veryLateDays;
-                        status = 'delayed';
-                    } else {
-                        // 10% Still pending/in-progress (no ATA yet)
-                        ataDate = null;
-                        delayDays = null;
-                        status = Math.random() < 0.5 ? 'pending' : 'in-progress';
-                    }
-                    
-                    dummyData.push({
-                        id: i,
-                        name: `${materials[Math.floor(Math.random() * materials.length)]} ${Math.floor(Math.random() * 100) + 10} unit`,
-                        supplier: suppliers[Math.floor(Math.random() * suppliers.length)],
-                        category: categories[Math.floor(Math.random() * categories.length)],
-                        eta: etaDate,
-                        ata: ataDate,
-                        delayDays: delayDays,
-                        status: status,
-                        urgency: urgency,
-                        budget: Math.floor(Math.random() * 50000000) + 5000000,
-                        unit: ['unit', 'sak', 'm³', 'lembar', 'batang'][Math.floor(Math.random() * 5)]
-                    });
-                }
-                
-                return dummyData;
-            }
-
-            // ETA vs ATA Chart Manager
-            class ETAATAChartManager {
-                constructor() {
-                    this.dummyData = generateETAATADummyData();
-                    this.filteredData = [...this.dummyData];
-                    this.urgencyFilter = 'all';
-                    this.chart = null;
-                    this.initChart();
-                    this.initFilters();
-                }
-                
-                initFilters() {
-                    // Setup urgency filter buttons
-                    document.getElementById('filterAll').addEventListener('click', () => this.setUrgencyFilter('all'));
-                    document.getElementById('filterTopUrgent').addEventListener('click', () => this.setUrgencyFilter('top-urgent'));
-                    document.getElementById('filterUrgent').addEventListener('click', () => this.setUrgencyFilter('urgent'));
-                    document.getElementById('filterRegular').addEventListener('click', () => this.setUrgencyFilter('regular'));
-                    
-                    // Set initial active state
-                    this.updateFilterButtons();
-                }
-                
-                setUrgencyFilter(urgency) {
-                    this.urgencyFilter = urgency;
-                    this.applyFilters();
-                    this.updateChart();
-                    this.updateFilterButtons();
-                }
-                
-                applyFilters() {
-                    if (this.urgencyFilter === 'all') {
-                        this.filteredData = [...this.dummyData];
-                    } else {
-                        this.filteredData = this.dummyData.filter(item => item.urgency === this.urgencyFilter);
-                    }
-                }
-                
-                updateFilterButtons() {
-                    // Reset all buttons
-                    const buttons = ['filterAll', 'filterTopUrgent', 'filterUrgent', 'filterRegular'];
-                    buttons.forEach(id => {
-                        const btn = document.getElementById(id);
-                        btn.classList.remove('border-blue-500', 'bg-blue-100');
-                    });
-                    
-                    // Highlight active button
-                    let activeButton;
-                    switch(this.urgencyFilter) {
-                        case 'all': activeButton = 'filterAll'; break;
-                        case 'top-urgent': activeButton = 'filterTopUrgent'; break;
-                        case 'urgent': activeButton = 'filterUrgent'; break;
-                        case 'regular': activeButton = 'filterRegular'; break;
-                    }
-                    
-                    if (activeButton) {
-                        const btn = document.getElementById(activeButton);
-                        btn.classList.add('border-blue-500', 'bg-blue-100');
-                    }
-                }
-                
-                getUrgencyPointStyle(urgency) {
-                    switch(urgency) {
-                        case 'top-urgent':
-                            return {
-                                pointStyle: 'triangle',
-                                pointRadius: 8,
-                                pointHoverRadius: 10,
-                                borderWidth: 3
-                            };
-                        case 'urgent':
-                            return {
-                                pointStyle: 'rect',
-                                pointRadius: 7,
-                                pointHoverRadius: 9,
-                                borderWidth: 2
-                            };
-                        case 'regular':
-                            return {
-                                pointStyle: 'circle',
-                                pointRadius: 6,
-                                pointHoverRadius: 8,
-                                borderWidth: 2
-                            };
-                        default:
-                            return {
-                                pointStyle: 'circle',
-                                pointRadius: 6,
-                                pointHoverRadius: 8,
-                                borderWidth: 2
-                            };
-                    }
-                }
-                
-                initChart() {
-                    const ctx = document.getElementById('etaAtaChart').getContext('2d');
-                    
-                    this.chart = new Chart(ctx, {
-                        type: 'line', // Changed from 'scatter' to 'line'
-                        data: {
-                            datasets: [
-                                {
-                                    label: 'On Time',
-                                    data: [],
-                                    backgroundColor: 'rgba(34, 197, 94, 0.6)',
-                                    borderColor: 'rgba(34, 197, 94, 1)',
-                                    borderWidth: 2,
-                                    pointRadius: 6,
-                                    pointHoverRadius: 8,
-                                    fill: false,
-                                    showLine: true
-                                },
-                                {
-                                    label: 'Early',
-                                    data: [],
-                                    backgroundColor: 'rgba(234, 179, 8, 0.6)',
-                                    borderColor: 'rgba(234, 179, 8, 1)',
-                                    borderWidth: 2,
-                                    pointRadius: 6,
-                                    pointHoverRadius: 8,
-                                    fill: false,
-                                    showLine: true
-                                },
-                                {
-                                    label: 'Late',
-                                    data: [],
-                                    backgroundColor: 'rgba(239, 68, 68, 0.6)',
-                                    borderColor: 'rgba(239, 68, 68, 1)',
-                                    borderWidth: 2,
-                                    pointRadius: 6,
-                                    pointHoverRadius: 8,
-                                    fill: false,
-                                    showLine: true
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: 'ETA vs ATA Line Chart',
-                                    font: {
-                                        size: 16,
-                                        weight: 'bold'
-                                    }
-                                },
-                                legend: {
-                                    display: true,
-                                    position: 'top'
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        title: function(context) {
-                                            const point = context[0];
-                                            const item = point.raw.item;
-                                            return item.name;
-                                        },
-                                        label: function(context) {
-                                            const point = context.raw;
-                                            const eta = new Date(point.x).toLocaleDateString('id-ID');
-                                            const ata = new Date(point.y).toLocaleDateString('id-ID');
-                                            const delay = point.item.delayDays;
-                                            const urgency = point.item.urgency;
-                                            
-                                            // Urgency emoji
-                                            let urgencyEmoji = '';
-                                            switch(urgency) {
-                                                case 'top-urgent': urgencyEmoji = '🔴'; break;
-                                                case 'urgent': urgencyEmoji = '🟠'; break;
-                                                case 'regular': urgencyEmoji = '🟢'; break;
-                                            }
-                                            
-                                            return [
-                                                `${urgencyEmoji} ${urgency.toUpperCase().replace('-', ' ')}`,
-                                                `ETA: ${eta}`,
-                                                `ATA: ${ata}`,
-                                                `Delay: ${delay} days`,
-                                                `Supplier: ${point.item.supplier}`
-                                            ];
-                                        }
-                                    }
-                                }
-                            },
-                            scales: {
-                                x: {
-                                    type: 'linear',
-                                    position: 'bottom',
-                                    title: {
-                                        display: true,
-                                        text: 'ETA (Estimated Arrival)'
-                                    },
-                                    ticks: {
-                                        callback: function(value) {
-                                            return new Date(value).toLocaleDateString('id-ID', { 
-                                                month: 'short', 
-                                                day: 'numeric' 
-                                            });
-                                        }
-                                    }
-                                },
-                                y: {
-                                    type: 'linear',
-                                    title: {
-                                        display: true,
-                                        text: 'ATA (Actual Arrival)'
-                                    },
-                                    ticks: {
-                                        callback: function(value) {
-                                            return new Date(value).toLocaleDateString('id-ID', { 
-                                                month: 'short', 
-                                                day: 'numeric' 
-                                            });
-                                        }
-                                    }
-                                }
-                            }
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('monthlyStatusChart').getContext('2d');
+        const monthlyStatusChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @json($chartData['labels']),
+                datasets: [{
+                    label: 'Approved',
+                    data: @json($chartData['approved']),
+                    backgroundColor: 'rgba(52, 211, 153, 0.8)',
+                    borderColor: 'rgba(52, 211, 153, 1)',
+                    borderWidth: 1
+                }, {
+                    label: 'Pending',
+                    data: @json($chartData['pending']),
+                    backgroundColor: 'rgba(251, 191, 36, 0.8)',
+                    borderColor: 'rgba(251, 191, 36, 1)',
+                    borderWidth: 1
+                }, {
+                    label: 'Rejected',
+                    data: @json($chartData['rejected']),
+                    backgroundColor: 'rgba(248, 113, 113, 0.8)',
+                    borderColor: 'rgba(248, 113, 113, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Requests'
                         }
-                    });
-                    
-                    // Tambahkan garis diagonal untuk referensi "on time"
-                    this.addReferenceLine();
-                }
-                
-                addReferenceLine() {
-                    // Tambahkan reference line setelah chart update
-                    const chart = this.chart;
-                    
-                    // Plugin untuk menggambar garis diagonal
-                    const referenceLinePlugin = {
-                        id: 'referenceLine',
-                        afterDraw: function(chart) {
-                            const ctx = chart.ctx;
-                            const xScale = chart.scales.x;
-                            const yScale = chart.scales.y;
-                            
-                            if (!xScale || !yScale) return;
-                            
-                            // Gambar garis diagonal (ETA = ATA)
-                            ctx.save();
-                            ctx.setLineDash([5, 5]);
-                            ctx.strokeStyle = 'rgba(107, 114, 128, 0.5)';
-                            ctx.lineWidth = 2;
-                            ctx.beginPath();
-                            
-                            const minTime = Math.max(xScale.min, yScale.min);
-                            const maxTime = Math.min(xScale.max, yScale.max);
-                            
-                            ctx.moveTo(xScale.getPixelForValue(minTime), yScale.getPixelForValue(minTime));
-                            ctx.lineTo(xScale.getPixelForValue(maxTime), yScale.getPixelForValue(maxTime));
-                            ctx.stroke();
-                            ctx.restore();
-                        }
-                    };
-                    
-                    Chart.register(referenceLinePlugin);
-                }
-                
-                updateChart() {
-                    const data = this.filteredData.filter(item => item.ata !== null);
-                    
-                    // Sort data by ETA to ensure logical line connections
-                    data.sort((a, b) => a.eta.getTime() - b.eta.getTime());
-                    
-                    // Kategorikan data
-                    const onTime = [];
-                    const early = [];
-                    const late = [];
-                    
-                    data.forEach(item => {
-                        const urgencyStyle = this.getUrgencyPointStyle(item.urgency);
-                        const point = {
-                            x: item.eta.getTime(),
-                            y: item.ata.getTime(),
-                            item: item,
-                            ...urgencyStyle
-                        };
-                        
-                        if (item.delayDays === 0) {
-                            onTime.push(point);
-                        } else if (item.delayDays < 0) {
-                            early.push(point);
-                        } else {
-                            late.push(point);
-                        }
-                    });
-                    
-                    // Update chart data
-                    this.chart.data.datasets[0].data = onTime;
-                    this.chart.data.datasets[1].data = early;
-                    this.chart.data.datasets[2].data = late;
-                    
-                    this.chart.update();
-                    
-                    // Update summary statistics
-                    this.updateSummaryStats(data);
-                }
-                
-                updateSummaryStats(data) {
-                    const total = data.length;
-                    
-                    if (total === 0) {
-                        document.getElementById('onTimeCount').textContent =
-
- '0';
-                        document.getElementById('onTimePercentage').textContent = '0%';
-                        document.getElementById('earlyCount').textContent = '0';
-                        document.getElementById('earlyPercentage').textContent = '0%';
-                        document.getElementById('lateCount').textContent = '0';
-                        document.getElementById('latePercentage').textContent = '0%';
-                        document.getElementById('avgDelay').textContent = '0';
-                        
-                        // Urgency stats
-                        document.getElementById('topUrgentCount').textContent = '0';
-                        document.getElementById('topUrgentPercentage').textContent = '0%';
-                        document.getElementById('urgentCount').textContent = '0';
-                        document.getElementById('urgentPercentage').textContent = '0%';
-                        document.getElementById('regularCount').textContent = '0';
-                        document.getElementById('regularPercentage').textContent = '0%';
-                        return;
                     }
-                    
-                    const onTime = data.filter(item => item.delayDays === 0).length;
-                    const early = data.filter(item => item.delayDays < 0).length;
-                    const late = data.filter(item => item.delayDays > 0).length;
-                    
-                    const avgDelay = data.reduce((sum, item) => sum + (item.delayDays || 0), 0) / total;
-                    
-                    // Performance stats
-                    document.getElementById('onTimeCount').textContent = onTime;
-                    document.getElementById('onTimePercentage').textContent = `${Math.round((onTime / total) * 100)}%`;
-                    
-                    document.getElementById('earlyCount').textContent = early;
-                    document.getElementById('earlyPercentage').textContent = `${Math.round((early / total) * 100)}%`;
-                    
-                    document.getElementById('lateCount').textContent = late;
-                    document.getElementById('latePercentage').textContent = `${Math.round((late / total) * 100)}%`;
-                    
-                    document.getElementById('avgDelay').textContent = Math.round(avgDelay * 10) / 10;
-                    
-                    // Urgency stats (from all filtered data, not just completed)
-                    const allFilteredData = this.filteredData;
-                    const totalAll = allFilteredData.length;
-                    
-                    const topUrgent = allFilteredData.filter(item => item.urgency === 'top-urgent').length;
-                    const urgent = allFilteredData.filter(item => item.urgency === 'urgent').length;
-                    const regular = allFilteredData.filter(item => item.urgency === 'regular').length;
-                    
-                    document.getElementById('topUrgentCount').textContent = topUrgent;
-                    document.getElementById('topUrgentPercentage').textContent = totalAll > 0 ? `${Math.round((topUrgent / totalAll) * 100)}%` : '0%';
-                    
-                    document.getElementById('urgentCount').textContent = urgent;
-                    document.getElementById('urgentPercentage').textContent = totalAll > 0 ? `${Math.round((urgent / totalAll) * 100)}%` : '0%';
-                    
-                    document.getElementById('regularCount').textContent = regular;
-                    document.getElementById('regularPercentage').textContent = totalAll > 0 ? `${Math.round((regular / totalAll) * 100)}%` : '0%';
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
                 }
             }
-
-            // Inisialisasi chart setelah DOM loaded
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log('DOM loaded, initializing ETA ATA chart...');
-                
-                // Tunggu sebentar untuk memastikan semua library loaded
-                setTimeout(() => {
-                    try {
-                        window.etaAtaChart = new ETAATAChartManager();
-                        console.log('Chart initialized successfully');
-                        
-                        // Initial update
-                        window.etaAtaChart.updateChart();
-                        console.log('Chart updated with data');
-                        
-                    } catch (error) {
-                        console.error('Error initializing chart:', error);
-                    }
-                }, 500);
-            });
-        </script>
-    @endsection
+        });
+    </script>
+@endpush

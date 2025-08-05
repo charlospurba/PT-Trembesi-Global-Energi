@@ -11,6 +11,7 @@ use App\Models\Rating;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Events\OrderStatusUpdated;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
@@ -66,7 +67,7 @@ class OrderController extends Controller
         }
 
         $bids = $bidQuery->latest()->paginate(10);
-        $bidCounts = $this->getBidCounts($user->id);
+        $bidCounts = $this->getBidCounts($user->id); // Perbaikan: method ini sekarang tersedia
 
         Log::info('Vendor Orders and Bids Retrieved', [
             'vendor_id' => $user->id,
@@ -164,7 +165,6 @@ class OrderController extends Controller
                 ->where('vendor_id', $user->id)
                 ->firstOrFail();
 
-            // Logika penting: Pastikan bid hanya bisa diubah jika statusnya masih 'Pending'
             if ($bid->status !== 'Pending') {
                 return response()->json([
                     'success' => false,
@@ -177,14 +177,12 @@ class OrderController extends Controller
             ]);
 
             if ($validated['status'] === 'Accepted') {
-                // Reject all other bids for the same product and user
                 Bid::where('product_id', $bid->product_id)
                     ->where('user_id', $bid->user_id)
                     ->where('id', '!=', $bid->id)
                     ->update(['status' => 'Rejected']);
             }
 
-            // Update the status of the current bid
             $bid->update(['status' => $validated['status']]);
 
             Notification::create([
@@ -290,6 +288,7 @@ class OrderController extends Controller
         ];
     }
 
+    // Perbaikan: Menambahkan kembali metode getBidCounts()
     private function getBidCounts($vendorId)
     {
         return [
@@ -297,6 +296,21 @@ class OrderController extends Controller
             'pending' => Bid::where('vendor_id', $vendorId)->where('status', 'Pending')->count(),
             'accepted' => Bid::where('vendor_id', $vendorId)->where('status', 'Accepted')->count(),
             'rejected' => Bid::where('vendor_id', $vendorId)->where('status', 'Rejected')->count(),
+        ];
+    }
+
+    public function getProcurementOrderCounts($userId)
+    {
+        $orders = Order::where('user_id', $userId)
+            ->get()
+            ->groupBy('status');
+
+        return [
+            'all' => $orders->flatten()->count(),
+            'awaiting_shipment' => $orders->get('Awaiting Shipment', collect())->count(),
+            'shipped' => $orders->get('Shipped', collect())->count(),
+            'completed' => $orders->get('Completed', collect())->count(),
+            'cancelled' => $orders->get('Cancelled', collect())->count(),
         ];
     }
 

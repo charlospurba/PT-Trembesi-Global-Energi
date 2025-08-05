@@ -20,6 +20,7 @@ use App\Http\Controllers\VendorApprovalController;
 use App\Http\Controllers\PurchaseRequestController;
 use App\Http\Controllers\PMRequestController;
 use App\Http\Controllers\ProcurementNotesController;
+use App\Http\Controllers\DashboardPMController; // Tambahkan baris ini
 use Illuminate\Support\Facades\Route;
 
 // 🏠 Default Routes
@@ -75,7 +76,7 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     });
 
     // Project Manager Routes
-    Route::view('/dashboard/projectmanager', 'projectmanager.dashboardpm')->name('dashboard.projectmanager');
+    Route::get('/dashboard/projectmanager', [DashboardPMController::class, 'index'])->name('dashboard.projectmanager');
     Route::get('/projectmanager/addrequest', [PMRequestController::class, 'showAll'])->name('projectmanager.addrequest');
     Route::get('/projectmanager/formadd', [PMRequestController::class, 'create'])->name('projectmanager.formadd');
     Route::get('/projectmanager/purchase-requests', [PurchaseRequestController::class, 'index'])->name('projectmanager.purchase_requests');
@@ -101,7 +102,7 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     Route::get('/electrical/search', [ProductController::class, 'searchElectrical'])->name('search.electrical');
     Route::get('/consumables/search', [ProductController::class, 'searchConsumables'])->name('search.consumables');
     Route::get('/personal/search', [ProductController::class, 'searchPersonal'])->name('search.personal');
-    Route::get('/search/item', [ProductController::class, 'searchByItem'])->name('procurement.search.item'); // New route for item search
+    Route::get('/search/item', [ProductController::class, 'searchByItem'])->name('procurement.search.item');
 
     // Notes
     Route::get('/procurement/notes', [ProcurementNotesController::class, 'index'])->name('procurement.notes');
