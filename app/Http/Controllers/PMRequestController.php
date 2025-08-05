@@ -19,8 +19,14 @@ class PMRequestController extends Controller
     public function create()
     {
         $pmRequest = null;
-        $projectName = Auth::user()->project_name; // ambil dari user yang login
-        return view('projectmanager.formadd', compact('pmRequest', 'projectName'));
+        $projectName = Auth::user()->project_name;
+
+        // Ambil item unik dari tabel p_m_requests untuk dijadikan pilihan
+        $existingItems = PMRequest::select('item', 'specification', 'uom', 'qty', 'eta', 'remark')
+            ->groupBy('item', 'specification', 'uom', 'qty', 'eta', 'remark')
+            ->get();
+
+        return view('projectmanager.formadd', compact('pmRequest', 'projectName', 'existingItems'));
     }
 
     public function store(Request $request)

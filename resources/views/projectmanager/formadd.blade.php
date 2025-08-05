@@ -76,6 +76,32 @@
                                 </div>
 
                                 {{-- Item --}}
+                                {{-- Dropdown untuk pilih item dari request sebelumnya --}}
+                                <div class="group">
+                                    <label for="item_select" class="block text-sm font-semibold text-gray-700 mb-2">
+                                        <span class="flex items-center space-x-2">
+                                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1V4z" />
+                                            </svg>
+                                            <span>Choose Existing Item (Optional)</span>
+                                        </span>
+                                    </label>
+                                    <select id="item_select" class="w-full border border-gray-300 rounded-xl px-4 py-3"
+                                        onchange="handleItemChange(this)">
+                                        <option value="">-- Choose previous item --</option>
+                                        @foreach ($existingItems as $existing)
+                                            <option value="{{ $existing->item }}" data-spec="{{ $existing->specification }}"
+                                                data-uom="{{ $existing->uom }}" data-qty="{{ $existing->qty }}"
+                                                data-eta="{{ $existing->eta }}" data-remark="{{ $existing->remark }}">
+                                                {{ $existing->item }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                {{-- Manual Input Item --}}
                                 <div class="group">
                                     <label for="item" class="block text-sm font-semibold text-gray-700 mb-2">
                                         <span class="flex items-center space-x-2">
@@ -89,7 +115,7 @@
                                         </span>
                                     </label>
                                     <input type="text" name="item" id="item" value="{{ old('item') }}"
-                                        class="w-full border border-gray-300 rounded-xl px-4 py-3 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent hover:border-gray-400 group-hover:shadow-sm"
+                                        class="w-full border border-gray-300 rounded-xl px-4 py-3"
                                         placeholder="Enter description material" required>
                                 </div>
 
@@ -168,7 +194,8 @@
                                 <div class="group sm:col-span-2 lg:col-span-3">
                                     <label for="remark" class="block text-sm font-semibold text-gray-700 mb-2">
                                         <span class="flex items-center space-x-2">
-                                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z">
                                                 </path>
@@ -179,10 +206,14 @@
                                     <select name="remark" id="remark"
                                         class="w-full border border-gray-300 rounded-xl px-4 py-3 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent hover:border-gray-400">
                                         <option value="" disabled selected hidden>Select material urgency</option>
-                                        <option value="Top Urgent" {{ old('remark') == 'Top Urgent' ? 'selected' : '' }}>Top Urgent</option>
-                                        <option value="Urgent" {{ old('remark') == 'Urgent' ? 'selected' : '' }}>Urgent</option>
-                                        <option value="Regular" {{ old('remark') == 'Regular' ? 'selected' : '' }}>Regular</option>
-                                        <option value="Termination" {{ old('remark') == 'Termination' ? 'selected' : '' }}>Termination</option>
+                                        <option value="Top Urgent" {{ old('remark') == 'Top Urgent' ? 'selected' : '' }}>Top
+                                            Urgent</option>
+                                        <option value="Urgent" {{ old('remark') == 'Urgent' ? 'selected' : '' }}>Urgent
+                                        </option>
+                                        <option value="Regular" {{ old('remark') == 'Regular' ? 'selected' : '' }}>Regular
+                                        </option>
+                                        <option value="Termination" {{ old('remark') == 'Termination' ? 'selected' : '' }}>
+                                            Termination</option>
                                     </select>
                                 </div>
                             </div>
@@ -251,7 +282,8 @@
                             </div>
 
                             {{-- Action Buttons --}}
-                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-gray-100 gap-4">
+                            <div
+                                class="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-gray-100 gap-4">
                                 <a href="{{ route('pmrequest.downloadTemplate') }}"
                                     class="group flex items-center space-x-2 text-sm text-red-600 hover:text-red-700 font-semibold transition-colors duration-200">
                                     <svg class="w-4 h-4 group-hover:scale-110 transition-transform duration-200" fill="none"
@@ -282,3 +314,33 @@
         </div>
     </div>
 @endsection
+
+<script>
+    function handleItemChange(select) {
+        const selected = select.options[select.selectedIndex];
+
+        const item = selected.value;
+        const spec = selected.getAttribute('data-spec') || '';
+        const uom = selected.getAttribute('data-uom') || '';
+        const qty = selected.getAttribute('data-qty') || '';
+        const eta = selected.getAttribute('data-eta') || '';
+        const remark = selected.getAttribute('data-remark') || '';
+
+        // Set ke input
+        document.getElementById('item').value = item;
+        document.getElementById('specification').value = spec;
+        document.getElementById('uom').value = uom;
+        document.getElementById('qty').value = qty;
+        document.getElementById('eta').value = eta;
+
+        const remarkSelect = document.getElementById('remark');
+        if (remarkSelect) {
+            for (let i = 0; i < remarkSelect.options.length; i++) {
+                if (remarkSelect.options[i].value === remark) {
+                    remarkSelect.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+    }
+</script>
