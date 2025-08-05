@@ -18,6 +18,7 @@ class OrderController extends Controller
     {
         $user = Auth::user();
 
+        // Query for Orders
         $query = Order::whereHas('orderItems.product', function ($q) use ($user) {
             $q->where('vendor_id', $user->id);
         })->with('orderItems.product');
@@ -44,6 +45,7 @@ class OrderController extends Controller
         $orders = $query->latest()->paginate(10);
         $orderCounts = $this->getOrderCounts($user->id);
 
+        // Query for Bids
         $bidQuery = Bid::where('vendor_id', $user->id)
             ->with('product', 'user', 'purchaseRequest');
 
@@ -162,17 +164,27 @@ class OrderController extends Controller
                 ->where('vendor_id', $user->id)
                 ->firstOrFail();
 
+            // Logika penting: Pastikan bid hanya bisa diubah jika statusnya masih 'Pending'
+            if ($bid->status !== 'Pending') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bid status cannot be changed as it is not pending.'
+                ], 400);
+            }
+
             $validated = $request->validate([
                 'status' => 'required|in:Accepted,Rejected',
             ]);
 
             if ($validated['status'] === 'Accepted') {
+                // Reject all other bids for the same product and user
                 Bid::where('product_id', $bid->product_id)
                     ->where('user_id', $bid->user_id)
                     ->where('id', '!=', $bid->id)
                     ->update(['status' => 'Rejected']);
             }
 
+            // Update the status of the current bid
             $bid->update(['status' => $validated['status']]);
 
             Notification::create([
