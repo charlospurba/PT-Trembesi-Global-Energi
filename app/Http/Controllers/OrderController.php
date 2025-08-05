@@ -44,13 +44,9 @@ class OrderController extends Controller
         $orders = $query->latest()->paginate(10);
         $orderCounts = $this->getOrderCounts($user->id);
 
-        // Perbaikan: Ambil data bid yang memiliki relasi 'purchaseRequest' atau 'cart'
+        // --- Corrected Bid Logic ---
         $bidQuery = Bid::where('vendor_id', $user->id)
-            ->with('product', 'user', 'purchaseRequest') // Muat relasi ke Purchase Request
-            ->where(function ($q) {
-                $q->whereNotNull('cart_id') // Bid yang masih terhubung ke keranjang
-                    ->orWhereNotNull('purchase_request_id'); // Bid yang sudah jadi riwayat
-            });
+            ->with('product', 'user', 'purchaseRequest');
 
         if ($request->has('bid_status') && $request->bid_status) {
             $bidQuery->where('status', $request->bid_status);
