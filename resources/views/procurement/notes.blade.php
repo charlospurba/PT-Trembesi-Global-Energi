@@ -78,9 +78,9 @@
                                     class="px-3 py-1 text-sm bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-md transition-colors border-2 border-orange-200">
                                     🟠 Urgent
                                 </button>
-                                <button id="filterAverage"
+                                <button id="filterRegular"
                                     class="px-3 py-1 text-sm bg-green-50 hover:bg-green-100 text-green-700 rounded-md transition-colors border-2 border-green-200">
-                                    🟢 Average
+                                    🟢 Regular
                                 </button>
                             </div>
                         </div>
@@ -124,9 +124,9 @@
                             <div id="urgentPercentage" class="text-xs text-orange-600">0%</div>
                         </div>
                         <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
-                            <div class="text-sm font-medium text-green-600">🟢 Average</div>
-                            <div id="averageCount" class="text-2xl font-bold text-green-900">0</div>
-                            <div id="averagePercentage" class="text-xs text-green-600">0%</div>
+                            <div class="text-sm font-medium text-green-600">🟢 Regular</div>
+                            <div id="regularCount" class="text-2xl font-bold text-green-900">0</div>
+                            <div id="regularPercentage" class="text-xs text-green-600">0%</div>
                         </div>
                     </div>
                 </div>
@@ -194,11 +194,6 @@
                                     <h2 class="text-xl font-bold">Project - {{ $userRequests->first()->project_name }}</h2>
                                     <p class="{{ $colors['muted'] }} text-sm">Requested by User ID: {{ $userId }}</p>
                                 </div>
-                                <div class="text-right">
-                                    <p class="{{ $colors['muted'] }} text-sm">Total Budget</p>
-                                    <p class="text-2xl font-bold">Rp{{ number_format($userRequests->sum('price'), 0, ',', '.') }}
-                                    </p>
-                                </div>
                             </div>
 
                             <!-- (Optional) Summary Stats -->
@@ -218,13 +213,6 @@
                                     <span
                                         class="inline-block px-2 py-1 text-xs font-bold bg-white {{ $colors['text'] }} rounded-full">Active</span>
                                 </div>
-                                <div class="text-center {{ $colors['light'] }} bg-opacity-30 rounded-lg p-3">
-                                    <h4 class="text-xs font-semibold text-red-100 uppercase">Progress</h4>
-                                    <div class="w-full {{ $colors['progress'] }} rounded-full h-2 mt-1">
-                                        <div class="bg-white h-2 rounded-full" style="width: 45%"></div>
-                                    </div>
-                                    <p class="text-xs font-bold text-white mt-1">45%</p>
-                                </div>
                             </div>
                         </div>
 
@@ -235,7 +223,7 @@
                                     $remarkClass = match ($request->remark) {
                                         'Top Urgent' => 'bg-red-100 text-red-700',
                                         'Urgent' => 'bg-orange-100 text-orange-700',
-                                        'Average' => 'bg-yellow-100 text-yellow-700',
+                                        'Regular' => 'bg-yellow-100 text-yellow-700',
                                         default => 'bg-gray-100 text-gray-700',
                                     };
                                 @endphp
@@ -255,7 +243,7 @@
                                         <div class="space-y-3 text-sm">
                                             <div class="flex justify-between">
                                                 <span class="text-gray-600">Qty:</span>
-                                                <span>{{ $request->qty }} {{ $request->unit }}</span>
+                                                <span>{{ $request->qty }} {{ $request->uom }}</span>
                                             </div>
                                             <div class="flex justify-between">
                                                 <span class="text-gray-600">ETA:</span>
@@ -264,10 +252,6 @@
                                             <div class="flex justify-between">
                                                 <span class="text-gray-600">Specification:</span>
                                                 <span>{{ $request->specification }}</span>
-                                            </div>
-                                            <div class="flex justify-between border-t pt-2 font-semibold">
-                                                <span>Price:</span>
-                                                <span class="text-red-600">Rp{{ number_format($request->price, 0, ',', '.') }}</span>
                                             </div>
                                         </div>
 
@@ -287,42 +271,6 @@
 
 
             @endif
-        </div>
-
-        @php
-            $grandTotal = 0;
-            $projectTotals = [];
-
-            foreach ($groupedRequests as $userId => $userRequests) {
-                $projectName = $userRequests->first()->project_name;
-                $projectTotal = $userRequests->sum('price');
-
-                $grandTotal += $projectTotal;
-
-                // Jika project_name sudah ada, tambahkan nilainya
-                if (isset($projectTotals[$projectName])) {
-                    $projectTotals[$projectName] += $projectTotal;
-                } else {
-                    $projectTotals[$projectName] = $projectTotal;
-                }
-            }
-        @endphp
-
-        <!-- Grand Total Summary -->
-        <div class="bg-white rounded-xl shadow-lg p-8">
-            <div class="text-center">
-                <h3 class="text-lg font-semibold text-gray-600 uppercase mb-4">Total Project Budget</h3>
-                <p class="text-4xl font-bold text-gray-800">Rp{{ number_format($grandTotal, 0, ',', '.') }}</p>
-
-                <div class="mt-4 flex justify-center flex-wrap gap-6">
-                    @foreach($projectTotals as $projectName => $amount)
-                        <div class="text-center">
-                            <p class="text-sm text-gray-500">{{ $projectName }}</p>
-                            <p class="text-lg font-semibold text-blue-600">Rp{{ number_format($amount, 0, ',', '.') }}</p>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
         </div>
 
     </main>
@@ -451,7 +399,7 @@
                         ata: new Date('2024-06-28'),
                         delayDays: 0,
                         status: 'completed',
-                        urgency: 'average',
+                        urgency: 'regular',
                         budget: 25000000,
                         unit: "Units",
                         project: "project2"
@@ -528,7 +476,7 @@
                     "PT Asahimas", "PT Propan Raya", "PT Granito Tiles", "PT Baja Ringan Prima"
                 ];
                 const categories = ["Material", "Equipment", "Electrical Tools", "Consumables", "PPE", "Safety", "Finishing"];
-                const urgencyLevels = ["top-urgent", "urgent", "average"];
+                const urgencyLevels = ["top-urgent", "urgent", "regular"];
                 const projects = ["project1", "project2"];
 
                 const additionalData = [];
@@ -536,7 +484,7 @@
                     const etaDate = new Date();
                     etaDate.setDate(etaDate.getDate() + Math.floor(Math.random() * 42) + 14);
                     const urgencyRandom = Math.random();
-                    let urgency = urgencyRandom < 0.2 ? "top-urgent" : urgencyRandom < 0.5 ? "urgent" : "average";
+                    let urgency = urgencyRandom < 0.2 ? "top-urgent" : urgencyRandom < 0.5 ? "urgent" : "regular";
                     let ataDate, delayDays, status;
                     const random = Math.random();
 
@@ -610,7 +558,7 @@
                 document.getElementById('filterAll').addEventListener('click', () => this.setUrgencyFilter('all'));
                 document.getElementById('filterTopUrgent').addEventListener('click', () => this.setUrgencyFilter('top-urgent'));
                 document.getElementById('filterUrgent').addEventListener('click', () => this.setUrgencyFilter('urgent'));
-                document.getElementById('filterAverage').addEventListener('click', () => this.setUrgencyFilter('average'));
+                document.getElementById('filterRegular').addEventListener('click', () => this.setUrgencyFilter('regular'));
 
                 // Project selector
                 document.getElementById('projectSelector').addEventListener('change', (e) => {
@@ -628,7 +576,7 @@
             }
 
             updateFilterButtons() {
-                const buttons = ['filterAll', 'filterTopUrgent', 'filterUrgent', 'filterAverage'];
+                const buttons = ['filterAll', 'filterTopUrgent', 'filterUrgent', 'filterRegular'];
                 buttons.forEach(id => {
                     const btn = document.getElementById(id);
                     btn.classList.remove('border-blue-500', 'bg-blue-100');
@@ -639,7 +587,7 @@
                     case 'all': activeButton = 'filterAll'; break;
                     case 'top-urgent': activeButton = 'filterTopUrgent'; break;
                     case 'urgent': activeButton = 'filterUrgent'; break;
-                    case 'average': activeButton = 'filterAverage'; break;
+                    case 'regular': activeButton = 'filterRegular'; break;
                 }
 
                 if (activeButton) {
@@ -673,7 +621,7 @@
                             pointHoverRadius: 9,
                             borderWidth: 2
                         };
-                    case 'average':
+                    case 'regular':
                         return {
                             pointStyle: 'circle',
                             pointRadius: 6,
@@ -751,7 +699,7 @@
                                         switch (urgency) {
                                             case 'top-urgent': urgencyEmoji = '🔴'; break;
                                             case 'urgent': urgencyEmoji = '🟠'; break;
-                                            case 'average': urgencyEmoji = '🟢'; break;
+                                            case 'regular': urgencyEmoji = '🟢'; break;
                                         }
                                         return [
                                             `${urgencyEmoji} ${urgency.toUpperCase().replace('-', ' ')}`,
@@ -943,8 +891,8 @@
                     document.getElementById('topUrgentPercentage').textContent = '0%';
                     document.getElementById('urgentCount').textContent = '0';
                     document.getElementById('urgentPercentage').textContent = '0%';
-                    document.getElementById('averageCount').textContent = '0';
-                    document.getElementById('averagePercentage').textContent = '0%';
+                    document.getElementById('regularCount').textContent = '0';
+                    document.getElementById('regularPercentage').textContent = '0%';
                     return;
                 }
 
@@ -965,14 +913,14 @@
                 const totalAll = allFilteredData.length;
                 const topUrgent = allFilteredData.filter(item => item.urgency === 'top-urgent').length;
                 const urgent = allFilteredData.filter(item => item.urgency === 'urgent').length;
-                const average = allFilteredData.filter(item => item.urgency === 'average').length;
+                const regular = allFilteredData.filter(item => item.urgency === 'regular').length;
 
                 document.getElementById('topUrgentCount').textContent = topUrgent;
                 document.getElementById('topUrgentPercentage').textContent = totalAll > 0 ? `${Math.round((topUrgent / totalAll) * 100)}%` : '0%';
                 document.getElementById('urgentCount').textContent = urgent;
                 document.getElementById('urgentPercentage').textContent = totalAll > 0 ? `${Math.round((urgent / totalAll) * 100)}%` : '0%';
-                document.getElementById('averageCount').textContent = average;
-                document.getElementById('averagePercentage').textContent = totalAll > 0 ? `${Math.round((average / totalAll) * 100)}%` : '0%';
+                document.getElementById('regularCount').textContent = regular;
+                document.getElementById('regularPercentage').textContent = totalAll > 0 ? `${Math.round((regular / totalAll) * 100)}%` : '0%';
             }
         }
 

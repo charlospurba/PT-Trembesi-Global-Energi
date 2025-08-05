@@ -46,23 +46,12 @@ class PMRequestImport implements ToCollection
                 'procurement_kode' => $this->procurementKode,
                 'item' => $row[1],
                 'specification' => $row[2] ?? '',
-                'unit' => $row[3] ?? '',
+                'uom' => $row[3] ?? '',
                 'qty' => (int) $row[4],
                 'eta' => $eta,
                 'remark' => $row[6] ?? '',
-                'price' => $this->convertPriceFormat($row[7] ?? ''),
             ]);
         }
-    }
-
-    private function convertPriceFormat($price)
-    {
-        if (is_string($price)) {
-            $cleaned = str_replace(['Rp', '.', ' '], '', $price);
-            $cleaned = str_replace(',', '.', $cleaned);
-            return is_numeric($cleaned) ? (float) $cleaned : 0;
-        }
-        return is_numeric($price) ? (float) $price : 0;
     }
 
 }

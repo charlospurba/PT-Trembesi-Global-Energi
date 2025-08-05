@@ -35,11 +35,11 @@
                                     </div>
                                 </div>
 
-                                {{-- Unit --}}
+                                {{-- UOM --}}
                                 <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border-l-4 border-red-400 shadow-sm">
                                     <div>
-                                        <p class="text-xs font-semibold text-gray-500 uppercase">Unit</p>
-                                        <p class="text-sm text-gray-800 font-bold">{{ $pmRequest->unit ?? '-' }}</p>
+                                        <p class="text-xs font-semibold text-gray-500 uppercase">UOM</p>
+                                        <p class="text-sm text-gray-800 font-bold">{{ $pmRequest->uom ?? '-' }}</p>
                                     </div>
                                 </div>
 
@@ -64,12 +64,6 @@
                             <div class="mb-3 p-4 bg-gray-50 rounded-lg shadow-sm border-l-4 border-red-400">
                                 <p class="text-xs font-semibold text-gray-500 uppercase">Specification</p>
                                 <p class="text-sm text-gray-800 line-clamp-2">{{ $pmRequest->specification ?? '-' }}</p>
-                            </div>
-
-                            <!-- Price -->
-                            <div class="mb-3 p-4 bg-gray-50 rounded-lg shadow-sm border-l-4 border-red-400">
-                                <p class="text-xs font-semibold text-gray-500 uppercase">Price</p>
-                                <p class="text-sm text-gray-800">Rp {{ number_format($pmRequest->price ?? 0, 0, ',', '.') }}</p>
                             </div>
                         </div>
                     @endforeach

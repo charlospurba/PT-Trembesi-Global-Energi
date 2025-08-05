@@ -15,11 +15,10 @@ class PMRequest extends Model
         'procurement_kode',
         'item',
         'specification',
-        'unit',
+        'uom',
         'qty',
         'eta',
         'remark',
-        'price',
     ];
 
     protected $casts = [

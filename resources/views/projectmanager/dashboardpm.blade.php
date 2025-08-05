@@ -48,8 +48,8 @@
                                     <button id="filterUrgent" class="px-3 py-1 text-sm bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-md transition-colors border-2 border-orange-200">
                                         🟠 Urgent
                                     </button>
-                                    <button id="filterAverage" class="px-3 py-1 text-sm bg-green-50 hover:bg-green-100 text-green-700 rounded-md transition-colors border-2 border-green-200">
-                                        🟢 Average
+                                    <button id="filterRegular" class="px-3 py-1 text-sm bg-green-50 hover:bg-green-100 text-green-700 rounded-md transition-colors border-2 border-green-200">
+                                        🟢 Regular
                                     </button>
                                 </div>
                             </div>
@@ -94,9 +94,9 @@
                                 <div id="urgentPercentage" class="text-xs text-orange-600">0%</div>
                             </div>
                             <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
-                                <div class="text-sm font-medium text-green-600">🟢 Average</div>
-                                <div id="averageCount" class="text-2xl font-bold text-green-900">0</div>
-                                <div id="averagePercentage" class="text-xs text-green-600">0%</div>
+                                <div class="text-sm font-medium text-green-600">🟢 Regular</div>
+                                <div id="regulareCount" class="text-2xl font-bold text-green-900">0</div>
+                                <div id="regularPercentage" class="text-xs text-green-600">0%</div>
                             </div>
                         </div>
                     </div>
@@ -124,7 +124,7 @@
                 ];
                 
                 const categories = ["Material", "Equipment", "Electrical Tools", "Consumables"];
-                const urgencyLevels = ["top-urgent", "urgent", "average"];
+                const urgencyLevels = ["top-urgent", "urgent", "regular"];
                 
                 for (let i = 1; i <= 50; i++) {
                     // Generate ETA (2-8 weeks from now)
@@ -139,7 +139,7 @@
                     } else if (urgencyRandom < 0.5) {
                         urgency = "urgent"; // 30%
                     } else {
-                        urgency = "average"; // 50%
+                        urgency = "regular"; // 50%
                     }
                     
                     // Generate ATA with realistic patterns
@@ -210,7 +210,7 @@
                     document.getElementById('filterAll').addEventListener('click', () => this.setUrgencyFilter('all'));
                     document.getElementById('filterTopUrgent').addEventListener('click', () => this.setUrgencyFilter('top-urgent'));
                     document.getElementById('filterUrgent').addEventListener('click', () => this.setUrgencyFilter('urgent'));
-                    document.getElementById('filterAverage').addEventListener('click', () => this.setUrgencyFilter('average'));
+                    document.getElementById('filterRegular').addEventListener('click', () => this.setUrgencyFilter('regular'));
                     
                     // Set initial active state
                     this.updateFilterButtons();
@@ -233,7 +233,7 @@
                 
                 updateFilterButtons() {
                     // Reset all buttons
-                    const buttons = ['filterAll', 'filterTopUrgent', 'filterUrgent', 'filterAverage'];
+                    const buttons = ['filterAll', 'filterTopUrgent', 'filterUrgent', 'filterRegular'];
                     buttons.forEach(id => {
                         const btn = document.getElementById(id);
                         btn.classList.remove('border-blue-500', 'bg-blue-100');
@@ -245,7 +245,7 @@
                         case 'all': activeButton = 'filterAll'; break;
                         case 'top-urgent': activeButton = 'filterTopUrgent'; break;
                         case 'urgent': activeButton = 'filterUrgent'; break;
-                        case 'average': activeButton = 'filterAverage'; break;
+                        case 'regular': activeButton = 'filterRegular'; break;
                     }
                     
                     if (activeButton) {
@@ -270,7 +270,7 @@
                                 pointHoverRadius: 9,
                                 borderWidth: 2
                             };
-                        case 'average':
+                        case 'regular':
                             return {
                                 pointStyle: 'circle',
                                 pointRadius: 6,
@@ -364,7 +364,7 @@
                                             switch(urgency) {
                                                 case 'top-urgent': urgencyEmoji = '🔴'; break;
                                                 case 'urgent': urgencyEmoji = '🟠'; break;
-                                                case 'average': urgencyEmoji = '🟢'; break;
+                                                case 'regular': urgencyEmoji = '🟢'; break;
                                             }
                                             
                                             return [
@@ -511,8 +511,8 @@
                         document.getElementById('topUrgentPercentage').textContent = '0%';
                         document.getElementById('urgentCount').textContent = '0';
                         document.getElementById('urgentPercentage').textContent = '0%';
-                        document.getElementById('averageCount').textContent = '0';
-                        document.getElementById('averagePercentage').textContent = '0%';
+                        document.getElementById('regularCount').textContent = '0';
+                        document.getElementById('regularPercentage').textContent = '0%';
                         return;
                     }
                     
@@ -540,7 +540,7 @@
                     
                     const topUrgent = allFilteredData.filter(item => item.urgency === 'top-urgent').length;
                     const urgent = allFilteredData.filter(item => item.urgency === 'urgent').length;
-                    const average = allFilteredData.filter(item => item.urgency === 'average').length;
+                    const regular = allFilteredData.filter(item => item.urgency === 'regular').length;
                     
                     document.getElementById('topUrgentCount').textContent = topUrgent;
                     document.getElementById('topUrgentPercentage').textContent = totalAll > 0 ? `${Math.round((topUrgent / totalAll) * 100)}%` : '0%';
@@ -548,8 +548,8 @@
                     document.getElementById('urgentCount').textContent = urgent;
                     document.getElementById('urgentPercentage').textContent = totalAll > 0 ? `${Math.round((urgent / totalAll) * 100)}%` : '0%';
                     
-                    document.getElementById('averageCount').textContent = average;
-                    document.getElementById('averagePercentage').textContent = totalAll > 0 ? `${Math.round((average / totalAll) * 100)}%` : '0%';
+                    document.getElementById('regularCount').textContent = regular;
+                    document.getElementById('regularPercentage').textContent = totalAll > 0 ? `${Math.round((regular / totalAll) * 100)}%` : '0%';
                 }
             }
 

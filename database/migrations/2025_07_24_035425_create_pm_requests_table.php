@@ -18,11 +18,10 @@ return new class extends Migration {
             $table->string('procurement_kode');
             $table->string('item');
             $table->string('specification');
-            $table->string('unit');
+            $table->string('uom');
             $table->integer('qty');
             $table->date('eta')->nullable();
             $table->text('remark');
-            $table->decimal('price', 15, 2); // beri precision dan scale
             $table->timestamps();
         });
     }

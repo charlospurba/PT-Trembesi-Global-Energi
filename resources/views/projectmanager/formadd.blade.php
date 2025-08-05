@@ -93,9 +93,9 @@
                                         placeholder="Enter item name" required>
                                 </div>
 
-                                {{-- Unit --}}
+                                {{-- UOM --}}
                                 <div class="group">
-                                    <label for="unit" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <label for="uom" class="block text-sm font-semibold text-gray-700 mb-2">
                                         <span class="flex items-center space-x-2">
                                             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
@@ -103,11 +103,11 @@
                                                     d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z">
                                                 </path>
                                             </svg>
-                                            <span>Unit</span>
+                                            <span>UOM</span>
                                             <span class="text-red-500">*</span>
                                         </span>
                                     </label>
-                                    <input type="text" name="unit" id="unit" value="{{ old('unit') }}"
+                                    <input type="text" name="uom" id="uom" value="{{ old('uom') }}"
                                         class="w-full border border-gray-300 rounded-xl px-4 py-3 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent hover:border-gray-400 group-hover:shadow-sm"
                                         placeholder="e.g., kg, pcs, m³" required>
                                 </div>
@@ -128,25 +128,6 @@
                                     <input type="number" name="qty" id="qty" value="{{ old('qty') }}"
                                         class="w-full border border-gray-300 rounded-xl px-4 py-3 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent hover:border-gray-400 group-hover:shadow-sm"
                                         placeholder="Enter quantity" required>
-                                </div>
-
-                                {{-- Price --}}
-                                <div class="group">
-                                    <label for="price" class="block text-sm font-semibold text-gray-700 mb-2">
-                                        <span class="flex items-center space-x-2">
-                                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 10c-4.41 0-8-1.79-8-4V6c0-2.21 3.59-4 8-4s8 1.79 8 4v8c0 2.21-3.59 4-8 4z" />
-                                            </svg>
-                                            <span>Price</span>
-                                            <span class="text-red-500">*</span>
-                                        </span>
-                                    </label>
-                                    <input type="number" name="price" id="price" step="0.01" min="0"
-                                        value="{{ old('price') }}"
-                                        class="w-full border border-gray-300 rounded-xl px-4 py-3 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent hover:border-gray-400 group-hover:shadow-sm"
-                                        placeholder="Enter price (e.g., 15000)" required>
                                 </div>
 
                                 {{-- ETA --}}
@@ -200,7 +181,7 @@
                                         <option value="" disabled selected hidden>Select material urgency</option>
                                         <option value="Top Urgent" {{ old('remark') == 'Top Urgent' ? 'selected' : '' }}>Top Urgent</option>
                                         <option value="Urgent" {{ old('remark') == 'Urgent' ? 'selected' : '' }}>Urgent</option>
-                                        <option value="Average" {{ old('remark') == 'Average' ? 'selected' : '' }}>Average</option>
+                                        <option value="Regular" {{ old('remark') == 'Regular' ? 'selected' : '' }}>Regular</option>
                                     </select>
                                 </div>
                             </div>

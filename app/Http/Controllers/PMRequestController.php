@@ -30,11 +30,10 @@ class PMRequestController extends Controller
         $validated = $request->validate([
             'item' => 'required|string',
             'specification' => 'required|string',
-            'unit' => 'required|string',
+            'uom' => 'required|string',
             'qty' => 'required|integer',
             'eta' => 'required|date',
             'remark' => 'required|string',
-            'price' => 'required|numeric|min:0',
         ]);
 
         $validated['project_name'] = Auth::user()->project_name;
