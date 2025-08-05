@@ -92,6 +92,16 @@
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed">
                 </div>
 
+                <!-- Project Name -->
+                <div class="mb-6">
+                    <label for="project_name" class="block text-sm font-medium text-gray-700 mb-2">Project Name</label>
+                    <input id="project_name" 
+                           type="text" 
+                           value="{{ $user->project_name }}" 
+                           readonly
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed">
+                </div>
+
                 <!-- Procurement Code -->
                 <div class="mb-6">
                     <label for="procurement_kode" class="block text-sm font-medium text-gray-700 mb-2">Procurement Code</label>

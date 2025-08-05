@@ -82,6 +82,10 @@
                                     class="px-3 py-1 text-sm bg-green-50 hover:bg-green-100 text-green-700 rounded-md transition-colors border-2 border-green-200">
                                     🟢 Regular
                                 </button>
+                                <button id="filterRegular"
+                                    class="px-3 py-1 text-sm bg-green-50 hover:bg-green-100 text-green-700 rounded-md transition-colors border-2 border-green-200">
+                                    🟣 Termination
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -127,6 +131,11 @@
                             <div class="text-sm font-medium text-green-600">🟢 Regular</div>
                             <div id="regularCount" class="text-2xl font-bold text-green-900">0</div>
                             <div id="regularPercentage" class="text-xs text-green-600">0%</div>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-400">
+                            <div class="text-sm font-medium text-purple-600">🟣 Termination</div>
+                            <div id="regularCount" class="text-2xl font-bold text-purple-900">0</div>
+                            <div id="regularPercentage" class="text-xs text-purple-600">0%</div>
                         </div>
                     </div>
                 </div>
@@ -224,6 +233,7 @@
                                         'Top Urgent' => 'bg-red-100 text-red-700',
                                         'Urgent' => 'bg-orange-100 text-orange-700',
                                         'Regular' => 'bg-yellow-100 text-yellow-700',
+                                        'Termination' => 'bg-purple-100 text-purple-700',
                                         default => 'bg-gray-100 text-gray-700',
                                     };
                                 @endphp
@@ -700,6 +710,7 @@
                                             case 'top-urgent': urgencyEmoji = '🔴'; break;
                                             case 'urgent': urgencyEmoji = '🟠'; break;
                                             case 'regular': urgencyEmoji = '🟢'; break;
+                                            case 'termination': urgencyEmoji = '🟣'; break;
                                         }
                                         return [
                                             `${urgencyEmoji} ${urgency.toUpperCase().replace('-', ' ')}`,
