@@ -182,6 +182,7 @@
                                         <option value="Top Urgent" {{ old('remark') == 'Top Urgent' ? 'selected' : '' }}>Top Urgent</option>
                                         <option value="Urgent" {{ old('remark') == 'Urgent' ? 'selected' : '' }}>Urgent</option>
                                         <option value="Regular" {{ old('remark') == 'Regular' ? 'selected' : '' }}>Regular</option>
+                                        <option value="Termination" {{ old('remark') == 'Termination' ? 'selected' : '' }}>Termination</option>
                                     </select>
                                 </div>
                             </div>
