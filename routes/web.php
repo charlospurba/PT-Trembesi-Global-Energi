@@ -130,6 +130,8 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     Route::get('/procurement/order-history', [OrderController::class, 'orderHistory'])->name('procurement.order_history');
     Route::post('/orders/{orderId}/rate', [OrderController::class, 'submitRating'])->name('orders.rate');
 
+    Route::get('/procurement-monthly-data', [OrderController::class, 'monthlyProcurementData'])->name('procurement.monthly-data');
+    
     // Notification Routes
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
     Route::get('/notifications/count', [NotificationController::class, 'count'])->name('notifications.count');

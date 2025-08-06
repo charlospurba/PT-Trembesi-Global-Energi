@@ -192,211 +192,30 @@
     <!-- Chart.js Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script>
-        // Data management class
-        class ProcurementDataManager {
-            constructor() {
-                this.allData = this.generateSampleData();
-                this.filteredData = [...this.allData];
-                this.projectFilter = '';
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('monthlySpendChart').getContext('2d');
+            let monthlySpendChart;
+
+            function formatIDR(value) {
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0
+                }).format(value);
             }
 
-            generateSampleData() {
-                const project1Items = [
-                    {
-                        id: 1,
-                        name: "Excavator 5 unit",
-                        supplier: "PT Heavy Equipment",
-                        category: "Equipment",
-                        eta: new Date('2024-06-30'),
-                        budget: 840000000,
-                        unit: "Units",
-                        project: "project1"
-                    },
-                    {
-                        id: 2,
-                        name: "Cement 500 Bags",
-                        supplier: "PT Semen Indonesia",
-                        category: "Material",
-                        eta: new Date('2024-06-25'),
-                        budget: 10000000,
-                        unit: "Bags",
-                        project: "project1"
-                    },
-                    {
-                        id: 3,
-                        name: "Concrete Mixer 2 Units",
-                        supplier: "CV Machinery",
-                        category: "Equipment",
-                        eta: new Date('2024-06-22'),
-                        budget: 30000000,
-                        unit: "Units",
-                        project: "project1"
-                    },
-                    {
-                        id: 4,
-                        name: "Tower Crane 1 Unit",
-                        supplier: "PT Crane Solutions",
-                        category: "Equipment",
-                        eta: new Date('2024-07-10'),
-                        budget: 150000000,
-                        unit: "Unit",
-                        project: "project1"
-                    },
-                    {
-                        id: 5,
-                        name: "Rebar Steel 3000 kg",
-                        supplier: "PT Krakatau Steel",
-                        category: "Material",
-                        eta: new Date('2024-07-05'),
-                        budget: 25500000,
-                        unit: "kg",
-                        project: "project1"
-                    },
-                    {
-                        id: 6,
-                        name: "Scaffolding 100 Sets",
-                        supplier: "UD Construction",
-                        category: "Equipment",
-                        eta: new Date('2024-07-15'),
-                        budget: 39000000,
-                        unit: "Sets",
-                        project: "project1"
-                    }
-                ];
-
-                const project2Items = [
-                    {
-                        id: 7,
-                        name: "Safety Helmet 100 Pcs",
-                        supplier: "PT Safety Gear",
-                        category: "PPE",
-                        eta: new Date('2024-06-20'),
-                        budget: 2500000,
-                        unit: "Pcs",
-                        project: "project2"
-                    },
-                    {
-                        id: 8,
-                        name: "Steel Beams 200 Units",
-                        supplier: "PT Baja Prima",
-                        category: "Material",
-                        eta: new Date('2024-06-28'),
-                        budget: 25000000,
-                        unit: "Units",
-                        project: "project2"
-                    },
-                    {
-                        id: 9,
-                        name: "Safety Vest 50 Pcs",
-                        supplier: "CV Safety Supplies",
-                        category: "PPE",
-                        eta: new Date('2024-06-21'),
-                        budget: 3750000,
-                        unit: "Pcs",
-                        project: "project2"
-                    },
-                    {
-                        id: 10,
-                        name: "Fire Extinguisher 20 Units",
-                        supplier: "PT Fire Safety",
-                        category: "Safety",
-                        eta: new Date('2024-06-18'),
-                        budget: 17000000,
-                        unit: "Units",
-                        project: "project2"
-                    },
-                    {
-                        id: 11,
-                        name: "Paint Materials 200 Liters",
-                        supplier: "PT Propan Raya",
-                        category: "Finishing",
-                        eta: new Date('2024-07-05'),
-                        budget: 15000000,
-                        unit: "Liters",
-                        project: "project2"
-                    },
-                    {
-                        id: 12,
-                        name: "First Aid Kit 50 Sets",
-                        supplier: "CV Medika",
-                        category: "Safety",
-                        eta: new Date('2024-06-17'),
-                        budget: 25500000,
-                        unit: "Sets",
-                        project: "project2"
-                    }
-                ];
-
-                const materials = [
-                    "Besi Beton 10mm", "Semen Portland", "Pasir Beton", "Keramik 40x40",
-                    "Bata Merah", "Pipa PVC 4in", "Genteng Beton", "Kayu Meranti",
-                    "Kaca Tempered", "Cat Tembok", "Keramik Granite", "Baja Ringan",
-                    "Pintu Panel", "Jendela UPVC", "Atap Spandek", "Wire Mesh",
-                    "Besi Hollow", "Triplek 18mm", "Plafon Gypsum", "Lantai Parket"
-                ];
-                const suppliers = [
-                    "PT Krakatau Steel", "PT Semen Indonesia", "CV Sumber Alam", "PT Roman Ceramics",
-                    "UD Bata Mandiri", "PT Rucika", "PT Genteng Mas", "CV Kayu Jati",
-                    "PT Asahimas", "PT Propan Raya", "PT Granito Tiles", "PT Baja Ringan Prima"
-                ];
-                const categories = ["Material", "Equipment", "Electrical Tools", "Consumables", "PPE", "Safety", "Finishing"];
-                const projects = ["project1", "project2"];
-
-                const additionalData = [];
-                for (let i = 13; i <= 50; i++) {
-                    const etaDate = new Date();
-                    etaDate.setDate(etaDate.getDate() + Math.floor(Math.random() * 42) + 14);
-
-                    additionalData.push({
-                        id: i,
-                        name: `${materials[Math.floor(Math.random() * materials.length)]} ${Math.floor(Math.random() * 100) + 10} unit`,
-                        supplier: suppliers[Math.floor(Math.random() * suppliers.length)],
-                        category: categories[Math.floor(Math.random() * categories.length)],
-                        eta: etaDate,
-                        budget: Math.floor(Math.random() * 50000000) + 5000000,
-                        unit: ['unit', 'sak', 'm³', 'lembar', 'batang'][Math.floor(Math.random() * 5)],
-                        project: projects[Math.floor(Math.random() * projects.length)]
-                    });
+            function createChart(labels, data) {
+                if (monthlySpendChart) {
+                    monthlySpendChart.destroy();
                 }
 
-                return [...project1Items, ...project2Items, ...additionalData];
-            }
-
-            applyFilters() {
-                this.filteredData = this.allData.filter(item => {
-                    return this.projectFilter === '' || item.project === this.projectFilter;
-                });
-            }
-        }
-
-        // Chart Manager for Monthly Spending
-        class ChartManager {
-            constructor() {
-                this.dataManager = new ProcurementDataManager();
-                this.projectFilter = '';
-                this.monthlySpendChart = null;
-                this.initChart();
-                this.initFilters();
-            }
-
-            initFilters() {
-                // Project selector
-                document.getElementById('projectSelector').addEventListener('change', (e) => {
-                    this.projectFilter = e.target.value;
-                    this.applyFiltersAndUpdate();
-                });
-            }
-
-            initChart() {
-                // Monthly Spending Chart
-                const monthlySpendCtx = document.getElementById('monthlySpendChart').getContext('2d');
-                this.monthlySpendChart = new Chart(monthlySpendCtx, {
+                monthlySpendChart = new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: [],
+                        labels: labels,
                         datasets: [{
                             label: 'Monthly Spend (IDR)',
-                            data: [],
+                            data: data,
                             backgroundColor: 'rgba(59, 130, 246, 0.6)',
                             borderColor: 'rgba(59, 130, 246, 1)',
                             borderWidth: 1
@@ -411,32 +230,33 @@
                                 text: 'Monthly Spending by Project',
                                 font: { size: 16, weight: 'bold' }
                             },
-                            legend: { display: true, position: 'top' },
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
                             tooltip: {
                                 callbacks: {
                                     label: function (context) {
-                                        return new Intl.NumberFormat('id-ID', {
-                                            style: 'currency',
-                                            currency: 'IDR',
-                                            minimumFractionDigits: 0
-                                        }).format(context.parsed.y);
+                                        return formatIDR(context.parsed.y);
                                     }
                                 }
                             }
                         },
                         scales: {
                             x: {
-                                title: { display: true, text: 'Month' }
+                                title: {
+                                    display: true,
+                                    text: 'Month'
+                                }
                             },
                             y: {
-                                title: { display: true, text: 'Spending (IDR)' },
+                                title: {
+                                    display: true,
+                                    text: 'Spending (IDR)'
+                                },
                                 ticks: {
                                     callback: function (value) {
-                                        return new Intl.NumberFormat('id-ID', {
-                                            style: 'currency',
-                                            currency: 'IDR',
-                                            minimumFractionDigits: 0
-                                        }).format(value);
+                                        return formatIDR(value);
                                     }
                                 }
                             }
@@ -445,56 +265,27 @@
                 });
             }
 
-            applyFiltersAndUpdate() {
-                this.dataManager.projectFilter = this.projectFilter;
-                this.dataManager.applyFilters();
-                this.updateMonthlySpendChart();
-            }
-
-            updateMonthlySpendChart() {
-                const today = new Date();
-                const months = [];
-                const spendData = new Array(12).fill(0);
-
-                // Generate 12 months of labels (6 months before and after current month)
-                for (let i = -5; i <= 6; i++) {
-                    const date = new Date(today.getFullYear(), today.getMonth() + i, 1);
-                    months.push(date.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' }));
-                }
-
-                this.dataManager.filteredData.forEach(item => {
-                    const itemMonth = new Date(item.eta).getMonth();
-                    const itemYear = new Date(item.eta).getFullYear();
-                    const monthIndex = months.findIndex(month => {
-                        const [monthName, year] = month.split(' ');
-                        const monthNum = new Date(Date.parse(monthName + " 1, " + year)).getMonth();
-                        return monthNum === itemMonth && parseInt(year) === itemYear;
+            function fetchChartData(project = '') {
+                fetch(`{{ route('procurement.monthly-data') }}?project=${encodeURIComponent(project)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        createChart(data.labels, data.data);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching chart data:', error);
+                        createChart([], []);
                     });
-
-                    if (monthIndex !== -1) {
-                        spendData[monthIndex] += item.budget;
-                    }
-                });
-
-                this.monthlySpendChart.data.labels = months;
-                this.monthlySpendChart.data.datasets[0].data = spendData;
-                this.monthlySpendChart.update();
             }
-        }
 
-        // Initialize chart
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log('DOM loaded, initializing chart...');
-            setTimeout(() => {
-                try {
-                    window.chartManager = new ChartManager();
-                    console.log('Chart initialized successfully');
-                    window.chartManager.applyFiltersAndUpdate();
-                    console.log('Chart updated with data');
-                } catch (error) {
-                    console.error('Error initializing chart:', error);
-                }
-            }, 500);
+            // Initial fetch
+            fetchChartData();
+
+            // Listen to project change
+            document.getElementById('projectSelector').addEventListener('change', (e) => {
+                const selectedProject = e.target.value;
+                fetchChartData(selectedProject);
+            });
         });
     </script>
+
 @endsection

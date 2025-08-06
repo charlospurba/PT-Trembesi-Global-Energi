@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Events\OrderStatusUpdated;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -338,5 +339,44 @@ class OrderController extends Controller
                 'error' => 'Failed to load order history: ' . $e->getMessage()
             ]);
         }
+    }
+    public function monthlyProcurementData(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $query = Order::select(
+            DB::raw('YEAR(created_at) as year'),
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('SUM(total_price) as total_spend')
+        )->where('user_id', $user->id);
+
+        // Filter by project name (if exists)
+        if ($request->filled('project')) {
+            $query->where('project_name', $request->project); // Ganti ke `project_id` jika pakai ID
+        }
+
+        $data = $query->groupBy('year', 'month')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
+
+        // Format output
+        $labels = [];
+        $values = [];
+
+        foreach ($data as $row) {
+            $monthName = \Carbon\Carbon::create()->month($row->month)->format('F');
+            $labels[] = $monthName . ' ' . $row->year;
+            $values[] = $row->total_spend;
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'data' => $values
+        ]);
     }
 }

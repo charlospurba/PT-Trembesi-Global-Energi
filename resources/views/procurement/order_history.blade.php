@@ -342,7 +342,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="flex justify-end pt-4">
+                                            <div class="flex justify-end pt-4 invisible">
                                                 <button onclick="generateEBilling({{ $order->id }})"
                                                     class="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl group">
                                                     <i
