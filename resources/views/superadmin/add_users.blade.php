@@ -9,26 +9,14 @@
         <div class="flex-1 bg-transparent h-screen overflow-y-auto">
             <div class="p-6">
 
-                <!-- Breadcrumb -->
-                <div class="mb-6">
-                    <nav class="flex" aria-label="Breadcrumb">
-                        <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                            <li class="inline-flex items-center">
-                                <a href="{{ route('superadmin.dashboard') }}"
-                                   class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors">
-                                    <i class="fas fa-home mr-2"></i>
-                                    Dashboard
-                                </a>
-                            </li>
-                            <li>
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
-                                    <span class="text-sm font-medium text-gray-500">Add New User</span>
-                                </div>
-                            </li>
-                        </ol>
-                    </nav>
-                </div>
+            <!-- Back to Dashboard Button -->
+            <div class="mb-6">
+                <a href="{{ route('superadmin.dashboard') }}"
+                class="inline-flex items-center bg-red-500 text-white text-sm font-medium px-4 py-2 rounded-lg shadow hover:bg-red-600 transition">
+                    ← Back to Dashboard
+                </a>
+            </div>
+
 
                 <!-- Card -->
                 <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200/50 backdrop-blur-sm">

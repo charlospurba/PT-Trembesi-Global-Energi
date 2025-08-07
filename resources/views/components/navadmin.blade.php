@@ -1,45 +1,47 @@
 <header class="bg-red-600 shadow-md p-4 flex justify-between items-center text-white w-full z-50">
     <div class="flex items-center gap-2">
-        <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Logo Trembesi" class="logo-img" />
+        <!-- Tombol hamburger untuk mobile -->
+        <button id="sidebarToggle" class="text-white text-2xl md:hidden mr-2">
+            ☰
+        </button>
+
+        <div class="logo-section flex items-center gap-2">
+            <a href="{{ route('superadmin.dashboard') }}">
+                <img src="{{ asset('assets/images/logo_trembesi.png') }}" alt="Logo Trembesi" class="logo-img h-8 w-auto">
+            </a>
+            <h1 class="text-xl font-bold text-white hidden sm:block">Admin Panel</h1>
+        </div>
     </div>
-      <!-- Profile Dropdown -->
-            <div class="profile-dropdown" style="position: relative;">
-                <div class="profile-trigger" onclick="toggleDropdown()"
-                        style="cursor: pointer; display: flex; align-items: center; color: white; gap: 8px;">
-                        @auth
-                            @php
-                                $profilePicture = Auth::user()->profile_picture
-                                    ? asset('storage/profile_picture/' . Auth::user()->profile_picture)
-                                    : asset('assets/images/default-profile.png');
-                            @endphp
-                            <div style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden;">
-                                <img src="{{ $profilePicture }}" alt="Profile Picture"
-                                    style="width: 100%; height: 100%; object-fit: cover;">
-                            </div>
-                            <span>Hello, {{ Auth::user()->name }}</span>
-                        @endauth
-                    @guest
-                        <i class="fas fa-user-circle" style="font-size: 24px; margin-right: 8px;"></i>
-                        <span>Guest</span>
-                    @endguest
 
-                    <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
+    <!-- Profile Dropdown -->
+    <div class="profile-dropdown relative">
+        <div class="profile-trigger flex items-center cursor-pointer" onclick="toggleDropdown()">
+            @auth
+                <span class="mr-2 hidden sm:inline">Hello, {{ Auth::user()->name }}</span>
+                @php
+                    $profilePicture = Auth::user()->profile_picture
+                        ? asset('storage/profile_picture/' . Auth::user()->profile_picture)
+                        : asset('assets/images/default-profile.png');
+                @endphp
+                <div class="w-9 h-9 rounded-full overflow-hidden mr-2">
+                    <img src="{{ $profilePicture }}" alt="Profile Picture" class="w-full h-full object-cover">
                 </div>
+            @endauth
+            @guest
+                <i class="fas fa-user-circle text-2xl mr-2"></i>
+                <span>Guest</span>
+            @endguest
+            <i class="fas fa-caret-down ml-1"></i>
+        </div>
 
-                <!-- Dropdown Menu -->
-                <div id="dropdownMenu" class="dropdown-menu"
-                    style="position: absolute; top: 100%; right: 0; background-color: white; color: black; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; min-width: 150px; z-index: 999;">
-                    <a href="/dashboard/profilesa" class="dropdown-item"
-                        style="display: block; padding: 10px 15px; text-decoration: none; color: black;">My Profile</a>
-                    <form id="logoutForm" method="POST" action="/logout" style="margin: 0;">
-                        @csrf
-                        <button type="button" id="logoutBtn" class="dropdown-item"
-                            style="width: 100%; text-align: left; background: none; border: none; padding: 10px 15px; cursor: pointer;">
-                            Logout
-                        </button>
-                    </form>
-                </div>
-            </div>
+        <div id="dropdownMenu" class="absolute top-full right-0 bg-white text-black rounded shadow-md hidden min-w-[150px] z-50">
+            <a href="/dashboard/profilesa" class="block px-4 py-2 hover:bg-gray-100">My Profile</a>
+            <form id="logoutForm" method="POST" action="/logout" class="m-0">
+                @csrf
+                <button type="button" id="logoutBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100">Logout</button>
+            </form>
+        </div>
+    </div>
 </header>
 
 <script>

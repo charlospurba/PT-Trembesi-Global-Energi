@@ -1,4 +1,6 @@
-<aside class="w-64 bg-white p-6 shadow-lg border-r border-gray-200 hidden md:block">
+<!-- Sidebar -->
+<aside class="fixed inset-y-0 left-0 w-64 sm:w-56 bg-white p-4 sm:p-6 shadow-lg border-r border-gray-200 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out md:static md:block z-50"
+    id="sidebar">
     <nav class="space-y-2 text-sm font-medium">
         @php
             $menus = [
@@ -55,3 +57,53 @@
         @endforeach
     </nav>
 </aside>
+<script>
+    function toggleDropdown() {
+        document.getElementById("dropdownMenu").classList.toggle("hidden");
+    }
+
+    window.addEventListener("click", function (e) {
+        const trigger = document.querySelector(".profile-trigger");
+        const dropdown = document.getElementById("dropdownMenu");
+        if (!trigger.contains(e.target)) {
+            dropdown.classList.add("hidden");
+        }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You will be signed out of your account.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, log out',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('logoutForm').submit();
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.getElementById('sidebar');
+        const toggleButton = document.getElementById('sidebarToggle');
+
+        if (toggleButton) {
+            toggleButton.addEventListener('click', function () {
+                sidebar.classList.toggle('-translate-x-full');
+            });
+        }
+
+        document.addEventListener('click', function (e) {
+            if (window.innerWidth < 768 &&
+                !sidebar.contains(e.target) &&
+                !toggleButton.contains(e.target)) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+    });
+</script>
